@@ -1,25 +1,26 @@
 package com.github.mydeardoctor.chinesechess;
 
 import java.awt.*;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.net.URL;
 
 class PanelBackground extends JPanel
 {
     private BufferedImage background = null;
-    PanelBackground()
+    PanelBackground(Text text)
     {
-        //TODO: catch dialogue, logging
+        URL url = getClass().getResource("/background.jpg");
+
         try
         {
-            URL url = getClass().getResource("/background.jpg");
             background = ImageIO.read(url);
-        } catch (IOException e)
+        }
+        catch (Exception e)
         {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, text.getErrorBackground(), text.getError(),
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
     @Override
