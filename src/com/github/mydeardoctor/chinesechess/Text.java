@@ -38,4 +38,18 @@ abstract class Text
     abstract String getErrorIcon();
     abstract String getErrorFont();
     abstract String getErrorBackground();
+    abstract String getErrorAdvisorBlack();
+    abstract String getErrorAdvisorRed();
+    abstract String getErrorCannonBlack();
+    abstract String getErrorCannonRed();
+    abstract String getErrorChariotBlack();
+    abstract String getErrorChariotRed();
+    abstract String getErrorElephantBlack();
+    abstract String getErrorElephantRed();
+    abstract String getErrorGeneralBlack();
+    abstract String getErrorGeneralRed();
+    abstract String getErrorHorseBlack();
+    abstract String getErrorHorseRed();
+    abstract String getErrorSoldierBlack();
+    abstract String getErrorSoldierRed();
 }

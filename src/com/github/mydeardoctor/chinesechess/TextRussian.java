@@ -102,4 +102,74 @@ class TextRussian extends Text
     {
         return "Не удалось загрузить \"background.jpg\"";
     }
+    @Override
+    String getErrorAdvisorBlack()
+    {
+        return "Не удалось загрузить \"advisorBlack.png\"";
+    }
+    @Override
+    String getErrorAdvisorRed()
+    {
+        return "Не удалось загрузить \"advisorRed.png\"";
+    }
+    @Override
+    String getErrorCannonBlack()
+    {
+        return "Не удалось загрузить \"cannonBlack.png\"";
+    }
+    @Override
+    String getErrorCannonRed()
+    {
+        return "Не удалось загрузить \"cannonRed.png\"";
+    }
+    @Override
+    String getErrorChariotBlack()
+    {
+        return "Не удалось загрузить \"chariotBlack.png\"";
+    }
+    @Override
+    String getErrorChariotRed()
+    {
+        return "Не удалось загрузить \"chariotRed.png\"";
+    }
+    @Override
+    String getErrorElephantBlack()
+    {
+        return "Не удалось загрузить \"elephantBlack.png\"";
+    }
+    @Override
+    String getErrorElephantRed()
+    {
+        return "Не удалось загрузить \"elephantRed.png\"";
+    }
+    @Override
+    String getErrorGeneralBlack()
+    {
+        return "Не удалось загрузить \"generalBlack.png\"";
+    }
+    @Override
+    String getErrorGeneralRed()
+    {
+        return "Не удалось загрузить \"generalRed.png\"";
+    }
+    @Override
+    String getErrorHorseBlack()
+    {
+        return "Не удалось загрузить \"horseBlack.png\"";
+    }
+    @Override
+    String getErrorHorseRed()
+    {
+        return "Не удалось загрузить \"horseRed.png\"";
+    }
+    @Override
+    String getErrorSoldierBlack()
+    {
+        return "Не удалось загрузить \"soldierBlack.png\"";
+    }
+    @Override
+    String getErrorSoldierRed()
+    {
+        return "Не удалось загрузить \"soldierRed.png\"";
+    }
 }
