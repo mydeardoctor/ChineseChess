@@ -252,7 +252,7 @@ class GUI
         labelLanguage = new JLabel(text.getLanguage());
 
         //ComboBox.
-        comboBoxLanguage = new JComboBox<String>();
+        comboBoxLanguage = new JComboBox<>();
         comboBoxLanguage.addItem(text.getEnglish());
         comboBoxLanguage.addItem(text.getRussian());
 
@@ -328,12 +328,6 @@ class GUI
         frame.getContentPane().validate();
         frame.repaint();
     }
-    private void showFrameLoad()
-    {
-    }
-    private void showFrameRules()
-    {
-    }
     private void showFrameSettings()
     {
         frame.getContentPane().removeAll();
@@ -355,15 +349,11 @@ class GUI
     }
     private void refreshText()
     {
-        String language = (String)comboBoxLanguage.getSelectedItem();
-        switch(language)
+        String language = (String)(comboBoxLanguage.getSelectedItem());
+        switch (language)
         {
-            case "English":
-                text = textEnglish;
-                break;
-            case "Русский":
-                text = textRussian;
-                break;
+            case "English" -> text = textEnglish;
+            case "Русский" -> text = textRussian;
         }
 
         //Frame Common.
@@ -416,13 +406,6 @@ class GUI
     }
     class PanelBoard extends JPanel
     {
-        private Graphics2D g2d = null;
-        private int x = 0;
-        private int y = 0;
-        private int side = 0;
-        private int tile = 0;
-        private int figureDiameter = 0;
-        private int figureRadius = 0;
         private BufferedImage advisorBlack = null;
         private BufferedImage advisorRed = null;
         private BufferedImage cannonBlack = null;
@@ -585,15 +568,15 @@ class GUI
         {
             super.paintComponent(g);
 
-            g2d = (Graphics2D)g;
+            Graphics2D g2d = (Graphics2D)g;
 
             //Calculation of dimensions.
-            side = Math.min(this.getWidth(), this.getHeight());
-            tile = side/11;
-            x = (int)(this.getBounds().getCenterX()-tile*10/2);
-            y = (int)(this.getBounds().getCenterY()-tile*11/2);
-            figureDiameter = (int)(tile*0.85);
-            figureRadius = figureDiameter/2;
+            int side = Math.min(this.getWidth(), this.getHeight());
+            int tile = side/11;
+            int x = (int)(this.getBounds().getCenterX()-tile*10/2);
+            int y = (int)(this.getBounds().getCenterY()-tile*11/2);
+            int figureDiameter = (int)(tile*0.85);
+            int figureRadius = figureDiameter/2;
 
             //Rectangles.
             g2d.setColor(new Color(207, 92, 1));
@@ -613,40 +596,45 @@ class GUI
             g2d.drawLine(x,y+tile*11,x+tile*10,y+tile*11);
             //Vertical lines.
             g2d.drawLine(x,y,x,y+tile*11);
-            g2d.drawLine(x+tile*1,y+tile*1,x+tile*1,y+tile*10);
+            g2d.drawLine(x+tile,y+tile,x+tile,y+tile*10);
             for(int i = 2; i <= 8; i++)
             {
-                g2d.drawLine(x+tile*i,y+tile*1,x+tile*i,y+tile*5);
+                g2d.drawLine(x+tile*i,y+tile,x+tile*i,y+tile*5);
                 g2d.drawLine(x+tile*i,y+tile*6,x+tile*i,y+tile*10);
             }
-            g2d.drawLine(x+tile*9,y+tile*1,x+tile*9,y+tile*10);
+            g2d.drawLine(x+tile*9,y+tile,x+tile*9,y+tile*10);
             g2d.drawLine(x+tile*10,y,x+tile*10,y+tile*11);
+            //Diagonal lines.
+            g2d.drawLine(x+tile*4,y+tile*3,x+tile*6,y+tile);
+            g2d.drawLine(x+tile*4,y+tile,x+tile*6,y+tile*3);
+            g2d.drawLine(x+tile*4,y+tile*10,x+tile*6,y+tile*8);
+            g2d.drawLine(x+tile*4,y+tile*8,x+tile*6,y+tile*10);
 
             //Figures.
             //Black figures.
-            g2d.drawImage(chariotBlack, x+tile*1-figureRadius,y+tile*1-figureRadius,
+            g2d.drawImage(chariotBlack, x+tile-figureRadius,y+tile-figureRadius,
                     figureDiameter, figureDiameter, this);
-            g2d.drawImage(horseBlack, x+tile*2-figureRadius,y+tile*1-figureRadius,
+            g2d.drawImage(horseBlack, x+tile*2-figureRadius,y+tile-figureRadius,
                     figureDiameter, figureDiameter, this);
-            g2d.drawImage(elephantBlack, x+tile*3-figureRadius,y+tile*1-figureRadius,
+            g2d.drawImage(elephantBlack, x+tile*3-figureRadius,y+tile-figureRadius,
                     figureDiameter, figureDiameter, this);
-            g2d.drawImage(advisorBlack, x+tile*4-figureRadius,y+tile*1-figureRadius,
+            g2d.drawImage(advisorBlack, x+tile*4-figureRadius,y+tile-figureRadius,
                     figureDiameter, figureDiameter, this);
-            g2d.drawImage(generalBlack, x+tile*5-figureRadius,y+tile*1-figureRadius,
+            g2d.drawImage(generalBlack, x+tile*5-figureRadius,y+tile-figureRadius,
                     figureDiameter, figureDiameter, this);
-            g2d.drawImage(advisorBlack, x+tile*6-figureRadius,y+tile*1-figureRadius,
+            g2d.drawImage(advisorBlack, x+tile*6-figureRadius,y+tile-figureRadius,
                     figureDiameter, figureDiameter, this);
-            g2d.drawImage(elephantBlack, x+tile*7-figureRadius,y+tile*1-figureRadius,
+            g2d.drawImage(elephantBlack, x+tile*7-figureRadius,y+tile-figureRadius,
                     figureDiameter, figureDiameter, this);
-            g2d.drawImage(horseBlack, x+tile*8-figureRadius,y+tile*1-figureRadius,
+            g2d.drawImage(horseBlack, x+tile*8-figureRadius,y+tile-figureRadius,
                     figureDiameter, figureDiameter, this);
-            g2d.drawImage(chariotBlack, x+tile*9-figureRadius,y+tile*1-figureRadius,
+            g2d.drawImage(chariotBlack, x+tile*9-figureRadius,y+tile-figureRadius,
                     figureDiameter, figureDiameter, this);
             g2d.drawImage(cannonBlack, x+tile*2-figureRadius,y+tile*3-figureRadius,
                     figureDiameter, figureDiameter, this);
             g2d.drawImage(cannonBlack, x+tile*8-figureRadius,y+tile*3-figureRadius,
                     figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierBlack, x+tile*1-figureRadius,y+tile*4-figureRadius,
+            g2d.drawImage(soldierBlack, x+tile-figureRadius,y+tile*4-figureRadius,
                     figureDiameter, figureDiameter, this);
             g2d.drawImage(soldierBlack, x+tile*3-figureRadius,y+tile*4-figureRadius,
                     figureDiameter, figureDiameter, this);
@@ -657,7 +645,7 @@ class GUI
             g2d.drawImage(soldierBlack, x+tile*9-figureRadius,y+tile*4-figureRadius,
                     figureDiameter, figureDiameter, this);
             //Red figures.
-            g2d.drawImage(chariotRed, x+tile*1-figureRadius,y+tile*10-figureRadius,
+            g2d.drawImage(chariotRed, x+tile-figureRadius,y+tile*10-figureRadius,
                     figureDiameter, figureDiameter, this);
             g2d.drawImage(horseRed, x+tile*2-figureRadius,y+tile*10-figureRadius,
                     figureDiameter, figureDiameter, this);
@@ -679,7 +667,7 @@ class GUI
                     figureDiameter, figureDiameter, this);
             g2d.drawImage(cannonRed, x+tile*8-figureRadius,y+tile*8-figureRadius,
                     figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierRed, x+tile*1-figureRadius,y+tile*7-figureRadius,
+            g2d.drawImage(soldierRed, x+tile-figureRadius,y+tile*7-figureRadius,
                     figureDiameter, figureDiameter, this);
             g2d.drawImage(soldierRed, x+tile*3-figureRadius,y+tile*7-figureRadius,
                     figureDiameter, figureDiameter, this);
