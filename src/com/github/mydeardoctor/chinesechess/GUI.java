@@ -2,6 +2,7 @@ package com.github.mydeardoctor.chinesechess;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicBorders;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,48 +12,53 @@ import java.net.URL;
 class GUI
 {
     //Text.
-    private Text text = null;
-    private TextEnglish textEnglish = null;
-    private TextRussian textRussian = null;
+    private Text text;
 
     //Frame Common.
-    private JFrame frame = null;
-    private Font fontChinese = null;
-    JMenu menu = null;
-    JMenuItem menuItemRules = null;
-    JMenuItem menuItemSettings = null;
-    JMenuItem menuItemAbout = null;
-    private GridBagLayout layoutGridBag = null;
+    private JFrame frame;
+    private Font fontChinese;
+    private JMenu menu;
+    private JMenuItem menuItemRules;
+    private JMenuItem menuItemSettings;
+    private JMenuItem menuItemAbout;
+    private PanelBackground panelBackground;
+    private GridBagLayout layoutGridBag;
 
     //Frame Main Menu.
-    private JButton buttonPlay = null;
-    private JButton buttonLoad = null;
-    private JButton buttonRules = null;
-    private JButton buttonSettings = null;
-    private GridBagConstraints constraintsForButtonPlay = null;
-    private GridBagConstraints constraintsForButtonLoad = null;
-    private GridBagConstraints constraintsForButtonRules = null;
-    private GridBagConstraints constraintsForButtonSettings = null;
+    private JButton buttonPlay;
+    private JButton buttonLoad;
+    private JButton buttonRules;
+    private JButton buttonSettings;
+    private GridBagConstraints constraintsForButtonPlay;
+    private GridBagConstraints constraintsForButtonLoad;
+    private GridBagConstraints constraintsForButtonRules;
+    private GridBagConstraints constraintsForButtonSettings;
 
     //Frame Game Mode.
-    private JButton buttonSinglePlayer = null;
-    private JButton buttonLocalMultiplayer = null;
-    private JButton buttonOnlineMultiplayer = null;
-    private JButton buttonBackGameMode = null;
-    private GridBagConstraints constraintsForButtonSinglePlayer = null;
-    private GridBagConstraints constraintsForButtonLocalMultiplayer = null;
-    private GridBagConstraints constraintsForButtonOnlineMultiplayer = null;
-    private GridBagConstraints constraintsForButtonBackGameMode = null;
+    private JButton buttonSinglePlayer;
+    private JButton buttonLocalMultiplayer;
+    private JButton buttonOnlineMultiplayer;
+    private JButton buttonBackGameMode;
+    private GridBagConstraints constraintsForButtonSinglePlayer;
+    private GridBagConstraints constraintsForButtonLocalMultiplayer;
+    private GridBagConstraints constraintsForButtonOnlineMultiplayer;
+    private GridBagConstraints constraintsForButtonBackGameMode;
+
+    //Frame Board.
+    private JPanel panelBackgroundEmpty;
+    private PanelBoard panelBoard;
+    private JLabel statusBar;
+    private BorderLayout layoutBorder;
 
     //Frame Settings.
-    private JLabel labelLanguage = null;
-    private JComboBox<String> comboBoxLanguage = null;
-    private JButton buttonBackSettings = null;
-    private JButton buttonApply = null;
-    private GridBagConstraints constraintsForLabelLanguage = null;
-    private GridBagConstraints constraintsForComboBoxLanguage = null;
-    private GridBagConstraints constraintsForButtonBackSettings = null;
-    private GridBagConstraints constraintsForButtonApply = null;
+    private JLabel labelLanguage;
+    private JComboBox<String> comboBoxLanguage;
+    private JButton buttonBackSettings;
+    private JButton buttonApply;
+    private GridBagConstraints constraintsForLabelLanguage;
+    private GridBagConstraints constraintsForComboBoxLanguage;
+    private GridBagConstraints constraintsForButtonBackSettings;
+    private GridBagConstraints constraintsForButtonApply;
 
     GUI()
     {
@@ -60,15 +66,13 @@ class GUI
         frameCommonInit();
         frameMainMenuInit();
         frameGameModeInit();
+        frameBoardInit();
         frameSettingsInit();
-        //showFrameMainMenu();
-        showFrameBoard();
+        showFrameMainMenu();
     }
     private void textInit()
     {
-        textEnglish = new TextEnglish();
-        textRussian = new TextRussian();
-        text = textEnglish;
+        text = new TextEnglish();
     }
     private void frameCommonInit()
     {
@@ -118,7 +122,8 @@ class GUI
         frame.setJMenuBar(menuBar);
 
         //ContentPane with background image.
-        frame.setContentPane(new PanelBackground());
+        panelBackground = new PanelBackground(text);
+        frame.setContentPane(panelBackground);
 
         //Bounds.
         frame.setMinimumSize(new Dimension(800,800));
@@ -128,7 +133,7 @@ class GUI
                         (int)frame.getBounds().getCenterY(),
                 800,800);
 
-
+        frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
         frame.setVisible(true);
     }
     private void frameMainMenuInit()
@@ -198,6 +203,7 @@ class GUI
         buttonBackGameMode = new JButton(text.getBack());
 
         //Action listener.
+        buttonSinglePlayer.addActionListener(e->showFrameBoard());
         buttonBackGameMode.addActionListener(e->showFrameMainMenu());
 
         //Background Color.
@@ -245,6 +251,18 @@ class GUI
                 (0, 3,1,1,0,0,
                         GridBagConstraints.WEST, GridBagConstraints.NONE,
                         insets, 0,0);
+    }
+    private void frameBoardInit()
+    {
+        panelBackgroundEmpty = new JPanel();
+        panelBoard = new PanelBoard(text);
+
+        statusBar = new JLabel(" ");
+        statusBar.setOpaque(true);
+        statusBar.setBorder(new LineBorder(Color.BLACK, 1));
+        statusBar.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
+
+        layoutBorder = new BorderLayout();
     }
     private void frameSettingsInit()
     {
@@ -309,51 +327,56 @@ class GUI
     private void showFrameMainMenu()
     {
         frame.getContentPane().removeAll();
+        frame.setContentPane(panelBackground);
         frame.getContentPane().setLayout(layoutGridBag);
         frame.getContentPane().add(buttonPlay, constraintsForButtonPlay);
         frame.getContentPane().add(buttonLoad, constraintsForButtonLoad);
         frame.getContentPane().add(buttonRules, constraintsForButtonRules);
         frame.getContentPane().add(buttonSettings, constraintsForButtonSettings);
-        frame.getContentPane().validate();
+        frame.validate();
         frame.repaint();
     }
     private void showFrameGameMode()
     {
         frame.getContentPane().removeAll();
+        frame.setContentPane(panelBackground);
         frame.getContentPane().setLayout(layoutGridBag);
         frame.getContentPane().add(buttonSinglePlayer, constraintsForButtonSinglePlayer);
         frame.getContentPane().add(buttonLocalMultiplayer, constraintsForButtonLocalMultiplayer);
         frame.getContentPane().add(buttonOnlineMultiplayer, constraintsForButtonOnlineMultiplayer);
         frame.getContentPane().add(buttonBackGameMode, constraintsForButtonBackGameMode);
-        frame.getContentPane().validate();
+        frame.validate();
+        frame.repaint();
+    }
+    private void showFrameBoard()
+    {
+        frame.getContentPane().removeAll();
+        frame.setContentPane(panelBackgroundEmpty);
+        frame.getContentPane().setLayout(layoutBorder);
+        frame.getContentPane().add(panelBoard, BorderLayout.CENTER);
+        frame.getContentPane().add(statusBar, BorderLayout.SOUTH);
+        frame.validate();
         frame.repaint();
     }
     private void showFrameSettings()
     {
         frame.getContentPane().removeAll();
+        frame.setContentPane(panelBackground);
         frame.getContentPane().setLayout(layoutGridBag);
         frame.getContentPane().add(labelLanguage, constraintsForLabelLanguage);
         frame.getContentPane().add(comboBoxLanguage, constraintsForComboBoxLanguage);
         frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
         frame.getContentPane().add(buttonApply, constraintsForButtonApply);
-        frame.getContentPane().validate();
+        frame.validate();
         frame.repaint();
     }
-    private void showFrameBoard()
-    { //TODO:
-        frame.getContentPane().removeAll();
-        frame.getContentPane().setLayout(new BorderLayout());
-        frame.getContentPane().add(new PanelBoard());
-        frame.getContentPane().validate();
-        frame.repaint();
-    }
-    private void refreshText()
+    public void refreshText()
     {
         String language = (String)(comboBoxLanguage.getSelectedItem());
         switch (language)
         {
-            case "English" -> text = textEnglish;
-            case "Русский" -> text = textRussian;
+            case "English" -> text = new TextEnglish();
+            case "Русский" -> text = new TextRussian();
         }
 
         //Frame Common.
@@ -362,6 +385,8 @@ class GUI
         menuItemRules.setText(text.getRules());
         menuItemSettings.setText(text.getSettings());
         menuItemAbout.setText(text.getAbout());
+        //Panel Background.
+        panelBackground.refreshText(text);
 
         //Frame Main Menu.
         buttonPlay.setText(text.getPlay());
@@ -375,308 +400,12 @@ class GUI
         buttonOnlineMultiplayer.setText(text.getOnlineMultiplayer());
         buttonBackGameMode.setText(text.getBack());
 
+        //Frame Board.
+        panelBoard.refreshText(text);
+
         //Frame Settings.
         labelLanguage.setText(text.getLanguage());
         buttonBackSettings.setText(text.getBack());
         buttonApply.setText(text.getApply());
-    }
-    private class PanelBackground extends JPanel
-    {
-        private BufferedImage background = null;
-        private PanelBackground()
-        {
-            URL url = getClass().getResource("/background.jpg");
-
-            try
-            {
-                background = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorBackground(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        @Override
-        public void paintComponent(Graphics g)
-        {
-            super.paintComponent(g);
-            g.drawImage(background, 0,0, this.getWidth(), this.getHeight(),this);
-        }
-    }
-    class PanelBoard extends JPanel
-    {
-        private BufferedImage advisorBlack = null;
-        private BufferedImage advisorRed = null;
-        private BufferedImage cannonBlack = null;
-        private BufferedImage cannonRed = null;
-        private BufferedImage chariotBlack = null;
-        private BufferedImage chariotRed = null;
-        private BufferedImage elephantBlack = null;
-        private BufferedImage elephantRed = null;
-        private BufferedImage generalBlack = null;
-        private BufferedImage generalRed = null;
-        private BufferedImage horseBlack = null;
-        private BufferedImage horseRed = null;
-        private BufferedImage soldierBlack = null;
-        private BufferedImage soldierRed = null;
-        PanelBoard()
-        {
-            URL url = getClass().getResource("/advisorBlack.png");
-            try
-            {
-                advisorBlack = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorAdvisorBlack(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/advisorRed.png");
-            try
-            {
-                advisorRed = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorAdvisorRed(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/cannonBlack.png");
-            try
-            {
-                cannonBlack = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorCannonBlack(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/cannonRed.png");
-            try
-            {
-                cannonRed = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorCannonRed(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/chariotBlack.png");
-            try
-            {
-                chariotBlack = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorChariotBlack(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/chariotRed.png");
-            try
-            {
-                chariotRed = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorChariotRed(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/elephantBlack.png");
-            try
-            {
-                elephantBlack = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorElephantBlack(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/elephantRed.png");
-            try
-            {
-                elephantRed = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorElephantRed(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/generalBlack.png");
-            try
-            {
-                generalBlack = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorGeneralBlack(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/generalRed.png");
-            try
-            {
-                generalRed = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorGeneralRed(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/horseBlack.png");
-            try
-            {
-                horseBlack = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorHorseBlack(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/horseRed.png");
-            try
-            {
-                horseRed = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorHorseRed(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/soldierBlack.png");
-            try
-            {
-                soldierBlack = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorSoldierBlack(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            url = getClass().getResource("/soldierRed.png");
-            try
-            {
-                soldierRed = ImageIO.read(url);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(null, text.getErrorSoldierRed(), text.getError(),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        @Override
-        protected void paintComponent(Graphics g)
-        {
-            super.paintComponent(g);
-
-            Graphics2D g2d = (Graphics2D)g;
-
-            //Calculation of dimensions.
-            int side = Math.min(this.getWidth(), this.getHeight());
-            int tile = side/11;
-            int x = (int)(this.getBounds().getCenterX()-tile*10/2);
-            int y = (int)(this.getBounds().getCenterY()-tile*11/2);
-            int figureDiameter = (int)(tile*0.85);
-            int figureRadius = figureDiameter/2;
-
-            //Rectangles.
-            g2d.setColor(new Color(207, 92, 1));
-            g2d.fillRect(x, y, tile*10, tile*11);
-            g2d.setColor(new Color(252, 174, 63));
-            g2d.fillRect(x+tile, y+tile, tile*8, tile*9);
-
-            //Lines.
-            g2d.setColor(Color.BLACK);
-            g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
-            //Horizontal lines.
-            g2d.drawLine(x,y,x+tile*10,y);
-            for(int i = 1; i <= 10; i++)
-            {
-                g2d.drawLine(x+tile,y+tile*i,x+tile*9,y+tile*i);
-            }
-            g2d.drawLine(x,y+tile*11,x+tile*10,y+tile*11);
-            //Vertical lines.
-            g2d.drawLine(x,y,x,y+tile*11);
-            g2d.drawLine(x+tile,y+tile,x+tile,y+tile*10);
-            for(int i = 2; i <= 8; i++)
-            {
-                g2d.drawLine(x+tile*i,y+tile,x+tile*i,y+tile*5);
-                g2d.drawLine(x+tile*i,y+tile*6,x+tile*i,y+tile*10);
-            }
-            g2d.drawLine(x+tile*9,y+tile,x+tile*9,y+tile*10);
-            g2d.drawLine(x+tile*10,y,x+tile*10,y+tile*11);
-            //Diagonal lines.
-            g2d.drawLine(x+tile*4,y+tile*3,x+tile*6,y+tile);
-            g2d.drawLine(x+tile*4,y+tile,x+tile*6,y+tile*3);
-            g2d.drawLine(x+tile*4,y+tile*10,x+tile*6,y+tile*8);
-            g2d.drawLine(x+tile*4,y+tile*8,x+tile*6,y+tile*10);
-
-            //Figures.
-            //Black figures.
-            g2d.drawImage(chariotBlack, x+tile-figureRadius,y+tile-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(horseBlack, x+tile*2-figureRadius,y+tile-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(elephantBlack, x+tile*3-figureRadius,y+tile-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(advisorBlack, x+tile*4-figureRadius,y+tile-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(generalBlack, x+tile*5-figureRadius,y+tile-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(advisorBlack, x+tile*6-figureRadius,y+tile-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(elephantBlack, x+tile*7-figureRadius,y+tile-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(horseBlack, x+tile*8-figureRadius,y+tile-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(chariotBlack, x+tile*9-figureRadius,y+tile-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(cannonBlack, x+tile*2-figureRadius,y+tile*3-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(cannonBlack, x+tile*8-figureRadius,y+tile*3-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierBlack, x+tile-figureRadius,y+tile*4-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierBlack, x+tile*3-figureRadius,y+tile*4-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierBlack, x+tile*5-figureRadius,y+tile*4-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierBlack, x+tile*7-figureRadius,y+tile*4-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierBlack, x+tile*9-figureRadius,y+tile*4-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            //Red figures.
-            g2d.drawImage(chariotRed, x+tile-figureRadius,y+tile*10-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(horseRed, x+tile*2-figureRadius,y+tile*10-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(elephantRed, x+tile*3-figureRadius,y+tile*10-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(advisorRed, x+tile*4-figureRadius,y+tile*10-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(generalRed, x+tile*5-figureRadius,y+tile*10-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(advisorRed, x+tile*6-figureRadius,y+tile*10-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(elephantRed, x+tile*7-figureRadius,y+tile*10-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(horseRed, x+tile*8-figureRadius,y+tile*10-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(chariotRed, x+tile*9-figureRadius,y+tile*10-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(cannonRed, x+tile*2-figureRadius,y+tile*8-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(cannonRed, x+tile*8-figureRadius,y+tile*8-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierRed, x+tile-figureRadius,y+tile*7-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierRed, x+tile*3-figureRadius,y+tile*7-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierRed, x+tile*5-figureRadius,y+tile*7-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierRed, x+tile*7-figureRadius,y+tile*7-figureRadius,
-                    figureDiameter, figureDiameter, this);
-            g2d.drawImage(soldierRed, x+tile*9-figureRadius,y+tile*7-figureRadius,
-                    figureDiameter, figureDiameter, this);
-        }
     }
 }
