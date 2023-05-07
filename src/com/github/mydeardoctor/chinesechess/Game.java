@@ -1,11 +1,11 @@
 package com.github.mydeardoctor.chinesechess;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.image.BufferedImage;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Random;
+import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import javax.swing.*;
+import javax.imageio.ImageIO;
+import java.net.URL;
 
 class Game
 {
@@ -26,8 +26,10 @@ class Game
     private BufferedImage horseRed;
     private BufferedImage soldierBlack;
     private BufferedImage soldierRed;
+    ArrayList<Player> players;
     private Player playerRed;
     private Player playerBlack;
+    private Random randomGenerator;
     private ArrayList<Figure> figures;
     Game(Text text, PanelBoard panelBoardReference, JLabel statusBarReference)
     {
@@ -35,10 +37,11 @@ class Game
         this.panelBoardReference = panelBoardReference;
         this.statusBarReference = statusBarReference;
         iconsInit();
-        setRandomSides();
-        figuresInit();
-        refreshPanelBoard();
+        players = new ArrayList<>();
+        randomGenerator = new Random();
+        figures = new ArrayList<>();
     }
+    @SuppressWarnings("DataFlowIssue")
     private void iconsInit()
     {
         URL url = getClass().getResource("/advisorBlack.png");
@@ -182,12 +185,16 @@ class Game
                     JOptionPane.ERROR_MESSAGE);
         }
     }
+    public void gameStart()
+    {
+        setRandomSides();
+        figuresInit();
+    }
     private void setRandomSides()
     {
-        ArrayList<Player> players = new ArrayList<>();
+        players.clear();
         players.add(Player.HUMAN);
         players.add(Player.CPU);
-        Random randomGenerator = new Random();
         int randomIndex = randomGenerator.nextInt(2);
         playerRed = players.get(randomIndex);
         players.remove(randomIndex);
@@ -204,14 +211,14 @@ class Game
     }
     private void figuresInit()
     {
-        figures = new ArrayList<Figure>();
+        figures.clear();
 
         //Black figures.
         figures.add(new Chariot(playerBlack, chariotBlack, 0,0));
         figures.add(new Horse(playerBlack, horseBlack, 1,0));
         figures.add(new Elephant(playerBlack, elephantBlack, 2,0));
         figures.add(new Advisor(playerBlack, advisorBlack, 3,0));
-        figures.add(new General(playerBlack, generalBlack, 4,0));
+        figures.add(new General(playerBlack, generalBlack, 0));
         figures.add(new Advisor(playerBlack, advisorBlack, 5,0));
         figures.add(new Elephant(playerBlack, elephantBlack, 6,0));
         figures.add(new Horse(playerBlack, horseBlack, 7,0));
@@ -236,20 +243,19 @@ class Game
         figures.add(new Horse(playerRed, horseRed, 1,9));
         figures.add(new Elephant(playerRed, elephantRed, 2,9));
         figures.add(new Advisor(playerRed, advisorRed, 3,9));
-        figures.add(new General(playerRed, generalRed, 4,9));
+        figures.add(new General(playerRed, generalRed, 9));
         figures.add(new Advisor(playerRed, advisorRed, 5,9));
         figures.add(new Elephant(playerRed, elephantRed, 6,9));
         figures.add(new Horse(playerRed, horseRed, 7,9));
         figures.add(new Chariot(playerRed, chariotRed, 8,9));
     }
-    private void refreshPanelBoard()
-    {
-        panelBoardReference.setFiguresReference(figures);
-        panelBoardReference.repaint();
-    }
     public void refreshText(Text text)
     {
         this.text = text;
         statusBarReference.setText(" ");
+    }
+    public ArrayList<Figure> getFigures()
+    {
+        return figures;
     }
 }

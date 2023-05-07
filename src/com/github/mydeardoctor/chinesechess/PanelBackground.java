@@ -1,23 +1,21 @@
 package com.github.mydeardoctor.chinesechess;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.swing.*;
 import java.net.URL;
+import javax.imageio.ImageIO;
 
 class PanelBackground extends JPanel
 {
-    private Text text;
     private BufferedImage background;
     PanelBackground(Text text)
     {
-        this.text = text;
-
         URL url = getClass().getResource("/background.jpg");
 
         try
         {
+            //noinspection DataFlowIssue
             background = ImageIO.read(url);
         }
         catch (Exception e)

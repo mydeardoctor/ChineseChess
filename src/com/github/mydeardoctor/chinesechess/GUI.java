@@ -1,11 +1,11 @@
 package com.github.mydeardoctor.chinesechess;
 
-import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicBorders;
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -13,13 +13,13 @@ class GUI
 {
     //Text.
     private Text text;
+    private TextEnglish textEnglish;
+    private TextRussian textRussian;
 
     //Frame Common.
     private JFrame frame;
     private Font fontChinese;
     private JMenu menu;
-    private JMenuItem menuItemRules;
-    private JMenuItem menuItemSettings;
     private JMenuItem menuItemAbout;
     private PanelBackground panelBackground;
     private GridBagLayout layoutGridBag;
@@ -61,33 +61,33 @@ class GUI
     private GridBagConstraints constraintsForButtonApply;
 
     //Game.
-    private Game game;
+    private Game gameReference;
 
-    GUI()
+    GUI(Text text, TextEnglish textEnglish, TextRussian textRussian)
     {
-        textInit();
+        textInit(text, textEnglish, textRussian);
         frameCommonInit();
         frameMainMenuInit();
         frameGameModeInit();
         frameBoardInit();
         frameSettingsInit();
-        showFrameMainMenu();
     }
-    private void textInit()
+    private void textInit(Text text, TextEnglish textEnglish, TextRussian textRussian)
     {
-        text = new TextEnglish();
+        this.text = text;
+        this.textEnglish = textEnglish;
+        this.textRussian = textRussian;
     }
     private void frameCommonInit()
     {
         frame = new JFrame(text.getTitle());
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        layoutGridBag = new GridBagLayout();
 
         //Icon.
         URL urlIcon = getClass().getResource("/icon.jpg");
         try
         {
-            BufferedImage icon = ImageIO.read(urlIcon);
+            @SuppressWarnings("DataFlowIssue") BufferedImage icon = ImageIO.read(urlIcon);
             frame.setIconImage(icon);
         } catch (Exception e)
         {
@@ -97,6 +97,7 @@ class GUI
 
         //Font.
         URL urlFont = getClass().getResource("/kashimarusbycop.otf");
+        //noinspection DataFlowIssue
         try (InputStream inputStream = urlFont.openStream())
         {
             fontChinese = Font.createFont(Font.TRUETYPE_FONT, inputStream);
@@ -111,22 +112,17 @@ class GUI
         //Menu Bar.
         JMenuBar menuBar = new JMenuBar();
         menu = new JMenu(text.getHelp());
-        menuItemRules = new JMenuItem(text.getRules());
-        menuItemSettings = new JMenuItem(text.getSettings());
         menuItemAbout = new JMenuItem(text.getAbout());
-        menuItemSettings.addActionListener(e->showFrameSettings());
         menuItemAbout.addActionListener(e->
                 JOptionPane.showMessageDialog(frame, text.getAboutVerbose(), text.getAbout(),
                         JOptionPane.INFORMATION_MESSAGE));
-        menu.add(menuItemRules);
-        menu.add(menuItemSettings);
         menu.add(menuItemAbout);
         menuBar.add(menu);
         frame.setJMenuBar(menuBar);
 
-        //ContentPane with background image.
+        //Content Pane with background image.
         panelBackground = new PanelBackground(text);
-        frame.setContentPane(panelBackground);
+        layoutGridBag = new GridBagLayout();
 
         //Bounds.
         frame.setMinimumSize(new Dimension(800,800));
@@ -135,8 +131,8 @@ class GUI
                 (int)frame.getGraphicsConfiguration().getBounds().getCenterY() -
                         (int)frame.getBounds().getCenterY(),
                 800,800);
-
         frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+
         frame.setVisible(true);
     }
     private void frameMainMenuInit()
@@ -257,14 +253,18 @@ class GUI
     }
     private void frameBoardInit()
     {
+        //Empty Content Pane.
         panelBackgroundEmpty = new JPanel();
         panelBoard = new PanelBoard(text);
+        panelBoard.addMouseListener(panelBoard);
 
+        //Status Bar.
         statusBar = new JLabel(" ");
         statusBar.setOpaque(true);
         statusBar.setBorder(new LineBorder(Color.BLACK, 1));
         statusBar.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
 
+        //Layout manager.
         layoutBorder = new BorderLayout();
     }
     private void frameSettingsInit()
@@ -327,7 +327,7 @@ class GUI
                         new Insets(80,30,0,30), 0,0);
 
     }
-    private void showFrameMainMenu()
+    public void showFrameMainMenu()
     {
         frame.getContentPane().removeAll();
         frame.setContentPane(panelBackground);
@@ -353,6 +353,7 @@ class GUI
     }
     private void showFrameBoard()
     {
+        gameReference.gameStart();
         frame.getContentPane().removeAll();
         frame.setContentPane(panelBackgroundEmpty);
         frame.getContentPane().setLayout(layoutBorder);
@@ -360,7 +361,6 @@ class GUI
         frame.getContentPane().add(statusBar, BorderLayout.SOUTH);
         frame.validate();
         frame.repaint();
-        game = new Game(text, panelBoard, statusBar);
     }
     private void showFrameSettings()
     {
@@ -379,15 +379,13 @@ class GUI
         String language = (String)(comboBoxLanguage.getSelectedItem());
         switch (language)
         {
-            case "English" -> text = new TextEnglish();
-            case "Русский" -> text = new TextRussian();
+            case "English" -> text = textEnglish;
+            case "Русский" -> text = textRussian;
         }
 
         //Frame Common.
         frame.setTitle(text.getTitle());
         menu.setText(text.getHelp());
-        menuItemRules.setText(text.getRules());
-        menuItemSettings.setText(text.getSettings());
         menuItemAbout.setText(text.getAbout());
 
         //Frame Main Menu.
@@ -408,6 +406,18 @@ class GUI
         buttonApply.setText(text.getApply());
 
         //Game.
-        game.refreshText(text);
+        gameReference.refreshText(text);
+    }
+    public PanelBoard getPanelBoard()
+    {
+        return panelBoard;
+    }
+    public JLabel getStatusBar()
+    {
+        return statusBar;
+    }
+    public void setGameReference(Game gameReference)
+    {
+        this.gameReference = gameReference;
     }
 }

@@ -23,10 +23,12 @@ abstract class Text
 
     //Frame Settings.
     abstract String getLanguage();
+    @SuppressWarnings("SameReturnValue")
     String getEnglish()
     {
         return "English";
     }
+    @SuppressWarnings("SameReturnValue")
     String getRussian()
     {
         return "Русский";

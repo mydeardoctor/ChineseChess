@@ -1,15 +1,16 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.awt.*;
 
-class PanelBoard extends PanelBackground
+class PanelBoard extends PanelBackground implements MouseListener
 {
-    private ArrayList<Figure> figuresReference;
+    private Game gameReference;
     PanelBoard(Text text)
     {
         super(text);
-        figuresReference = null;
     }
     @Override
     public void paintComponent(Graphics g)
@@ -59,9 +60,10 @@ class PanelBoard extends PanelBackground
         g2d.drawLine(x+tile*4,y+tile*8,x+tile*6,y+tile*10);
 
         //Figures.
-        if(figuresReference!=null)
+        ArrayList<Figure> figures = gameReference.getFigures();
+        if(figures!=null)
         {
-            for(Figure figure : figuresReference)
+            for(Figure figure : figures)
             {
                 g2d.drawImage(figure.getIcon(),
                         x+tile + tile*figure.getLocation().getX()-figureRadius,
@@ -70,8 +72,29 @@ class PanelBoard extends PanelBackground
             }
         }
     }
-    public void setFiguresReference(ArrayList<Figure> figuresReference)
+    @Override
+    public void mouseClicked(MouseEvent e)
     {
-        this.figuresReference = figuresReference;
+
+    }
+    @Override
+    public void mousePressed(MouseEvent e)
+    {
+    }
+    @Override
+    public void mouseReleased(MouseEvent e)
+    {
+    }
+    @Override
+    public void mouseEntered(MouseEvent e)
+    {
+    }
+    @Override
+    public void mouseExited(MouseEvent e)
+    {
+    }
+    public void setGameReference(Game gameReference)
+    {
+        this.gameReference = gameReference;
     }
 }
