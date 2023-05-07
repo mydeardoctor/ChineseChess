@@ -1,171 +1,15 @@
 package com.github.mydeardoctor.chinesechess;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.net.URL;
+import java.util.ArrayList;
 
 class PanelBoard extends PanelBackground
 {
-    private BufferedImage advisorBlack;
-    private BufferedImage advisorRed;
-    private BufferedImage cannonBlack;
-    private BufferedImage cannonRed;
-    private BufferedImage chariotBlack;
-    private BufferedImage chariotRed;
-    private BufferedImage elephantBlack;
-    private BufferedImage elephantRed;
-    private BufferedImage generalBlack;
-    private BufferedImage generalRed;
-    private BufferedImage horseBlack;
-    private BufferedImage horseRed;
-    private BufferedImage soldierBlack;
-    private BufferedImage soldierRed;
+    private ArrayList<Figure> figuresReference;
     PanelBoard(Text text)
     {
         super(text);
-
-        URL url = getClass().getResource("/advisorBlack.png");
-        try
-        {
-            advisorBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorAdvisorBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/advisorRed.png");
-        try
-        {
-            advisorRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorAdvisorRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/cannonBlack.png");
-        try
-        {
-            cannonBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorCannonBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/cannonRed.png");
-        try
-        {
-            cannonRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorCannonRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/chariotBlack.png");
-        try
-        {
-            chariotBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorChariotBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/chariotRed.png");
-        try
-        {
-            chariotRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorChariotRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/elephantBlack.png");
-        try
-        {
-            elephantBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorElephantBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/elephantRed.png");
-        try
-        {
-            elephantRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorElephantRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/generalBlack.png");
-        try
-        {
-            generalBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorGeneralBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/generalRed.png");
-        try
-        {
-            generalRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorGeneralRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/horseBlack.png");
-        try
-        {
-            horseBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorHorseBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/horseRed.png");
-        try
-        {
-            horseRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorHorseRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/soldierBlack.png");
-        try
-        {
-            soldierBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorSoldierBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/soldierRed.png");
-        try
-        {
-            soldierRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorSoldierRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
+        figuresReference = null;
     }
     @Override
     public void paintComponent(Graphics g)
@@ -215,71 +59,19 @@ class PanelBoard extends PanelBackground
         g2d.drawLine(x+tile*4,y+tile*8,x+tile*6,y+tile*10);
 
         //Figures.
-        //Black figures.
-        g2d.drawImage(chariotBlack, x+tile-figureRadius,y+tile-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(horseBlack, x+tile*2-figureRadius,y+tile-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(elephantBlack, x+tile*3-figureRadius,y+tile-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(advisorBlack, x+tile*4-figureRadius,y+tile-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(generalBlack, x+tile*5-figureRadius,y+tile-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(advisorBlack, x+tile*6-figureRadius,y+tile-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(elephantBlack, x+tile*7-figureRadius,y+tile-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(horseBlack, x+tile*8-figureRadius,y+tile-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(chariotBlack, x+tile*9-figureRadius,y+tile-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(cannonBlack, x+tile*2-figureRadius,y+tile*3-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(cannonBlack, x+tile*8-figureRadius,y+tile*3-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(soldierBlack, x+tile-figureRadius,y+tile*4-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(soldierBlack, x+tile*3-figureRadius,y+tile*4-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(soldierBlack, x+tile*5-figureRadius,y+tile*4-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(soldierBlack, x+tile*7-figureRadius,y+tile*4-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(soldierBlack, x+tile*9-figureRadius,y+tile*4-figureRadius,
-                figureDiameter, figureDiameter, this);
-        //Red figures.
-        g2d.drawImage(chariotRed, x+tile-figureRadius,y+tile*10-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(horseRed, x+tile*2-figureRadius,y+tile*10-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(elephantRed, x+tile*3-figureRadius,y+tile*10-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(advisorRed, x+tile*4-figureRadius,y+tile*10-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(generalRed, x+tile*5-figureRadius,y+tile*10-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(advisorRed, x+tile*6-figureRadius,y+tile*10-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(elephantRed, x+tile*7-figureRadius,y+tile*10-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(horseRed, x+tile*8-figureRadius,y+tile*10-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(chariotRed, x+tile*9-figureRadius,y+tile*10-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(cannonRed, x+tile*2-figureRadius,y+tile*8-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(cannonRed, x+tile*8-figureRadius,y+tile*8-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(soldierRed, x+tile-figureRadius,y+tile*7-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(soldierRed, x+tile*3-figureRadius,y+tile*7-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(soldierRed, x+tile*5-figureRadius,y+tile*7-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(soldierRed, x+tile*7-figureRadius,y+tile*7-figureRadius,
-                figureDiameter, figureDiameter, this);
-        g2d.drawImage(soldierRed, x+tile*9-figureRadius,y+tile*7-figureRadius,
-                figureDiameter, figureDiameter, this);
+        if(figuresReference!=null)
+        {
+            for(Figure figure : figuresReference)
+            {
+                g2d.drawImage(figure.getIcon(),
+                        x+tile + tile*figure.getLocation().getX()-figureRadius,
+                        y+tile+tile*figure.getLocation().getY()-figureRadius,
+                        figureDiameter, figureDiameter, this);
+            }
+        }
+    }
+    public void setFiguresReference(ArrayList<Figure> figuresReference)
+    {
+        this.figuresReference = figuresReference;
     }
 }

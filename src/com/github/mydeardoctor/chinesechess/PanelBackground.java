@@ -32,8 +32,4 @@ class PanelBackground extends JPanel
         super.paintComponent(g);
         g.drawImage(background, 0,0, this.getWidth(), this.getHeight(),this);
     }
-    public void refreshText(Text text)
-    {
-        this.text = text;
-    }
 }

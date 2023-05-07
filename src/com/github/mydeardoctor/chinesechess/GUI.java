@@ -60,6 +60,9 @@ class GUI
     private GridBagConstraints constraintsForButtonBackSettings;
     private GridBagConstraints constraintsForButtonApply;
 
+    //Game.
+    private Game game;
+
     GUI()
     {
         textInit();
@@ -357,6 +360,7 @@ class GUI
         frame.getContentPane().add(statusBar, BorderLayout.SOUTH);
         frame.validate();
         frame.repaint();
+        game = new Game(text, panelBoard, statusBar);
     }
     private void showFrameSettings()
     {
@@ -370,7 +374,7 @@ class GUI
         frame.validate();
         frame.repaint();
     }
-    public void refreshText()
+    private void refreshText()
     {
         String language = (String)(comboBoxLanguage.getSelectedItem());
         switch (language)
@@ -385,8 +389,6 @@ class GUI
         menuItemRules.setText(text.getRules());
         menuItemSettings.setText(text.getSettings());
         menuItemAbout.setText(text.getAbout());
-        //Panel Background.
-        panelBackground.refreshText(text);
 
         //Frame Main Menu.
         buttonPlay.setText(text.getPlay());
@@ -400,12 +402,12 @@ class GUI
         buttonOnlineMultiplayer.setText(text.getOnlineMultiplayer());
         buttonBackGameMode.setText(text.getBack());
 
-        //Frame Board.
-        panelBoard.refreshText(text);
-
         //Frame Settings.
         labelLanguage.setText(text.getLanguage());
         buttonBackSettings.setText(text.getBack());
         buttonApply.setText(text.getApply());
+
+        //Game.
+        game.refreshText(text);
     }
 }

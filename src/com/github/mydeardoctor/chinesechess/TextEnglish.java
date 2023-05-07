@@ -81,6 +81,18 @@ class TextEnglish extends Text
         return "Apply";
     }
 
+    //Game.
+    @Override
+    String getPlayerRed()
+    {
+        return "You play Red.";
+    }
+    @Override
+    String getPlayerBlack()
+    {
+        return "You play Black.";
+    }
+
     //Errors.
     @Override
     String getError()

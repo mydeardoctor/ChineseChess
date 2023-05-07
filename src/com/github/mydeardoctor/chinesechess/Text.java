@@ -33,6 +33,10 @@ abstract class Text
     }
     abstract String getApply();
 
+    //Game.
+    abstract String getPlayerRed();
+    abstract String getPlayerBlack();
+
     //Errors.
     abstract String getError();
     abstract String getErrorIcon();

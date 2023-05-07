@@ -4,13 +4,21 @@ import java.awt.image.BufferedImage;
 
 abstract class Figure
 {
-    private Team team;
+    private Player player;
     private BufferedImage icon;
     private Location location;
-    Figure(Team team, BufferedImage icon, int x, int y)
+    Figure(Player player, BufferedImage icon, int x, int y)
     {
-        this.team = team;
+        this.player = player;
         this.icon = icon;
         location = new Location(x, y);
+    }
+    public BufferedImage getIcon()
+    {
+        return icon;
+    }
+    public Location getLocation()
+    {
+        return location;
     }
 }

@@ -1,6 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
-enum Team
+enum Player
 {
-    PLAYER1, PLAYER2
+    HUMAN, CPU
 }
