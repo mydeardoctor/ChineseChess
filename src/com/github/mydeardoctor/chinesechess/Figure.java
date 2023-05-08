@@ -7,11 +7,11 @@ abstract class Figure
     private Player player;
     private BufferedImage icon;
     private Location location;
-    Figure(Player player, BufferedImage icon, int x, int y)
+    Figure(Player player, BufferedImage icon, int xGrid, int yGrid)
     {
         this.player = player;
         this.icon = icon;
-        location = new Location(x, y);
+        location = new Location(xGrid, yGrid);
     }
     public BufferedImage getIcon()
     {

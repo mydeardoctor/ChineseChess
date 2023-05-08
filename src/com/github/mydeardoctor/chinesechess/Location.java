@@ -2,19 +2,19 @@ package com.github.mydeardoctor.chinesechess;
 
 class Location
 {
-    private int x;
-    private int y;
-    Location(int x, int y)
+    private int xGrid;
+    private int yGrid;
+    Location(int xGrid, int yGrid)
     {
-        this.x = x;
-        this.y = y;
+        this.xGrid = xGrid;
+        this.yGrid = yGrid;
     }
-    public int getX()
+    public int getXgrid()
     {
-        return x;
+        return xGrid;
     }
-    public int getY()
+    public int getYgrid()
     {
-        return y;
+        return yGrid;
     }
 }

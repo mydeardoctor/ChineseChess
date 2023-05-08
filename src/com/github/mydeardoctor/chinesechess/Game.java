@@ -31,6 +31,7 @@ class Game
     private Player playerBlack;
     private Random randomGenerator;
     private ArrayList<Figure> figures;
+    private GameState gameState;
     Game(Text text, PanelBoard panelBoardReference, JLabel statusBarReference)
     {
         this.text = text;
@@ -189,6 +190,7 @@ class Game
     {
         setRandomSides();
         figuresInit();
+        gameStateInit();
     }
     private void setRandomSides()
     {
@@ -248,6 +250,26 @@ class Game
         figures.add(new Elephant(playerRed, elephantRed, 6,9));
         figures.add(new Horse(playerRed, horseRed, 7,9));
         figures.add(new Chariot(playerRed, chariotRed, 8,9));
+    }
+    private void gameStateInit()
+    {
+        if(playerRed == Player.HUMAN)
+        {
+            gameState = GameState.HUMAN_TURN;
+        }
+        else
+        {
+            gameState = GameState.CPU_TURN;
+        }
+    }
+    public void figureClicked(Figure figureClicked)
+    {
+        if(gameState == GameState.CPU_TURN)
+        {
+            return;
+        }
+
+        System.out.println(figureClicked);
     }
     public void refreshText(Text text)
     {
