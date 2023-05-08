@@ -34,8 +34,8 @@ class Game
     private Random randomGenerator;
     private HashMap<GridLocation, GridTile> grid;
     private GameState gameState;
-    private Figure prevFigureSelected;
     private GridLocation prevGridLocationSelected;
+    private Figure prevFigureSelected;
     Game(Text text, PanelBoard panelBoardReference, JLabel statusBarReference)
     {
         this.text = text;
@@ -215,15 +215,6 @@ class Game
         playerRed = players.get(randomIndex);
         players.remove(randomIndex);
         playerBlack = players.get(0);
-
-        if(Player.HUMAN == playerRed)
-        {
-            statusBarReference.setText(text.getPlayerRed());
-        }
-        else //Player.HUMAN == playerBlack
-        {
-            statusBarReference.setText(text.getPlayerBlack());
-        }
     }
     private void gridInit()
     {
@@ -275,49 +266,114 @@ class Game
         grid.get(new GridLocation(7,9)).setFigure(new Horse(playerRed, horseRed));
         grid.get(new GridLocation(8,9)).setFigure(new Chariot(playerRed, chariotRed));
     }
-    private void gameStateInit() //TODO:
+    private void gameStateInit()
     {
-//        if(playerRed == Player.HUMAN)
-//        {
-//            gameState = GameState.HUMAN_TURN;
-//        }
-//        else
-//        {
-//            gameState = GameState.CPU_TURN;
-//        }
-        gameState = GameState.HUMAN_TURN_CHOOSE_FIGURE;
+        panelBoardReference.repaint();
+
+        if(Player.HUMAN == playerRed)
+        {
+            JOptionPane.showMessageDialog(panelBoardReference, text.getPlayerRed(), "",
+                    JOptionPane.INFORMATION_MESSAGE);
+            gameState = GameState.HUMAN_TURN_CHOOSE_FIGURE;
+            statusBarReference.setText(text.getChooseFigure());
+        }
+        else //Player.HUMAN == playerBlack
+        {
+            JOptionPane.showMessageDialog(panelBoardReference, text.getPlayerBlack(), "",
+                    JOptionPane.INFORMATION_MESSAGE);
+            gameState = GameState.CPU_TURN;
+            statusBarReference.setText(text.getCpuTurn());
+            cpuTurn();
+        }
     }
     public void gridLocationSelected(GridLocation gridLocationSelected)
     {
-        //TODO:
-//        if(gameState == GameState.CPU_TURN)
-//        {
-//            return;
-//        }
+        if(gameState == GameState.CPU_TURN)
+        {
+            return;
+        }
 
+        Figure figureSelected;
+        Player figurePlayer;
         switch(gameState)
         {
             case HUMAN_TURN_CHOOSE_FIGURE:
-                prevGridLocationSelected = gridLocationSelected;
-                prevFigureSelected = grid.get(gridLocationSelected).getFigure();
-                if(grid.get(gridLocationSelected).getFigure() != null)
+                figureSelected = grid.get(gridLocationSelected).getFigure();
+                if(figureSelected != null) //If figure was selected.
                 {
-                    grid.get(gridLocationSelected).setSelection(selection);
-                    gameState = GameState.HUMAN_TURN_CHOOSE_DESTINATION;
+                    figurePlayer = figureSelected.getPlayer();
+                    if(figurePlayer==Player.HUMAN) //If your own figure was selected.
+                    {
+                        prevGridLocationSelected = gridLocationSelected;                 //Save selected location.
+                        prevFigureSelected = grid.get(gridLocationSelected).getFigure(); //Save selected figure.
 
-                    panelBoardReference.repaint();
+                        grid.get(gridLocationSelected).setSelection(selection);          //Highlight selected figure.
+
+                        gameState = GameState.HUMAN_TURN_CHOOSE_DESTINATION;
+                        statusBarReference.setText(text.getChooseDestination());
+
+                        panelBoardReference.repaint();
+                    }
                 }
                 break;
 
             case HUMAN_TURN_CHOOSE_DESTINATION:
-                grid.get(prevGridLocationSelected).setSelection(null);
-                grid.get(prevGridLocationSelected).setFigure(null);
-                grid.get(gridLocationSelected).setFigure(prevFigureSelected);
-                gameState = GameState.HUMAN_TURN_CHOOSE_FIGURE;
+                figureSelected = grid.get(gridLocationSelected).getFigure();
+                if(figureSelected != null) //If there is a figure in destination.
+                {
+                    figurePlayer = figureSelected.getPlayer();
+                    if(figurePlayer==Player.HUMAN) //If your own figure was selected again.
+                    {
+                        grid.get(prevGridLocationSelected).setSelection(null); //Unhighlight previously selected figure.
 
-                panelBoardReference.repaint();
+                        prevGridLocationSelected = gridLocationSelected;                    //Save selected location.
+                        prevFigureSelected = grid.get(gridLocationSelected).getFigure();    //Save selected figure.
+
+                        grid.get(gridLocationSelected).setSelection(selection);             //Highlight selected figure.
+
+                        gameState = GameState.HUMAN_TURN_CHOOSE_DESTINATION;
+                        statusBarReference.setText(text.getChooseDestination());
+
+                        panelBoardReference.repaint();
+                    }
+                    else //If enemy figure was selected.
+                    {
+                        grid.get(prevGridLocationSelected).setSelection(null);        //Unhighlight previously selected figure.
+                        grid.get(prevGridLocationSelected).setFigure(null);           //Move figure from previous location...
+                        grid.get(gridLocationSelected).setFigure(prevFigureSelected); //...to new location.
+
+                        //check for endfame. if not. TODO
+                        gameState = GameState.CPU_TURN;
+                        statusBarReference.setText(text.getCpuTurn());
+
+                        panelBoardReference.repaint();
+
+                        cpuTurn();
+                    }
+                }
+                else //If destination is empty.
+                {
+                    grid.get(prevGridLocationSelected).setSelection(null);        //Unhighlight previously selected figure.
+                    grid.get(prevGridLocationSelected).setFigure(null);           //Move figure from previous location...
+                    grid.get(gridLocationSelected).setFigure(prevFigureSelected); //...to new location.
+
+                    //check for endgame. if not. TODO
+                    gameState = GameState.CPU_TURN;
+                    statusBarReference.setText(text.getCpuTurn());
+
+                    panelBoardReference.repaint();
+
+                    cpuTurn();
+                }
                 break;
         }
+    }
+    private void cpuTurn() //TODO
+    {
+        //do something;
+        //check for endgame. if not.
+        gameState = GameState.HUMAN_TURN_CHOOSE_FIGURE;
+        statusBarReference.setText(text.getChooseFigure());
     }
     public void refreshText(Text text)
     {

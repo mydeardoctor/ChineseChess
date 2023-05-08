@@ -38,6 +38,9 @@ abstract class Text
     //Game.
     abstract String getPlayerRed();
     abstract String getPlayerBlack();
+    abstract String getChooseFigure();
+    abstract String getChooseDestination();
+    abstract String getCpuTurn();
 
     //Errors.
     abstract String getError();

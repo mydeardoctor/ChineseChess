@@ -92,6 +92,21 @@ class TextRussian extends Text
     {
         return "Вы играете Чёрными.";
     }
+    @Override
+    String getChooseFigure()
+    {
+        return "Выберите фигуру.";
+    }
+    @Override
+    String getChooseDestination()
+    {
+        return "Выберите цель.";
+    }
+    @Override
+    String getCpuTurn()
+    {
+        return "Ход компьютера.";
+    }
 
     //Errors.
     @Override

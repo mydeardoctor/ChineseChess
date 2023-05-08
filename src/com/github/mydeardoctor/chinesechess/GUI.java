@@ -353,7 +353,6 @@ class GUI
     }
     private void showFrameBoard()
     {
-        gameReference.gameStart();
         frame.getContentPane().removeAll();
         frame.setContentPane(panelBackgroundEmpty);
         frame.getContentPane().setLayout(layoutBorder);
@@ -361,6 +360,7 @@ class GUI
         frame.getContentPane().add(statusBar, BorderLayout.SOUTH);
         frame.validate();
         frame.repaint();
+        gameReference.gameStart();
     }
     private void showFrameSettings()
     {

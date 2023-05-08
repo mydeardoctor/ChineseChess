@@ -11,6 +11,10 @@ abstract class Figure
         this.player = player;
         this.icon = icon;
     }
+    public Player getPlayer()
+    {
+        return player;
+    }
     public BufferedImage getIcon()
     {
         return icon;

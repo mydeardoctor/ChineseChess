@@ -92,6 +92,21 @@ class TextEnglish extends Text
     {
         return "You play Black.";
     }
+    @Override
+    String getChooseFigure()
+    {
+        return "Choose figure.";
+    }
+    @Override
+    String getChooseDestination()
+    {
+        return "Choose destination.";
+    }
+    @Override
+    String getCpuTurn()
+    {
+        return "CPU turn.";
+    }
 
     //Errors.
     @Override
