@@ -58,4 +58,5 @@ abstract class Text
     abstract String getErrorHorseRed();
     abstract String getErrorSoldierBlack();
     abstract String getErrorSoldierRed();
+    abstract String getErrorSelection();
 }

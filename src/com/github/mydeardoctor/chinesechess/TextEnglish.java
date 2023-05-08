@@ -184,4 +184,9 @@ class TextEnglish extends Text
     {
         return "Could not load \"soldierRed.png\"";
     }
+    @Override
+    String getErrorSelection()
+    {
+        return "Could not load \"selection.png\"";
+    }
 }

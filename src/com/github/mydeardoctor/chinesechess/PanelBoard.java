@@ -2,8 +2,11 @@ package com.github.mydeardoctor.chinesechess;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.awt.*;
+import java.util.Map;
+import java.util.Set;
 
 class PanelBoard extends PanelBackground implements MouseListener
 {
@@ -30,6 +33,8 @@ class PanelBoard extends PanelBackground implements MouseListener
         y0board = (this.getHeight()-tile*11)/2;
         int figureDiameter = (int)(tile*0.85);
         figureRadius = figureDiameter/2;
+        int selectionDiameter = (int)(figureDiameter*1.2);
+        int selectionRadius = (int)(figureRadius*1.2);
 
         //Rectangles.
         g2d.setColor(new Color(207, 92, 1));
@@ -64,48 +69,31 @@ class PanelBoard extends PanelBackground implements MouseListener
         g2d.drawLine(x0board +tile*4, y0board +tile*8, x0board +tile*6, y0board +tile*10);
 
         //Figures.
-        ArrayList<Figure> figures = gameReference.getFigures();
-        for(Figure figure : figures)
+        HashMap<GridLocation, GridTile> gridReference = gameReference.getGrid();
+        Set<Map.Entry<GridLocation,GridTile>> gridSet = gridReference.entrySet();
+        for(Map.Entry<GridLocation,GridTile> gridEntry : gridSet)
         {
-            g2d.drawImage(figure.getIcon(),
-                    x0board + tile + tile*figure.getLocation().getXgrid() - figureRadius,
-                    y0board + tile + tile*figure.getLocation().getYgrid() - figureRadius,
-                    figureDiameter, figureDiameter, this);
+            Figure figure = gridEntry.getValue().getFigure();
+            if(figure!=null)
+            {
+                g2d.drawImage(figure.getIcon(),
+                        x0board + tile + tile*gridEntry.getKey().getXgrid() - figureRadius,
+                        y0board + tile + tile*gridEntry.getKey().getYgrid() - figureRadius,
+                        figureDiameter, figureDiameter, this);
+            }
+            BufferedImage selection = gridEntry.getValue().getSelection();
+            if(selection!=null)
+            {
+                g2d.drawImage(selection,
+                        x0board + tile + tile*gridEntry.getKey().getXgrid() - selectionRadius,
+                        y0board + tile + tile*gridEntry.getKey().getYgrid() - selectionRadius,
+                        selectionDiameter, selectionDiameter, this);
+            }
         }
     }
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        if(e.getButton()!=MouseEvent.BUTTON1)
-        {
-            return;
-        }
-
-        int xMouse = e.getX();
-        int yMouse = e.getY();
-        ArrayList<Figure> figures = gameReference.getFigures();
-        Figure figureClicked = null;
-        for(Figure figure : figures)
-        {
-            int xGridFigure = figure.getLocation().getXgrid();
-            int yGridFigure = figure.getLocation().getYgrid();
-            int xCenterFigure = x0board + tile + tile*xGridFigure;
-            int yCenterFigure = y0board + tile + tile*yGridFigure;
-
-            //Closed disk formula. (x-x0)^2 + (y-y0)^2 <= r^2
-            if((Math.pow(xMouse - xCenterFigure, 2) +
-                Math.pow(yMouse - yCenterFigure, 2))
-                <= Math.pow(figureRadius, 2))
-            {
-                figureClicked = figure;
-                break;
-            }
-        }
-
-        if(figureClicked!=null)
-        {
-            gameReference.figureClicked(figureClicked);
-        }
     }
     @Override
     public void mousePressed(MouseEvent e)
@@ -114,6 +102,37 @@ class PanelBoard extends PanelBackground implements MouseListener
     @Override
     public void mouseReleased(MouseEvent e)
     {
+        if(e.getButton()!=MouseEvent.BUTTON1)
+        {
+            return;
+        }
+
+        int xMouse = e.getX();
+        int yMouse = e.getY();
+        HashMap<GridLocation, GridTile> gridReference = gameReference.getGrid();
+        Set<Map.Entry<GridLocation,GridTile>> gridSet = gridReference.entrySet();
+        GridLocation gridLocationSelected = null;
+        for(Map.Entry<GridLocation,GridTile> gridEntry : gridSet)
+        {
+            int xGrid = gridEntry.getKey().getXgrid();
+            int yGrid = gridEntry.getKey().getYgrid();
+            int xCenterTile = x0board + tile + tile*xGrid;
+            int yCenterTile = y0board + tile + tile*yGrid;
+
+            //Closed disk formula. (x-x0)^2 + (y-y0)^2 <= r^2
+            if((Math.pow(xMouse - xCenterTile, 2) +
+                    Math.pow(yMouse - yCenterTile, 2))
+                    <= Math.pow(figureRadius, 2))
+            {
+                gridLocationSelected = gridEntry.getKey();
+                break;
+            }
+        }
+
+        if(gridLocationSelected !=null)
+        {
+            gameReference.gridLocationSelected(gridLocationSelected);
+        }
     }
     @Override
     public void mouseEntered(MouseEvent e)

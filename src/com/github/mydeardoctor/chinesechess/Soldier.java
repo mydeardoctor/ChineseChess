@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 
 class Soldier extends Figure
 {
-    Soldier(Player player, BufferedImage icon, int x, int y)
+    Soldier(Player player, BufferedImage icon)
     {
-        super(player, icon, x, y);
+        super(player, icon);
     }
 }

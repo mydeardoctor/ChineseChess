@@ -1,5 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
+import java.util.HashMap;
 import java.util.Random;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
@@ -26,12 +27,15 @@ class Game
     private BufferedImage horseRed;
     private BufferedImage soldierBlack;
     private BufferedImage soldierRed;
+    private BufferedImage selection;
     ArrayList<Player> players;
     private Player playerRed;
     private Player playerBlack;
     private Random randomGenerator;
-    private ArrayList<Figure> figures;
+    private HashMap<GridLocation, GridTile> grid;
     private GameState gameState;
+    private Figure prevFigureSelected;
+    private GridLocation prevGridLocationSelected;
     Game(Text text, PanelBoard panelBoardReference, JLabel statusBarReference)
     {
         this.text = text;
@@ -40,7 +44,7 @@ class Game
         iconsInit();
         players = new ArrayList<>();
         randomGenerator = new Random();
-        figures = new ArrayList<>();
+        grid = new HashMap<>();
     }
     @SuppressWarnings("DataFlowIssue")
     private void iconsInit()
@@ -185,11 +189,21 @@ class Game
             JOptionPane.showMessageDialog(null, text.getErrorSoldierRed(), text.getError(),
                     JOptionPane.ERROR_MESSAGE);
         }
+        url = getClass().getResource("/selection.png");
+        try
+        {
+            selection = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(null, text.getErrorSelection(), text.getError(),
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
     public void gameStart()
     {
         setRandomSides();
-        figuresInit();
+        gridInit();
         gameStateInit();
     }
     private void setRandomSides()
@@ -211,73 +225,107 @@ class Game
             statusBarReference.setText(text.getPlayerBlack());
         }
     }
-    private void figuresInit()
+    private void gridInit()
     {
-        figures.clear();
+        grid.clear();
 
+        for(int y = 0; y <= 9; y++)
+        {
+            for(int x = 0; x <=8;  x++)
+            {
+                GridLocation gridLocation = new GridLocation(x,y);
+                GridTile gridTile = new GridTile(null, null);
+                grid.put(gridLocation, gridTile);
+            }
+        }
+        boolean result = grid.containsKey(new GridLocation(8,8));
         //Black figures.
-        figures.add(new Chariot(playerBlack, chariotBlack, 0,0));
-        figures.add(new Horse(playerBlack, horseBlack, 1,0));
-        figures.add(new Elephant(playerBlack, elephantBlack, 2,0));
-        figures.add(new Advisor(playerBlack, advisorBlack, 3,0));
-        figures.add(new General(playerBlack, generalBlack, 0));
-        figures.add(new Advisor(playerBlack, advisorBlack, 5,0));
-        figures.add(new Elephant(playerBlack, elephantBlack, 6,0));
-        figures.add(new Horse(playerBlack, horseBlack, 7,0));
-        figures.add(new Chariot(playerBlack, chariotBlack, 8,0));
-        figures.add(new Cannon(playerBlack, cannonBlack, 1,2));
-        figures.add(new Cannon(playerBlack, cannonBlack, 7,2));
-        figures.add(new Soldier(playerBlack, soldierBlack, 0,3));
-        figures.add(new Soldier(playerBlack, soldierBlack, 2,3));
-        figures.add(new Soldier(playerBlack, soldierBlack, 4,3));
-        figures.add(new Soldier(playerBlack, soldierBlack, 6,3));
-        figures.add(new Soldier(playerBlack, soldierBlack, 8,3));
+        grid.get(new GridLocation(0,0)).setFigure(new Chariot(playerBlack, chariotBlack));
+        grid.get(new GridLocation(1,0)).setFigure(new Horse(playerBlack, horseBlack));
+        grid.get(new GridLocation(2,0)).setFigure(new Elephant(playerBlack, elephantBlack));
+        grid.get(new GridLocation(3,0)).setFigure(new Advisor(playerBlack, advisorBlack));
+        grid.get(new GridLocation(4,0)).setFigure(new General(playerBlack, generalBlack));
+        grid.get(new GridLocation(5,0)).setFigure(new Advisor(playerBlack, advisorBlack));
+        grid.get(new GridLocation(6,0)).setFigure(new Elephant(playerBlack, elephantBlack));
+        grid.get(new GridLocation(7,0)).setFigure(new Horse(playerBlack, horseBlack));
+        grid.get(new GridLocation(8,0)).setFigure(new Chariot(playerBlack, chariotBlack));
+        grid.get(new GridLocation(1,2)).setFigure(new Cannon(playerBlack, cannonBlack));
+        grid.get(new GridLocation(7,2)).setFigure(new Cannon(playerBlack, cannonBlack));
+        grid.get(new GridLocation(0,3)).setFigure(new Soldier(playerBlack, soldierBlack));
+        grid.get(new GridLocation(2,3)).setFigure(new Soldier(playerBlack, soldierBlack));
+        grid.get(new GridLocation(4,3)).setFigure(new Soldier(playerBlack, soldierBlack));
+        grid.get(new GridLocation(6,3)).setFigure(new Soldier(playerBlack, soldierBlack));
+        grid.get(new GridLocation(8,3)).setFigure(new Soldier(playerBlack, soldierBlack));
 
         //Red figures.
-        figures.add(new Soldier(playerRed, soldierRed, 0,6));
-        figures.add(new Soldier(playerRed, soldierRed, 2,6));
-        figures.add(new Soldier(playerRed, soldierRed, 4,6));
-        figures.add(new Soldier(playerRed, soldierRed, 6,6));
-        figures.add(new Soldier(playerRed, soldierRed, 8,6));
-        figures.add(new Cannon(playerRed, cannonRed, 1,7));
-        figures.add(new Cannon(playerRed, cannonRed, 7,7));
-        figures.add(new Chariot(playerRed, chariotRed, 0,9));
-        figures.add(new Horse(playerRed, horseRed, 1,9));
-        figures.add(new Elephant(playerRed, elephantRed, 2,9));
-        figures.add(new Advisor(playerRed, advisorRed, 3,9));
-        figures.add(new General(playerRed, generalRed, 9));
-        figures.add(new Advisor(playerRed, advisorRed, 5,9));
-        figures.add(new Elephant(playerRed, elephantRed, 6,9));
-        figures.add(new Horse(playerRed, horseRed, 7,9));
-        figures.add(new Chariot(playerRed, chariotRed, 8,9));
+        grid.get(new GridLocation(0,6)).setFigure(new Soldier(playerRed, soldierRed));
+        grid.get(new GridLocation(2,6)).setFigure(new Soldier(playerRed, soldierRed));
+        grid.get(new GridLocation(4,6)).setFigure(new Soldier(playerRed, soldierRed));
+        grid.get(new GridLocation(6,6)).setFigure(new Soldier(playerRed, soldierRed));
+        grid.get(new GridLocation(8,6)).setFigure(new Soldier(playerRed, soldierRed));
+        grid.get(new GridLocation(1,7)).setFigure(new Cannon(playerRed, cannonRed));
+        grid.get(new GridLocation(7,7)).setFigure(new Cannon(playerRed, cannonRed));
+        grid.get(new GridLocation(0,9)).setFigure(new Chariot(playerRed, chariotRed));
+        grid.get(new GridLocation(1,9)).setFigure(new Horse(playerRed, horseRed));
+        grid.get(new GridLocation(2,9)).setFigure(new Elephant(playerRed, elephantRed));
+        grid.get(new GridLocation(3,9)).setFigure(new Advisor(playerRed, advisorRed));
+        grid.get(new GridLocation(4,9)).setFigure(new General(playerRed, generalRed));
+        grid.get(new GridLocation(5,9)).setFigure(new Advisor(playerRed, advisorRed));
+        grid.get(new GridLocation(6,9)).setFigure(new Elephant(playerRed, elephantRed));
+        grid.get(new GridLocation(7,9)).setFigure(new Horse(playerRed, horseRed));
+        grid.get(new GridLocation(8,9)).setFigure(new Chariot(playerRed, chariotRed));
     }
-    private void gameStateInit()
+    private void gameStateInit() //TODO:
     {
-        if(playerRed == Player.HUMAN)
-        {
-            gameState = GameState.HUMAN_TURN;
-        }
-        else
-        {
-            gameState = GameState.CPU_TURN;
-        }
+//        if(playerRed == Player.HUMAN)
+//        {
+//            gameState = GameState.HUMAN_TURN;
+//        }
+//        else
+//        {
+//            gameState = GameState.CPU_TURN;
+//        }
+        gameState = GameState.HUMAN_TURN_CHOOSE_FIGURE;
     }
-    public void figureClicked(Figure figureClicked)
+    public void gridLocationSelected(GridLocation gridLocationSelected)
     {
-        if(gameState == GameState.CPU_TURN)
-        {
-            return;
-        }
+        //TODO:
+//        if(gameState == GameState.CPU_TURN)
+//        {
+//            return;
+//        }
 
-        System.out.println(figureClicked);
+        switch(gameState)
+        {
+            case HUMAN_TURN_CHOOSE_FIGURE:
+                prevGridLocationSelected = gridLocationSelected;
+                prevFigureSelected = grid.get(gridLocationSelected).getFigure();
+                if(grid.get(gridLocationSelected).getFigure() != null)
+                {
+                    grid.get(gridLocationSelected).setSelection(selection);
+                    gameState = GameState.HUMAN_TURN_CHOOSE_DESTINATION;
+
+                    panelBoardReference.repaint();
+                }
+                break;
+
+            case HUMAN_TURN_CHOOSE_DESTINATION:
+                grid.get(prevGridLocationSelected).setSelection(null);
+                grid.get(prevGridLocationSelected).setFigure(null);
+                grid.get(gridLocationSelected).setFigure(prevFigureSelected);
+                gameState = GameState.HUMAN_TURN_CHOOSE_FIGURE;
+
+                panelBoardReference.repaint();
+                break;
+        }
     }
     public void refreshText(Text text)
     {
         this.text = text;
         statusBarReference.setText(" ");
     }
-    public ArrayList<Figure> getFigures()
+    public HashMap<GridLocation, GridTile> getGrid()
     {
-        return figures;
+        return grid;
     }
 }

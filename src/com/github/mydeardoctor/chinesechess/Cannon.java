@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 
 class Cannon extends Figure
 {
-    Cannon(Player player, BufferedImage icon, int x, int y)
+    Cannon(Player player, BufferedImage icon)
     {
-        super(player, icon, x, y);
+        super(player, icon);
     }
 }

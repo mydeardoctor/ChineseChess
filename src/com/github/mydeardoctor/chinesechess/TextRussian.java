@@ -184,4 +184,9 @@ class TextRussian extends Text
     {
         return "Не удалось загрузить \"soldierRed.png\"";
     }
+    @Override
+    String getErrorSelection()
+    {
+        return "Не удалось загрузить \"selection.png\"";
+    }
 }

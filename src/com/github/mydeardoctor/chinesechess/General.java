@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 
 class General extends Figure
 {
-    General(Player player, BufferedImage icon, int y)
+    General(Player player, BufferedImage icon)
     {
-        super(player, icon, 4, y);
+        super(player, icon);
     }
 }
