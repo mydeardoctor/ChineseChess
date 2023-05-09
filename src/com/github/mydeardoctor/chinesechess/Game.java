@@ -208,7 +208,7 @@ class Game
         gridInit();
         gameStateInit();
     }
-    private void setRandomSides() //TODO:
+    private void setRandomSides() //TODO: changed for debug purpuses
     {
 //        players.clear();
 //        players.add(Player.HUMAN);
@@ -217,8 +217,8 @@ class Game
 //        playerRed = players.get(randomIndex);
 //        players.remove(randomIndex);
 //        playerBlack = players.get(0);
-          playerRed = Player.HUMAN;
-          playerBlack = Player.CPU;
+          playerRed = Player.CPU;
+          playerBlack = Player.HUMAN;
     }
     private void gridInit()  //TODO: icons as static final variables.
     {
@@ -239,7 +239,7 @@ class Game
         grid.get(new GridLocation(1,0)).setFigure(new Horse(playerBlack, horseBlack));
         grid.get(new GridLocation(2,0)).setFigure(new Elephant(playerBlack, elephantBlack));
         grid.get(new GridLocation(3,0)).setFigure(new Advisor(playerBlack, advisorBlack));
-        grid.get(new GridLocation(4,0)).setFigure(new General(playerBlack, generalBlack));
+        grid.get(new GridLocation(4,0)).setFigure(new GeneralBlack(playerBlack, generalBlack));
         grid.get(new GridLocation(5,0)).setFigure(new Advisor(playerBlack, advisorBlack));
         grid.get(new GridLocation(6,0)).setFigure(new Elephant(playerBlack, elephantBlack));
         grid.get(new GridLocation(7,0)).setFigure(new Horse(playerBlack, horseBlack));
@@ -264,7 +264,7 @@ class Game
         grid.get(new GridLocation(1,9)).setFigure(new Horse(playerRed, horseRed));
         grid.get(new GridLocation(2,9)).setFigure(new Elephant(playerRed, elephantRed));
         grid.get(new GridLocation(3,9)).setFigure(new Advisor(playerRed, advisorRed));
-        grid.get(new GridLocation(4,9)).setFigure(new General(playerRed, generalRed));
+        grid.get(new GridLocation(4,9)).setFigure(new GeneralRed(playerRed, generalRed));
         grid.get(new GridLocation(5,9)).setFigure(new Advisor(playerRed, advisorRed));
         grid.get(new GridLocation(6,9)).setFigure(new Elephant(playerRed, elephantRed));
         grid.get(new GridLocation(7,9)).setFigure(new Horse(playerRed, horseRed));
@@ -381,7 +381,7 @@ class Game
         statusBarReference.setText(text.getCpuTurn());
         cpuTurn();
     }
-    private void cpuTurn() //TODO
+    private void cpuTurn() //TODO: implement
     {
         //do something;
         //check for endgame. if not.

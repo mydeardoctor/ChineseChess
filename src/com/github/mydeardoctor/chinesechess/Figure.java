@@ -14,7 +14,7 @@ abstract class Figure
         this.icon = icon;
     }
     abstract HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid);
-    boolean isPossibleMove(GridLocation destination, HashMap<GridLocation, GridTile> grid)
+    boolean isPossibleMove(GridLocation destination, HashMap<GridLocation, GridTile> grid) //TODO: check for king check
     {
         Figure figureAtDestination = grid.get(destination).getFigure();
         if(figureAtDestination == null)

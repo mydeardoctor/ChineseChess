@@ -11,7 +11,7 @@ class SoldierBlack extends Figure
         super(player, icon);
     }
     @Override
-    HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid) //TODO: implement
+    HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid)
     {
         HashSet<GridLocation> possibleMoves = new HashSet<>();
         int x = origin.getXgrid();
