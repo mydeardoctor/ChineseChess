@@ -1,6 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
-public class ChineseChess //TODO: final variables
+public class ChineseChess //TODO: Static and final variables.
 {
     public static void main(String[] args)
     {

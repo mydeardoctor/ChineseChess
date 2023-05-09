@@ -17,12 +17,14 @@ class SoldierBlack extends Figure
         int x = origin.getXgrid();
         int y = origin.getYgrid();
         GridLocation destination;
+        DestinationType destinationType;
 
         if((y >= 0)&&(y <= 4)) //If above River.
         {
             //Check tile below.
             destination = new GridLocation(x, y+1);
-            if(this.isPossibleMove(destination, grid))
+            destinationType = this.checkDestinationType(destination, grid);
+            if((destinationType==DestinationType.EMPTY)||(destinationType==DestinationType.ENEMY_FIGURE))
             {
                 possibleMoves.add(destination);
             }
@@ -33,7 +35,8 @@ class SoldierBlack extends Figure
             {
                 //Check tile below.
                 destination = new GridLocation(x, y+1);
-                if(this.isPossibleMove(destination, grid))
+                destinationType = this.checkDestinationType(destination, grid);
+                if((destinationType==DestinationType.EMPTY)||(destinationType==DestinationType.ENEMY_FIGURE))
                 {
                     possibleMoves.add(destination);
                 }
@@ -42,7 +45,8 @@ class SoldierBlack extends Figure
             {
                 //Check tile on the left.
                 destination = new GridLocation(x-1,y);
-                if(this.isPossibleMove(destination, grid))
+                destinationType = this.checkDestinationType(destination, grid);
+                if((destinationType==DestinationType.EMPTY)||(destinationType==DestinationType.ENEMY_FIGURE))
                 {
                     possibleMoves.add(destination);
                 }
@@ -51,7 +55,8 @@ class SoldierBlack extends Figure
             {
                 //Check tile on the right.
                 destination = new GridLocation(x+1,y);
-                if(this.isPossibleMove(destination, grid))
+                destinationType = this.checkDestinationType(destination, grid);
+                if((destinationType==DestinationType.EMPTY)||(destinationType==DestinationType.ENEMY_FIGURE))
                 {
                     possibleMoves.add(destination);
                 }

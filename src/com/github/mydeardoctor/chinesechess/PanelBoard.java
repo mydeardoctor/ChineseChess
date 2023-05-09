@@ -41,6 +41,8 @@ class PanelBoard extends PanelBackground implements MouseListener
         g2d.fillRect(x0board, y0board, tile*10, tile*11);
         g2d.setColor(new Color(252, 174, 63));
         g2d.fillRect(x0board +tile, y0board +tile, tile*8, tile*9);
+        g2d.setColor(new Color(69, 175, 252));
+        g2d.fillRect(x0board +tile, y0board +tile*5, tile*8, tile);
 
         //Lines.
         g2d.setColor(Color.BLACK);
