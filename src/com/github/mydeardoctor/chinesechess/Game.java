@@ -1,6 +1,7 @@
 package com.github.mydeardoctor.chinesechess;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
@@ -36,6 +37,7 @@ class Game
     private GameState gameState;
     private GridLocation prevGridLocationSelected;
     private Figure prevFigureSelected;
+    private HashSet<GridLocation> prevPossibleMoves;
     Game(Text text, PanelBoard panelBoardReference, JLabel statusBarReference)
     {
         this.text = text;
@@ -206,17 +208,19 @@ class Game
         gridInit();
         gameStateInit();
     }
-    private void setRandomSides()
+    private void setRandomSides() //TODO:
     {
-        players.clear();
-        players.add(Player.HUMAN);
-        players.add(Player.CPU);
-        int randomIndex = randomGenerator.nextInt(2);
-        playerRed = players.get(randomIndex);
-        players.remove(randomIndex);
-        playerBlack = players.get(0);
+//        players.clear();
+//        players.add(Player.HUMAN);
+//        players.add(Player.CPU);
+//        int randomIndex = randomGenerator.nextInt(2);
+//        playerRed = players.get(randomIndex);
+//        players.remove(randomIndex);
+//        playerBlack = players.get(0);
+          playerRed = Player.HUMAN;
+          playerBlack = Player.CPU;
     }
-    private void gridInit()
+    private void gridInit()  //TODO: icons as static final variables.
     {
         grid.clear();
 
@@ -242,18 +246,18 @@ class Game
         grid.get(new GridLocation(8,0)).setFigure(new Chariot(playerBlack, chariotBlack));
         grid.get(new GridLocation(1,2)).setFigure(new Cannon(playerBlack, cannonBlack));
         grid.get(new GridLocation(7,2)).setFigure(new Cannon(playerBlack, cannonBlack));
-        grid.get(new GridLocation(0,3)).setFigure(new Soldier(playerBlack, soldierBlack));
-        grid.get(new GridLocation(2,3)).setFigure(new Soldier(playerBlack, soldierBlack));
-        grid.get(new GridLocation(4,3)).setFigure(new Soldier(playerBlack, soldierBlack));
-        grid.get(new GridLocation(6,3)).setFigure(new Soldier(playerBlack, soldierBlack));
-        grid.get(new GridLocation(8,3)).setFigure(new Soldier(playerBlack, soldierBlack));
+        grid.get(new GridLocation(0,3)).setFigure(new SoldierBlack(playerBlack, soldierBlack));
+        grid.get(new GridLocation(2,3)).setFigure(new SoldierBlack(playerBlack, soldierBlack));
+        grid.get(new GridLocation(4,3)).setFigure(new SoldierBlack(playerBlack, soldierBlack));
+        grid.get(new GridLocation(6,3)).setFigure(new SoldierBlack(playerBlack, soldierBlack));
+        grid.get(new GridLocation(8,3)).setFigure(new SoldierBlack(playerBlack, soldierBlack));
 
         //Red figures.
-        grid.get(new GridLocation(0,6)).setFigure(new Soldier(playerRed, soldierRed));
-        grid.get(new GridLocation(2,6)).setFigure(new Soldier(playerRed, soldierRed));
-        grid.get(new GridLocation(4,6)).setFigure(new Soldier(playerRed, soldierRed));
-        grid.get(new GridLocation(6,6)).setFigure(new Soldier(playerRed, soldierRed));
-        grid.get(new GridLocation(8,6)).setFigure(new Soldier(playerRed, soldierRed));
+        grid.get(new GridLocation(0,6)).setFigure(new SoldierRed(playerRed, soldierRed));
+        grid.get(new GridLocation(2,6)).setFigure(new SoldierRed(playerRed, soldierRed));
+        grid.get(new GridLocation(4,6)).setFigure(new SoldierRed(playerRed, soldierRed));
+        grid.get(new GridLocation(6,6)).setFigure(new SoldierRed(playerRed, soldierRed));
+        grid.get(new GridLocation(8,6)).setFigure(new SoldierRed(playerRed, soldierRed));
         grid.get(new GridLocation(1,7)).setFigure(new Cannon(playerRed, cannonRed));
         grid.get(new GridLocation(7,7)).setFigure(new Cannon(playerRed, cannonRed));
         grid.get(new GridLocation(0,9)).setFigure(new Chariot(playerRed, chariotRed));
@@ -304,15 +308,10 @@ class Game
                     figurePlayer = figureSelected.getPlayer();
                     if(figurePlayer==Player.HUMAN) //If your own figure was selected.
                     {
-                        prevGridLocationSelected = gridLocationSelected;                 //Save selected location.
-                        prevFigureSelected = grid.get(gridLocationSelected).getFigure(); //Save selected figure.
-
-                        grid.get(gridLocationSelected).setSelection(selection);          //Highlight selected figure.
+                        saveAndHighlightSelectedFigure(gridLocationSelected, figureSelected);
 
                         gameState = GameState.HUMAN_TURN_CHOOSE_DESTINATION;
                         statusBarReference.setText(text.getChooseDestination());
-
-                        panelBoardReference.repaint();
                     }
                 }
                 break;
@@ -325,48 +324,62 @@ class Game
                     if(figurePlayer==Player.HUMAN) //If your own figure was selected again.
                     {
                         grid.get(prevGridLocationSelected).setSelection(null); //Unhighlight previously selected figure.
+                        for(GridLocation gridLocation : prevPossibleMoves)     //Unhighlight previously selected moves.
+                        {
+                            grid.get(gridLocation).setSelection(null);
+                        }
 
-                        prevGridLocationSelected = gridLocationSelected;                    //Save selected location.
-                        prevFigureSelected = grid.get(gridLocationSelected).getFigure();    //Save selected figure.
-
-                        grid.get(gridLocationSelected).setSelection(selection);             //Highlight selected figure.
-
-                        gameState = GameState.HUMAN_TURN_CHOOSE_DESTINATION;
-                        statusBarReference.setText(text.getChooseDestination());
-
-                        panelBoardReference.repaint();
+                        saveAndHighlightSelectedFigure(gridLocationSelected, figureSelected);
                     }
                     else //If enemy figure was selected.
                     {
-                        grid.get(prevGridLocationSelected).setSelection(null);        //Unhighlight previously selected figure.
-                        grid.get(prevGridLocationSelected).setFigure(null);           //Move figure from previous location...
-                        grid.get(gridLocationSelected).setFigure(prevFigureSelected); //...to new location.
-
-                        //check for endfame. if not. TODO
-                        gameState = GameState.CPU_TURN;
-                        statusBarReference.setText(text.getCpuTurn());
-
-                        panelBoardReference.repaint();
-
-                        cpuTurn();
+                        if(prevPossibleMoves.contains(gridLocationSelected)) //If possible move.
+                        {
+                            moveFigure(gridLocationSelected);
+                        }
                     }
                 }
                 else //If destination is empty.
                 {
-                    grid.get(prevGridLocationSelected).setSelection(null);        //Unhighlight previously selected figure.
-                    grid.get(prevGridLocationSelected).setFigure(null);           //Move figure from previous location...
-                    grid.get(gridLocationSelected).setFigure(prevFigureSelected); //...to new location.
-
-                    //check for endgame. if not. TODO
-                    gameState = GameState.CPU_TURN;
-                    statusBarReference.setText(text.getCpuTurn());
-
-                    panelBoardReference.repaint();
-
-                    cpuTurn();
+                    if(prevPossibleMoves.contains(gridLocationSelected)) //If possible move.
+                    {
+                        moveFigure(gridLocationSelected);
+                    }
                 }
                 break;
         }
+    }
+    private void saveAndHighlightSelectedFigure(GridLocation gridLocationSelected, Figure figureSelected)
+    {
+        prevGridLocationSelected = gridLocationSelected;                                  //Save selected location.
+        prevFigureSelected = figureSelected;                                              //Save selected figure.
+        prevPossibleMoves = figureSelected.getPossibleMoves(gridLocationSelected, grid);  //Save possible moves.
+
+        grid.get(gridLocationSelected).setSelection(selection); //Highlight selected figure.
+        for(GridLocation gridLocation : prevPossibleMoves)      //Highlight possible moves.
+        {
+            grid.get(gridLocation).setSelection(selection);
+        }
+
+        panelBoardReference.repaint();
+    }
+    private void moveFigure(GridLocation gridLocationSelected)
+    {
+        grid.get(prevGridLocationSelected).setSelection(null); //Unhighlight previously selected figure.
+        for(GridLocation prevPossibleMove : prevPossibleMoves) //Unhighlight previously selected moves.
+        {
+            grid.get(prevPossibleMove).setSelection(null);
+        }
+
+        grid.get(prevGridLocationSelected).setFigure(null);           //Move figure from previous location...
+        grid.get(gridLocationSelected).setFigure(prevFigureSelected); //...to new location.
+
+        panelBoardReference.repaint();
+
+        //check for endfame. if not. TODO
+        gameState = GameState.CPU_TURN;
+        statusBarReference.setText(text.getCpuTurn());
+        cpuTurn();
     }
     private void cpuTurn() //TODO
     {

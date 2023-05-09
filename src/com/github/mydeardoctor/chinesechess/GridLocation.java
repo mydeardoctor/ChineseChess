@@ -9,15 +9,6 @@ class GridLocation
         this.xGrid = xGrid;
         this.yGrid = yGrid;
     }
-    public int getXgrid()
-    {
-        return xGrid;
-    }
-    public int getYgrid()
-    {
-        return yGrid;
-    }
-
     @Override
     public int hashCode()
     {
@@ -32,5 +23,13 @@ class GridLocation
         Integer xGridIntegerPassed = Integer.valueOf(gridLocationPassed.getXgrid());
         Integer yGridIntegerPassed = Integer.valueOf(gridLocationPassed.getYgrid());
         return xGridInteger.equals(xGridIntegerPassed)&&yGridInteger.equals(yGridIntegerPassed);
+    }
+    public int getXgrid()
+    {
+        return xGrid;
+    }
+    public int getYgrid()
+    {
+        return yGrid;
     }
 }
