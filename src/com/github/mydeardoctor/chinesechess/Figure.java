@@ -15,29 +15,7 @@ abstract class Figure
     }
 
     //TODO: Check for king check.
-    //TODO: Move common code to separate functions inside Chariot and Cannon.
-    abstract HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid);
-    DestinationType checkDestinationType(GridLocation destination, HashMap<GridLocation, GridTile> grid) //TODO: Use this function in Game.gridLocationSelected().
-    {
-        Figure figureAtDestination = grid.get(destination).getFigure();
-        if(figureAtDestination == null)
-        {
-            return DestinationType.EMPTY;
-        }
-        else
-        {
-            Player playerOfFigureMoving = this.getPlayer();
-            Player playerOfFigureAtDestination = figureAtDestination.getPlayer();
-            if(playerOfFigureMoving==playerOfFigureAtDestination)
-            {
-                return DestinationType.FRIENDLY_FIGURE;
-            }
-            else
-            {
-                return DestinationType.ENEMY_FIGURE;
-            }
-        }
-    }
+    abstract HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn);
     public Player getPlayer()
     {
         return player;

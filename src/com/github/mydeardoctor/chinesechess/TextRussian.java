@@ -85,27 +85,22 @@ class TextRussian extends Text
     @Override
     String getPlayerRed()
     {
-        return "Вы играете Красными.";
+        return "Красный игрок";
     }
     @Override
     String getPlayerBlack()
     {
-        return "Вы играете Чёрными.";
+        return "Чёрный игрок";
     }
     @Override
     String getChooseFigure()
     {
-        return "Выберите фигуру.";
+        return "выберите фигуру.";
     }
     @Override
     String getChooseDestination()
     {
-        return "Выберите цель.";
-    }
-    @Override
-    String getCpuTurn()
-    {
-        return "Ход компьютера.";
+        return "выберите цель.";
     }
 
     //Errors.

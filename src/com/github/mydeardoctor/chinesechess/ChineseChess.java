@@ -1,6 +1,8 @@
 package com.github.mydeardoctor.chinesechess;
 
-public class ChineseChess //TODO: Static and final variables.
+//TODO: Сделать static функции. Передавать в них аргументы. Чтобы не передавать указатели на объекты для взаимодействия с полями.
+//TODO: Static and final variables.
+public class ChineseChess
 {
     public static void main(String[] args)
     {

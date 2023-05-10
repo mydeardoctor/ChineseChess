@@ -202,7 +202,7 @@ class GUI
         buttonBackGameMode = new JButton(text.getBack());
 
         //Action listener.
-        buttonSinglePlayer.addActionListener(e->showFrameBoard());
+        buttonLocalMultiplayer.addActionListener(e->showFrameBoard());
         buttonBackGameMode.addActionListener(e->showFrameMainMenu());
 
         //Background Color.

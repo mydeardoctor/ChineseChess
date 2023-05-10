@@ -85,27 +85,22 @@ class TextEnglish extends Text
     @Override
     String getPlayerRed()
     {
-        return "You play Red.";
+        return "Red player";
     }
     @Override
     String getPlayerBlack()
     {
-        return "You play Black.";
+        return "Black player";
     }
     @Override
     String getChooseFigure()
     {
-        return "Choose figure.";
+        return "choose figure.";
     }
     @Override
     String getChooseDestination()
     {
-        return "Choose destination.";
-    }
-    @Override
-    String getCpuTurn()
-    {
-        return "CPU turn.";
+        return "choose destination.";
     }
 
     //Errors.

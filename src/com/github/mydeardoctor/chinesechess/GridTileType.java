@@ -1,6 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
-enum DestinationType
+enum GridTileType
 {
     EMPTY, FRIENDLY_FIGURE, ENEMY_FIGURE
 }

@@ -1,6 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
-enum Player
+enum Phase
 {
-    RED, BLACK
+    CHOOSE_FIGURE, CHOOSE_DESTINATION,
 }
