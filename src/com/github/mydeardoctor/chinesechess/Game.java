@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.imageio.ImageIO;
 import java.net.URL;
+import java.util.Map;
+import java.util.Set;
 
 class Game
 {
@@ -30,9 +32,9 @@ class Game
     private HashMap<GridLocation, GridTile> grid;
     private Player turn;
     private Phase phase;
+    private HashMap<GridLocation, HashSet<GridLocation>> allPossibleMoves;
     private GridLocation prevGridLocationSelected;
     private Figure prevFigureSelected;
-    private HashSet<GridLocation> prevPossibleMoves;
     Game(Text text, PanelBoard panelBoardReference, JLabel statusBarReference)
     {
         this.text = text;
@@ -40,6 +42,7 @@ class Game
         this.statusBarReference = statusBarReference;
         iconsInit();
         grid = new HashMap<>();
+        allPossibleMoves = new HashMap<>();
     }
     @SuppressWarnings("DataFlowIssue")
     private void iconsInit()
@@ -256,6 +259,8 @@ class Game
         turn = Player.RED;
         phase = Phase.CHOOSE_FIGURE;
         statusBarReference.setText(text.getPlayerRed()+", "+text.getChooseFigure());
+
+        getAllPossibleMoves();
     }
     public void gridLocationSelected(GridLocation gridLocationSelected)
     {
@@ -285,23 +290,48 @@ class Game
                 {
                     case FRIENDLY_FIGURE ->
                     {
-                        grid.get(prevGridLocationSelected).setSelection(null); //Unhighlight previously selected figure.
-                        for(GridLocation gridLocation : prevPossibleMoves)     //Unhighlight previously selected moves.
+                        Set<Map.Entry<GridLocation,GridTile>> gridSet = grid.entrySet(); //Unhighlight everything.
+                        for(Map.Entry<GridLocation,GridTile> gridEntry : gridSet)
                         {
-                            grid.get(gridLocation).setSelection(null);
+                            gridEntry.getValue().setSelection(null);
                         }
+
                         saveAndHighlightSelectedFigure(gridLocationSelected);
                     }
                     case ENEMY_FIGURE, EMPTY ->
                     {
-                        if(prevPossibleMoves.contains(gridLocationSelected))    //If possible move.
+                        if(allPossibleMoves.containsKey(prevGridLocationSelected)) //If chosen figure has possible moves.
                         {
-                            moveFigure(gridLocationSelected);
+                            if(allPossibleMoves.get(prevGridLocationSelected).contains(gridLocationSelected)) //If this move is possible for this figure.
+                            {
+                                moveFigure(gridLocationSelected);
+                            }
                         }
                     }
                 }
             }
         }
+    }
+    private void getAllPossibleMoves()
+    {
+        allPossibleMoves.clear();
+
+        Set<Map.Entry<GridLocation,GridTile>> gridSet = grid.entrySet();
+        for(Map.Entry<GridLocation,GridTile> gridEntry : gridSet)
+        {
+            Figure figure = gridEntry.getValue().getFigure();
+            if(figure!=null)
+            {
+                GridLocation origin = gridEntry.getKey();
+                HashSet<GridLocation> possibleMoves = figure.getPossibleMoves(origin, grid, turn);
+                if(possibleMoves.size()>0)
+                {
+                    allPossibleMoves.put(origin, possibleMoves);
+                }
+            }
+        }
+
+        //TODO: если мувов нет, то эндгейм.
     }
     static GridTileType checkGridTileType(GridLocation destination, HashMap<GridLocation, GridTile> grid, Player turn)
     {
@@ -328,22 +358,22 @@ class Game
         Figure figureSelected = grid.get(gridLocationSelected).getFigure();
         prevGridLocationSelected = gridLocationSelected;                                        //Save selected location.
         prevFigureSelected = figureSelected;                                                    //Save selected figure.
-        prevPossibleMoves = figureSelected.getPossibleMoves(gridLocationSelected, grid, turn);  //Save possible moves.
 
-        grid.get(gridLocationSelected).setSelection(selection); //Highlight selected figure.
-        for(GridLocation gridLocation : prevPossibleMoves)      //Highlight possible moves.
+        grid.get(gridLocationSelected).setSelection(selection);                           //Highlight selected figure.
+        HashSet<GridLocation> possibleMoves = allPossibleMoves.get(gridLocationSelected); //Highlight possible moves.
+        for(GridLocation possibleMove : possibleMoves)
         {
-            grid.get(gridLocation).setSelection(selection);
+            grid.get(possibleMove).setSelection(selection);
         }
 
         panelBoardReference.repaint();
     }
     private void moveFigure(GridLocation gridLocationSelected)
     {
-        grid.get(prevGridLocationSelected).setSelection(null); //Unhighlight previously selected figure.
-        for(GridLocation prevPossibleMove : prevPossibleMoves) //Unhighlight previously selected moves.
+        Set<Map.Entry<GridLocation,GridTile>> gridSet = grid.entrySet(); //Unhighlight everything.
+        for(Map.Entry<GridLocation,GridTile> gridEntry : gridSet)
         {
-            grid.get(prevPossibleMove).setSelection(null);
+            gridEntry.getValue().setSelection(null);
         }
 
         grid.get(prevGridLocationSelected).setFigure(null);           //Move figure from previous location...
@@ -351,7 +381,6 @@ class Game
 
         panelBoardReference.repaint();
 
-        //check for endgame. if not. TODO: Implement.
         switch(turn)
         {
             case RED ->
@@ -367,6 +396,7 @@ class Game
                 statusBarReference.setText(text.getPlayerRed() + ", " + text.getChooseFigure());
             }
         }
+        getAllPossibleMoves();  //check for endgame. if not. TODO: Implement.
     }
     public void refreshText(Text text)
     {
