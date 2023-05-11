@@ -12,7 +12,7 @@ class GridLocation
     @Override
     public int hashCode()
     {
-        return Integer.hashCode(xGrid)+Integer.hashCode(yGrid);
+        return Integer.hashCode(9*yGrid+xGrid);
     }
     @Override
     public boolean equals(Object obj)

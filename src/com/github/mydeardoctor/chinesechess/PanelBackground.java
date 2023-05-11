@@ -13,7 +13,7 @@ class PanelBackground extends JPanel
     {
         URL url = getClass().getResource("/background.jpg");
 
-        try
+        try //TODO: Перенести в GUI
         {
             //noinspection DataFlowIssue
             background = ImageIO.read(url);

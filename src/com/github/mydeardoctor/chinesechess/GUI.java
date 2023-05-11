@@ -63,20 +63,20 @@ class GUI
     //Game.
     private Game gameReference;
 
-    GUI(Text text, TextEnglish textEnglish, TextRussian textRussian)
+    GUI(TextEnglish textEnglish, TextRussian textRussian) //Вначале frame.visible, затем загрузка ресурсов, dialog на отрисованном frame
     {
-        textInit(text, textEnglish, textRussian);
+        textInit(textEnglish, textRussian);
         frameCommonInit();
         frameMainMenuInit();
         frameGameModeInit();
         frameBoardInit();
         frameSettingsInit();
     }
-    private void textInit(Text text, TextEnglish textEnglish, TextRussian textRussian)
+    private void textInit(TextEnglish textEnglish, TextRussian textRussian)
     {
-        this.text = text;
         this.textEnglish = textEnglish;
         this.textRussian = textRussian;
+        this.text = textEnglish;
     }
     private void frameCommonInit()
     {
@@ -202,7 +202,10 @@ class GUI
         buttonBackGameMode = new JButton(text.getBack());
 
         //Action listener.
-        buttonLocalMultiplayer.addActionListener(e->showFrameBoard());
+        buttonLocalMultiplayer.addActionListener(e-> {
+            showFrameBoard();
+            gameReference.gameStart();
+        });
         buttonBackGameMode.addActionListener(e->showFrameMainMenu());
 
         //Background Color.
@@ -360,7 +363,6 @@ class GUI
         frame.getContentPane().add(statusBar, BorderLayout.SOUTH);
         frame.validate();
         frame.repaint();
-        gameReference.gameStart();
     }
     private void showFrameSettings()
     {

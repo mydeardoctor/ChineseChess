@@ -2,7 +2,7 @@ package com.github.mydeardoctor.chinesechess;
 
 import java.awt.image.BufferedImage;
 
-class GridTile
+class GridTile //TODO: поиск key по value. override hashcode and equals. сделать зависимость от id фигуры
 {
     private Figure figure;
     private BufferedImage selection;
