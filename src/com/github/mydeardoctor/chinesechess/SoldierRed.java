@@ -4,14 +4,14 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
 
-class SoldierRed extends Soldier
+public class SoldierRed extends Soldier
 {
-    SoldierRed(Player player, BufferedImage icon)
+    public SoldierRed(Player player, BufferedImage icon)
     {
         super(player, icon);
     }
     @Override
-    HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn)
+    public HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn)
     {
         HashSet<GridLocation> possibleMoves = new HashSet<>();
         int x = origin.getXgrid();

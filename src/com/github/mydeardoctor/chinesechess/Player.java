@@ -1,6 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
-enum Player
+public enum Player
 {
     RED, BLACK
 }

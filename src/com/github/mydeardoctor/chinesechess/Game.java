@@ -1,5 +1,7 @@
 package com.github.mydeardoctor.chinesechess;
 
+import java.awt.*;
+import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.awt.image.BufferedImage;
@@ -9,194 +11,61 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 
-class Game
+public class Game
 {
     private Text text;
     private PanelBoard panelBoardReference;
     private JLabel statusBarReference;
-    private BufferedImage advisorBlack; //TODO: Перенести в GUI
-    private BufferedImage advisorRed;
-    private BufferedImage cannonBlack;
-    private BufferedImage cannonRed;
-    private BufferedImage chariotBlack;
-    private BufferedImage chariotRed;
-    private BufferedImage elephantBlack;
-    private BufferedImage elephantRed;
-    private BufferedImage generalBlack;
+
     private BufferedImage generalRed;
-    private BufferedImage horseBlack;
+    private BufferedImage advisorRed;
+    private BufferedImage elephantRed;
     private BufferedImage horseRed;
-    private BufferedImage soldierBlack;
+    private BufferedImage chariotRed;
+    private BufferedImage cannonRed;
     private BufferedImage soldierRed;
+    private BufferedImage generalBlack;
+    private BufferedImage advisorBlack;
+    private BufferedImage elephantBlack;
+    private BufferedImage horseBlack;
+    private BufferedImage chariotBlack;
+    private BufferedImage cannonBlack;
+    private BufferedImage soldierBlack;
     private BufferedImage selection;
+
     private HashMap<GridLocation, GridTile> grid;
     private Player turn;
     private Phase phase;
     private HashMap<GridLocation, HashSet<GridLocation>> allAllowedMoves;
     private GridLocation prevGridLocationSelected;
     private Figure prevFigureSelected;
-    Game(Text text, PanelBoard panelBoardReference, JLabel statusBarReference)
+    public Game(GUI gui)
     {
-        this.text = text;
-        this.panelBoardReference = panelBoardReference;
-        this.statusBarReference = statusBarReference;
-        iconsInit();
+        text = gui.getText();
+        panelBoardReference = gui.getPanelBoard();
+        statusBarReference = gui.getStatusBar();
+        iconsInit(gui);
         grid = new HashMap<>();
         allAllowedMoves = new HashMap<>();
     }
     @SuppressWarnings("DataFlowIssue")
-    private void iconsInit()
+    private void iconsInit(GUI gui)
     {
-        URL url = getClass().getResource("/advisorBlack.png");
-        try
-        {
-            advisorBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorAdvisorBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/advisorRed.png");
-        try
-        {
-            advisorRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorAdvisorRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/cannonBlack.png");
-        try
-        {
-            cannonBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorCannonBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/cannonRed.png");
-        try
-        {
-            cannonRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorCannonRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/chariotBlack.png");
-        try
-        {
-            chariotBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorChariotBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/chariotRed.png");
-        try
-        {
-            chariotRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorChariotRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/elephantBlack.png");
-        try
-        {
-            elephantBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorElephantBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/elephantRed.png");
-        try
-        {
-            elephantRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorElephantRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/generalBlack.png");
-        try
-        {
-            generalBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorGeneralBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/generalRed.png");
-        try
-        {
-            generalRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorGeneralRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/horseBlack.png");
-        try
-        {
-            horseBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorHorseBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/horseRed.png");
-        try
-        {
-            horseRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorHorseRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/soldierBlack.png");
-        try
-        {
-            soldierBlack = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorSoldierBlack(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/soldierRed.png");
-        try
-        {
-            soldierRed = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorSoldierRed(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        url = getClass().getResource("/selection.png");
-        try
-        {
-            selection = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorSelection(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
+        generalRed = gui.getGeneralRed();
+        advisorRed = gui.getAdvisorRed();
+        elephantRed = gui.getElephantRed();
+        horseRed = gui.getHorseRed();
+        chariotRed = gui.getChariotRed();
+        cannonRed = gui.getCannonRed();
+        soldierRed = gui.getSoldierRed();
+        generalBlack = gui.getGeneralBlack();
+        advisorBlack = gui.getAdvisorBlack();
+        elephantBlack = gui.getElephantBlack();
+        horseBlack = gui.getHorseBlack();
+        chariotBlack = gui.getChariotBlack();
+        cannonBlack = gui.getCannonBlack();
+        soldierBlack = gui.getSoldierBlack();
+        selection = gui.getSelection();
     }
     public void gameStart()
     {
@@ -258,7 +127,7 @@ class Game
     {
         turn = Player.RED;
         phase = Phase.CHOOSE_FIGURE;
-        statusBarReference.setText(text.getPlayerRed()+", "+text.getChooseFigure());
+        statusBarReference.setText(text.getRedPlayer()+", "+text.getChooseFigure());
 
         getAllAllowedMoves();
     }
@@ -278,8 +147,8 @@ class Game
                     phase = Phase.CHOOSE_DESTINATION;
                     switch(turn)
                     {
-                        case RED -> statusBarReference.setText(text.getPlayerRed()+", "+text.getChooseDestination());
-                        case BLACK -> statusBarReference.setText(text.getPlayerBlack()+", "+text.getChooseDestination());
+                        case RED -> statusBarReference.setText(text.getRedPlayer()+", "+text.getChooseDestination());
+                        case BLACK -> statusBarReference.setText(text.getBlackPlayer()+", "+text.getChooseDestination());
                     }
                 }
             }
@@ -340,7 +209,7 @@ class Game
             statusBarReference.setText("Endgame"); //TODO: если мувов нет, то эндгейм.
         }
     }
-    static GridTileType checkGridTileType(GridLocation destination, HashMap<GridLocation, GridTile> grid, Player turn)
+    public static GridTileType checkGridTileType(GridLocation destination, HashMap<GridLocation, GridTile> grid, Player turn)
     {
         Figure figureAtDestination = grid.get(destination).getFigure();
         if(figureAtDestination == null)
@@ -397,13 +266,13 @@ class Game
             {
                 turn = Player.BLACK;
                 phase = Phase.CHOOSE_FIGURE;
-                statusBarReference.setText(text.getPlayerBlack() + ", " + text.getChooseFigure());
+                statusBarReference.setText(text.getBlackPlayer() + ", " + text.getChooseFigure());
             }
             case BLACK ->
             {
                 turn = Player.RED;
                 phase = Phase.CHOOSE_FIGURE;
-                statusBarReference.setText(text.getPlayerRed() + ", " + text.getChooseFigure());
+                statusBarReference.setText(text.getRedPlayer() + ", " + text.getChooseFigure());
             }
         }
         getAllAllowedMoves();  //check for endgame. if not. TODO: Implement.

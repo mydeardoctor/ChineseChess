@@ -4,13 +4,13 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
 
-abstract class Soldier extends Figure
+public abstract class Soldier extends Figure
 {
-    Soldier(Player player, BufferedImage icon)
+    public Soldier(Player player, BufferedImage icon)
     {
         super(player, icon);
     }
-    void checkTile(int xDestination, int yDestination,
+    public void checkTile(int xDestination, int yDestination,
                            HashSet<GridLocation> possibleMoves, HashMap<GridLocation, GridTile> grid, Player turn)
     {
         GridLocation destination = new GridLocation(xDestination,yDestination);

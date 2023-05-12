@@ -8,16 +8,16 @@ import java.awt.*;
 import java.util.Map;
 import java.util.Set;
 
-class PanelBoard extends PanelBackground implements MouseListener
+public class PanelBoard extends PanelBackground implements MouseListener
 {
     private int tile;
     private int x0board;
     private int y0board;
     private int figureRadius;
     private Game gameReference;
-    PanelBoard(Text text)
+    public PanelBoard(BufferedImage background)
     {
-        super(text);
+        super(background);
     }
     @Override
     public void paintComponent(Graphics g)

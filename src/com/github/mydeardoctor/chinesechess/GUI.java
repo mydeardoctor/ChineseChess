@@ -9,16 +9,35 @@ import javax.imageio.ImageIO;
 import java.io.InputStream;
 import java.net.URL;
 
-class GUI
+public class GUI
 {
     //Text.
     private Text text;
-    private TextEnglish textEnglish;
-    private TextRussian textRussian;
+    private EnglishText englishText;
+    private RussianText russianText;
+
+    //Resources.
+    private Font chineseFont;
+    private BufferedImage icon;
+    private BufferedImage background;
+    private BufferedImage generalRed;
+    private BufferedImage advisorRed;
+    private BufferedImage elephantRed;
+    private BufferedImage horseRed;
+    private BufferedImage chariotRed;
+    private BufferedImage cannonRed;
+    private BufferedImage soldierRed;
+    private BufferedImage generalBlack;
+    private BufferedImage advisorBlack;
+    private BufferedImage elephantBlack;
+    private BufferedImage horseBlack;
+    private BufferedImage chariotBlack;
+    private BufferedImage cannonBlack;
+    private BufferedImage soldierBlack;
+    private BufferedImage selection;
 
     //Frame Common.
     private JFrame frame;
-    private Font fontChinese;
     private JMenu menu;
     private JMenuItem menuItemAbout;
     private PanelBackground panelBackground;
@@ -63,51 +82,302 @@ class GUI
     //Game.
     private Game gameReference;
 
-    GUI(TextEnglish textEnglish, TextRussian textRussian) //Вначале frame.visible, затем загрузка ресурсов, dialog на отрисованном frame
+    public GUI()
     {
-        textInit(textEnglish, textRussian);
+        initializeText();
+        initializeResources();
         frameCommonInit();
         frameMainMenuInit();
         frameGameModeInit();
         frameBoardInit();
         frameSettingsInit();
     }
-    private void textInit(TextEnglish textEnglish, TextRussian textRussian)
+    private void initializeText()
     {
-        this.textEnglish = textEnglish;
-        this.textRussian = textRussian;
-        this.text = textEnglish;
+        englishText = new EnglishText();
+        russianText = new RussianText();
+        text = englishText;
     }
-    private void frameCommonInit()
+    private void initializeResources()
     {
-        frame = new JFrame(text.getTitle());
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        boolean resourcesMissing = false;
+
+        //Font.
+        URL urlFont = getClass().getResource("/kashimarusbycop.otf");
+        try (InputStream inputStream = urlFont.openStream())
+        {
+            chineseFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            chineseFont = new Font(Font.DIALOG, Font.PLAIN, 1);
+        }
 
         //Icon.
         URL urlIcon = getClass().getResource("/icon.jpg");
         try
         {
-            @SuppressWarnings("DataFlowIssue") BufferedImage icon = ImageIO.read(urlIcon);
-            frame.setIconImage(icon);
+            icon = ImageIO.read(urlIcon);
         } catch (Exception e)
         {
-            JOptionPane.showMessageDialog(null, text.getErrorIcon(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
+            resourcesMissing = true;
+            icon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = icon.createGraphics();
+            g2d.setColor(new Color(196, 185, 165));
+            g2d.fillRect(0,0,100,100);
+            g2d.setColor(Color.BLACK);
+            g2d.setFont(new Font(Font.DIALOG, Font.BOLD, 42));
+            g2d.drawString("象棋", 5, 65);
         }
 
-        //Font.
-        URL urlFont = getClass().getResource("/kashimarusbycop.otf");
-        //noinspection DataFlowIssue
-        try (InputStream inputStream = urlFont.openStream())
+        //Background.
+        URL url = getClass().getResource("/background.jpg");
+        try
         {
-            fontChinese = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+            background = ImageIO.read(url);
         }
         catch (Exception e)
         {
-            fontChinese = new Font(Font.DIALOG, Font.PLAIN, 1);
-            JOptionPane.showMessageDialog(null, text.getErrorFont(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
+            resourcesMissing = true;
+            background = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = background.createGraphics();
+            g2d.setColor(new Color(196, 185, 165));
+            g2d.fillRect(0,0,100,100);
         }
+
+        //General Red.
+        url = getClass().getResource("/generalRed.png");
+        try
+        {
+            generalRed = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            generalRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(generalRed, Color.RED, "帥");
+        }
+
+        //Advisor Red.
+        url = getClass().getResource("/advisorRed.png");
+        try
+        {
+            advisorRed = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            advisorRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(advisorRed, Color.RED, "仕");
+        }
+
+        //Elephant Red.
+        url = getClass().getResource("/elephantRed.png");
+        try
+        {
+            elephantRed = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            elephantRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(elephantRed, Color.RED, "相");
+        }
+
+        //Horse Red.
+        url = getClass().getResource("/horseRed.png");
+        try
+        {
+            horseRed = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            horseRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(horseRed, Color.RED, "傌");
+        }
+
+        //Chariot Red.
+        url = getClass().getResource("/chariotRed.png");
+        try
+        {
+            chariotRed = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            chariotRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(chariotRed, Color.RED, "俥");
+        }
+
+        //Cannon Red.
+        url = getClass().getResource("/cannonRed.png");
+        try
+        {
+            cannonRed = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            cannonRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(cannonRed, Color.RED, "炮");
+        }
+
+        //Soldier Red.
+        url = getClass().getResource("/soldierRed.png");
+        try
+        {
+            soldierRed = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            soldierRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(soldierRed, Color.RED, "兵");
+        }
+
+        //General Black.
+        url = getClass().getResource("/generalBlack.png");
+        try
+        {
+            generalBlack = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            generalBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(generalBlack, Color.BLACK, "將");
+        }
+
+        //Advisor Black.
+        url = getClass().getResource("/advisorBlack.png");
+        try
+        {
+            advisorBlack = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            advisorBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(advisorBlack, Color.BLACK, "士");
+        }
+
+        //Elephant Black.
+        url = getClass().getResource("/elephantBlack.png");
+        try
+        {
+            elephantBlack = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            elephantBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(elephantBlack, Color.BLACK, "象");
+        }
+
+        //Horse Black.
+        url = getClass().getResource("/horseBlack.png");
+        try
+        {
+            horseBlack = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            horseBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(horseBlack, Color.BLACK, "馬");
+        }
+
+        //Chariot Black.
+        url = getClass().getResource("/chariotBlack.png");
+        try
+        {
+            chariotBlack = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            chariotBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(chariotBlack, Color.BLACK, "車");
+        }
+
+        //Cannon Black.
+        url = getClass().getResource("/cannonBlack.png");
+        try
+        {
+            cannonBlack = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            cannonBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(cannonBlack, Color.BLACK, "砲");
+        }
+
+        //Soldier Black.
+        url = getClass().getResource("/soldierBlack.png");
+        try
+        {
+            soldierBlack = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            soldierBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(soldierBlack, Color.BLACK, "卒");
+        }
+
+       //Selection.
+        url = getClass().getResource("/selection.png");
+        try
+        {
+            selection = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            selection = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = selection.createGraphics();
+            g2d.setColor(new Color(117, 240, 131));
+            g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+            g2d.drawArc(5,5,90,90,0,360);
+        }
+
+        if(resourcesMissing==true)
+        {
+            JOptionPane.showMessageDialog(null, text.getSomeResourcesAreMissing(), text.getWarning(),
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    private void initializeDefaultFigureImage(BufferedImage figure, Color color, String label)
+    {
+        Graphics2D g2d = figure.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.fillOval(0,0,100,100);
+        g2d.setColor(new Color(255,221,170));
+        g2d.fillOval(3,3,94,94);
+        g2d.setColor(color);
+        g2d.fillOval(6,6,88,88);
+        g2d.setColor(new Color(255,221,170));
+        g2d.fillOval(9,9,82,82);
+        g2d.setColor(color);
+        g2d.setFont(new Font(Font.DIALOG, Font.BOLD, 60));
+        g2d.drawString(label,20,70);
+    }
+    private void frameCommonInit()
+    {
+
+
+
+
+
+
+        frame = new JFrame(text.getTitle());
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        //Icon.
+        frame.setIconImage(icon);
 
         //Menu Bar.
         JMenuBar menuBar = new JMenuBar();
@@ -121,7 +391,7 @@ class GUI
         frame.setJMenuBar(menuBar);
 
         //Content Pane with background image.
-        panelBackground = new PanelBackground(text);
+        panelBackground = new PanelBackground(background);
         layoutGridBag = new GridBagLayout();
 
         //Bounds.
@@ -162,7 +432,7 @@ class GUI
         buttonSettings.setBorder(border);
 
         //Font.
-        Font font = fontChinese.deriveFont(Font.BOLD, 50.f);
+        Font font = chineseFont.deriveFont(Font.BOLD, 50.f);
         buttonPlay.setFont(font);
         buttonLoad.setFont(font);
         buttonRules.setFont(font);
@@ -223,7 +493,7 @@ class GUI
         buttonBackGameMode.setBorder(border);
 
         //Font.
-        Font font = fontChinese.deriveFont(Font.BOLD, 46.f);
+        Font font = chineseFont.deriveFont(Font.BOLD, 46.f);
         buttonSinglePlayer.setFont(font);
         buttonLocalMultiplayer.setFont(font);
         buttonOnlineMultiplayer.setFont(font);
@@ -258,7 +528,7 @@ class GUI
     {
         //Empty Content Pane.
         panelBackgroundEmpty = new JPanel();
-        panelBoard = new PanelBoard(text);
+        panelBoard = new PanelBoard(background);
         panelBoard.addMouseListener(panelBoard);
 
         //Status Bar.
@@ -277,8 +547,8 @@ class GUI
 
         //ComboBox.
         comboBoxLanguage = new JComboBox<>();
-        comboBoxLanguage.addItem(text.getEnglish());
-        comboBoxLanguage.addItem(text.getRussian());
+        comboBoxLanguage.addItem("English");
+        comboBoxLanguage.addItem("Русский");
 
         //Buttons.
         buttonBackSettings = new JButton(text.getBack());
@@ -299,7 +569,7 @@ class GUI
         buttonApply.setBorder(border);
 
         //Font.
-        Font font = fontChinese.deriveFont(Font.BOLD, 46.f);
+        Font font = chineseFont.deriveFont(Font.BOLD, 46.f);
         labelLanguage.setFont(font);
         comboBoxLanguage.setFont(font);
         buttonBackSettings.setFont(font);
@@ -381,8 +651,8 @@ class GUI
         String language = (String)(comboBoxLanguage.getSelectedItem());
         switch (language)
         {
-            case "English" -> text = textEnglish;
-            case "Русский" -> text = textRussian;
+            case "English" -> text = englishText;
+            case "Русский" -> text = russianText;
         }
 
         //Frame Common.
@@ -410,6 +680,71 @@ class GUI
         //Game.
         gameReference.refreshText(text);
     }
+    public Text getText()
+    {
+        return text;
+    }
+    public BufferedImage getGeneralRed()
+    {
+        return generalRed;
+    }
+    public BufferedImage getAdvisorRed()
+    {
+        return advisorRed;
+    }
+    public BufferedImage getElephantRed()
+    {
+        return elephantRed;
+    }
+    public BufferedImage getHorseRed()
+    {
+        return horseRed;
+    }
+    public BufferedImage getChariotRed()
+    {
+        return chariotRed;
+    }
+    public BufferedImage getCannonRed()
+    {
+        return cannonRed;
+    }
+    public BufferedImage getSoldierRed()
+    {
+        return soldierRed;
+    }
+    public BufferedImage getGeneralBlack()
+    {
+        return generalBlack;
+    }
+    public BufferedImage getAdvisorBlack()
+    {
+        return advisorBlack;
+    }
+    public BufferedImage getElephantBlack()
+    {
+        return elephantBlack;
+    }
+    public BufferedImage getHorseBlack()
+    {
+        return horseBlack;
+    }
+    public BufferedImage getChariotBlack()
+    {
+        return chariotBlack;
+    }
+    public BufferedImage getCannonBlack()
+    {
+        return cannonBlack;
+    }
+    public BufferedImage getSoldierBlack()
+    {
+        return soldierBlack;
+    }
+    public BufferedImage getSelection()
+    {
+        return selection;
+    }
+
     public PanelBoard getPanelBoard()
     {
         return panelBoard;
@@ -421,5 +756,6 @@ class GUI
     public void setGameReference(Game gameReference)
     {
         this.gameReference = gameReference;
+        panelBoard.setGameReference(gameReference);
     }
 }

@@ -6,12 +6,12 @@ import java.util.HashSet;
 
 public class Chariot extends Figure
 {
-    Chariot(Player player, BufferedImage icon)
+    public Chariot(Player player, BufferedImage icon)
     {
         super(player, icon);
     }
     @Override
-    HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn)
+    public HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn)
     {
         HashSet<GridLocation> possibleMoves = new HashSet<>();
         int x = origin.getXgrid();

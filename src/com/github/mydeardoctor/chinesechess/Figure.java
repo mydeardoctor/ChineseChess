@@ -6,18 +6,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-abstract class Figure
+public abstract class Figure
 {
     private Player player;
     private BufferedImage icon;
-    Figure(Player player, BufferedImage icon)
+    public Figure(Player player, BufferedImage icon)
     {
         this.player = player;
         this.icon = icon;
     }
 
     //TODO: Check for king check.
-    HashSet<GridLocation> getAllowedMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn, BufferedImage generalRed, BufferedImage generalBlack)
+    public HashSet<GridLocation> getAllowedMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn, BufferedImage generalRed, BufferedImage generalBlack)
     {
         HashSet<GridLocation> allowedMoves = new HashSet<>();
         HashSet<GridLocation> possibleMoves = getPossibleMoves(origin, grid, turn);
@@ -131,7 +131,7 @@ abstract class Figure
         enemyPossibleMoves = null;
         return allowedMoves;
     }
-    abstract HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn);
+    public abstract HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn);
     public Player getPlayer()
     {
         return player;

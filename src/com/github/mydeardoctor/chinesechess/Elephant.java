@@ -4,13 +4,13 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
 
-abstract class Elephant extends Figure
+public abstract class Elephant extends Figure
 {
-    Elephant(Player player, BufferedImage icon)
+    public Elephant(Player player, BufferedImage icon)
     {
         super(player, icon);
     }
-    void checkTile(int xDestination, int yDestination, int xIntermediate, int yIntermediate,
+    public void checkTile(int xDestination, int yDestination, int xIntermediate, int yIntermediate,
                            HashSet<GridLocation> possibleMoves, HashMap<GridLocation, GridTile> grid, Player turn)
     {
         GridLocation destination = new GridLocation(xIntermediate, yIntermediate);

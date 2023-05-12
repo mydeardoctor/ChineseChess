@@ -1,10 +1,10 @@
 package com.github.mydeardoctor.chinesechess;
 
-class GridLocation
+public class GridLocation
 {
     private int xGrid;
     private int yGrid;
-    GridLocation(int xGrid, int yGrid)
+    public GridLocation(int xGrid, int yGrid)
     {
         this.xGrid = xGrid;
         this.yGrid = yGrid;

@@ -1,6 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
-enum Phase
+public enum Phase
 {
     CHOOSE_FIGURE, CHOOSE_DESTINATION,
 }

@@ -1,64 +1,40 @@
 package com.github.mydeardoctor.chinesechess;
 
-abstract class Text
+public abstract class Text
 {
-    abstract String getTitle();
+    //GUI.
+
+    //Resources.
+    public abstract String getWarning();
+    public abstract String getSomeResourcesAreMissing();
+
+    //Title.
+    public abstract String getTitle();
 
     //Menu Bar.
-    abstract String getHelp();
-    abstract String getAbout();
-    abstract String getAboutVerbose();
+    public abstract String getHelp();
+    public abstract String getAbout();
+    public abstract String getAboutVerbose();
 
     //Frame Main Menu.
-    abstract String getPlay();
-    abstract String getLoad();
-    abstract String getRules();
-    abstract String getSettings();
+    public abstract String getPlay();
+    public abstract String getLoad();
+    public abstract String getRules();
+    public abstract String getSettings();
 
     //Frame Game Mode.
-    abstract String getSinglePlayer();
-    abstract String getLocalMultiplayer();
-    abstract String getOnlineMultiplayer();
-    abstract String getBack();
+    public abstract String getSinglePlayer();
+    public abstract String getLocalMultiplayer();
+    public abstract String getOnlineMultiplayer();
+    public abstract String getBack();
 
     //Frame Settings.
-    abstract String getLanguage();
-    @SuppressWarnings("SameReturnValue")
-    String getEnglish()
-    {
-        return "English";
-    }
-    @SuppressWarnings("SameReturnValue")
-    String getRussian()
-    {
-        return "Русский";
-    }
-    abstract String getApply();
+    public abstract String getLanguage();
+    public abstract String getApply();
 
     //Game.
-    abstract String getPlayerRed();
-    abstract String getPlayerBlack();
-    abstract String getChooseFigure();
-    abstract String getChooseDestination();
-
-    //Errors.
-    abstract String getError();
-    abstract String getErrorIcon();
-    abstract String getErrorFont();
-    abstract String getErrorBackground();
-    abstract String getErrorAdvisorBlack();
-    abstract String getErrorAdvisorRed();
-    abstract String getErrorCannonBlack();
-    abstract String getErrorCannonRed();
-    abstract String getErrorChariotBlack();
-    abstract String getErrorChariotRed();
-    abstract String getErrorElephantBlack();
-    abstract String getErrorElephantRed();
-    abstract String getErrorGeneralBlack();
-    abstract String getErrorGeneralRed();
-    abstract String getErrorHorseBlack();
-    abstract String getErrorHorseRed();
-    abstract String getErrorSoldierBlack();
-    abstract String getErrorSoldierRed();
-    abstract String getErrorSelection();
+    public abstract String getRedPlayer();
+    public abstract String getBlackPlayer();
+    public abstract String getChooseFigure();
+    public abstract String getChooseDestination();
 }

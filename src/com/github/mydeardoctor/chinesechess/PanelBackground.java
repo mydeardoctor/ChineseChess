@@ -6,23 +6,12 @@ import javax.swing.*;
 import java.net.URL;
 import javax.imageio.ImageIO;
 
-class PanelBackground extends JPanel
+public class PanelBackground extends JPanel
 {
     private BufferedImage background;
-    PanelBackground(Text text)
+    public PanelBackground(BufferedImage background)
     {
-        URL url = getClass().getResource("/background.jpg");
-
-        try //TODO: Перенести в GUI
-        {
-            //noinspection DataFlowIssue
-            background = ImageIO.read(url);
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, text.getErrorBackground(), text.getError(),
-                    JOptionPane.ERROR_MESSAGE);
-        }
+        this.background = background;
     }
     @Override
     public void paintComponent(Graphics g)
