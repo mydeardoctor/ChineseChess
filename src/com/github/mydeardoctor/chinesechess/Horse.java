@@ -11,11 +11,13 @@ public class Horse extends Figure
         super(player, icon);
     }
     @Override
-    public HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn)
+    public HashSet<Location> getPossibleMoves(HashMap<Location, Tile> grid, Player turn, Figure generalRed, Figure generalBlack)
     {
-        HashSet<GridLocation> possibleMoves = new HashSet<>();
-        int x = origin.getXgrid();
-        int y = origin.getYgrid();
+        HashSet<Location> possibleMoves = new HashSet<>();
+
+        Location origin = Game.findLocationOfFigure(this, grid);
+        int x = origin.getX();
+        int y = origin.getY();
 
         //Check tile above, above-left.
         if(  ((x-1)>=0)  &&  ((y-2)>=0)  ) //If destination is inside the board.
@@ -68,15 +70,15 @@ public class Horse extends Figure
         return possibleMoves;
     }
     private void checkTile(int xDestination, int yDestination, int xIntermediate, int yIntermediate,
-                           HashSet<GridLocation> possibleMoves, HashMap<GridLocation, GridTile> grid, Player turn)
+                           HashSet<Location> possibleMoves, HashMap<Location, Tile> grid, Player turn)
     {
-        GridLocation destination = new GridLocation(xIntermediate, yIntermediate);
-        GridTileType destinationType = Game.checkGridTileType(destination, grid, turn);
-        if(destinationType== GridTileType.EMPTY)
+        Location destination = new Location(xIntermediate, yIntermediate);
+        TileType destinationType = Game.checkTileType(destination, grid, turn);
+        if(destinationType== TileType.EMPTY)
         {
-            destination = new GridLocation(xDestination, yDestination);
-            destinationType = Game.checkGridTileType(destination, grid, turn);
-            if((destinationType== GridTileType.EMPTY)||(destinationType== GridTileType.ENEMY_FIGURE))
+            destination = new Location(xDestination, yDestination);
+            destinationType = Game.checkTileType(destination, grid, turn);
+            if((destinationType== TileType.EMPTY)||(destinationType== TileType.ENEMY))
             {
                 possibleMoves.add(destination);
             }

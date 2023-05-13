@@ -1,8 +1,8 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.awt.image.BufferedImage;
 
 public class AdvisorBlack extends Advisor
 {
@@ -11,11 +11,13 @@ public class AdvisorBlack extends Advisor
         super(player, icon);
     }
     @Override
-    public HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn)
+    public HashSet<Location> getPossibleMoves(HashMap<Location, Tile> grid, Player turn, Figure generalRed, Figure generalBlack)
     {
-        HashSet<GridLocation> possibleMoves = new HashSet<>();
-        int x = origin.getXgrid();
-        int y = origin.getYgrid();
+        HashSet<Location> possibleMoves = new HashSet<>();
+
+        Location origin = Game.findLocationOfFigure(this, grid);
+        int x = origin.getX();
+        int y = origin.getY();
 
         //Check tile above-left.
         if((x>=4)&&(y>=1))

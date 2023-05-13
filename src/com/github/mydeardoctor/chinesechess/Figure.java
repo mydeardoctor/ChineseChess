@@ -1,10 +1,10 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Set;
+import java.util.HashSet;
+import java.awt.image.BufferedImage;
 
 public abstract class Figure
 {
@@ -15,15 +15,17 @@ public abstract class Figure
         this.player = player;
         this.icon = icon;
     }
-    public HashSet<GridLocation> getAllowedMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn, BufferedImage generalRed, BufferedImage generalBlack)
+    //TODO: генерал определяется по буфферед имадж. это буллщит, потому что они могут не загрузиться.генерал должен определяться по объекту general
+    public HashSet<Location> getAllowedMoves(HashMap<Location, Tile> grid, Player turn, Figure generalRed, Figure generalBlack)
     {
-        HashSet<GridLocation> allowedMoves = new HashSet<>();
-        HashSet<GridLocation> possibleMoves = getPossibleMoves(origin, grid, turn);
-        HashSet<GridLocation> enemyPossibleMoves = new HashSet<>();
+        HashSet<Location> allowedMoves = new HashSet<>();
+        HashSet<Location> possibleMoves = getPossibleMoves(grid, turn, generalRed, generalBlack);
+        HashSet<Location> enemyPossibleMoves = new HashSet<>();
+        Location origin = Game.findLocationOfFigure(this, grid);
 
-        Set<Map.Entry<GridLocation,GridTile>> gridSet = grid.entrySet();
+        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
 
-        for(GridLocation possibleMove : possibleMoves)
+        for(Location possibleMove : possibleMoves)
         {
             //Move figure
             Figure figureThatWasAtOrigin = grid.get(origin).getFigure();
@@ -33,25 +35,8 @@ public abstract class Figure
 
             //General sight check
             //Find General Red and General Black
-            GridLocation generalRedLocation = null;
-            GridLocation generalBlackLocation = null;
-            gridSet = grid.entrySet();
-            for(Map.Entry<GridLocation,GridTile> gridEntry : gridSet)
-            {
-                Figure figure = gridEntry.getValue().getFigure();
-                if(figure!=null)
-                {
-                    BufferedImage icon = figure.getIcon();
-                    if(icon == generalRed)
-                    {
-                        generalRedLocation = gridEntry.getKey();
-                    }
-                    else if(icon == generalBlack)
-                    {
-                        generalBlackLocation = gridEntry.getKey();
-                    }
-                }
-            }
+            Location generalRedLocation = Game.findLocationOfFigure(generalRed, grid);
+            Location generalBlackLocation = Game.findLocationOfFigure(generalBlack, grid);
             if((generalRedLocation==null) || (generalBlackLocation == null)) //General was killed. Illegal move.
             {
                 //Unmove figure
@@ -59,15 +44,15 @@ public abstract class Figure
                 grid.get(possibleMove).setFigure(figureThatWasAtDestination);
                 continue;
             }
-            if(generalRedLocation.getXgrid()==generalBlackLocation.getXgrid())
+            if(generalRedLocation.getX()==generalBlackLocation.getX())
             {
                 boolean generalsSeeEachOther = true;
-                int x = generalBlackLocation.getXgrid();
-                for(int y = generalBlackLocation.getYgrid()+1; y < generalRedLocation.getYgrid(); y++)
+                int x = generalBlackLocation.getX();
+                for(int y = generalBlackLocation.getY()+1; y < generalRedLocation.getY(); y++)
                 {
-                    GridLocation destination = new GridLocation(x, y);
-                    GridTileType gridTileType = Game.checkGridTileType(destination, grid, turn);
-                    if(gridTileType!=GridTileType.EMPTY)
+                    Location destination = new Location(x, y);
+                    TileType tileType = Game.checkTileType(destination, grid, turn);
+                    if(tileType != TileType.EMPTY)
                     {
                         generalsSeeEachOther = false;
                         break;
@@ -85,7 +70,7 @@ public abstract class Figure
             //General exposed check
             boolean generalExposed = false;
             //Work out my General and next turn
-            GridLocation generalLocation;
+            Location generalLocation;
             Player nextTurn;
             if(turn == Player.RED)
             {
@@ -98,7 +83,7 @@ public abstract class Figure
                 nextTurn = Player.RED;
             }
             enemyPossibleMoves.clear();
-            for(Map.Entry<GridLocation,GridTile> gridEntry : gridSet)
+            for(Map.Entry<Location, Tile> gridEntry : gridSet)
             {
                 Figure figure = gridEntry.getValue().getFigure();
                 if(figure!=null)
@@ -106,7 +91,7 @@ public abstract class Figure
                     Player player = figure.getPlayer();
                     if(player==nextTurn)
                     {
-                        enemyPossibleMoves = figure.getPossibleMoves(gridEntry.getKey(), grid, nextTurn);
+                        enemyPossibleMoves = figure.getPossibleMoves(grid, nextTurn, generalRed, generalBlack);
                         if(enemyPossibleMoves.contains(generalLocation))
                         {
                             generalExposed = true;
@@ -129,7 +114,7 @@ public abstract class Figure
         enemyPossibleMoves = null;
         return allowedMoves;
     }
-    public abstract HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn);
+    public abstract HashSet<Location> getPossibleMoves(HashMap<Location, Tile> grid, Player turn, Figure generalRed, Figure generalBlack);
     public Player getPlayer()
     {
         return player;

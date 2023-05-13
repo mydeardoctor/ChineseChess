@@ -1,8 +1,8 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.awt.image.BufferedImage;
 
 public abstract class Advisor extends Figure
 {
@@ -10,11 +10,11 @@ public abstract class Advisor extends Figure
     {
         super(player, icon);
     }
-    public void checkTile(int xDestination, int yDestination, HashSet<GridLocation> possibleMoves, HashMap<GridLocation, GridTile> grid, Player turn)
+    public void checkTile(int xDestination, int yDestination, HashSet<Location> possibleMoves, HashMap<Location, Tile> grid, Player turn)
     {
-        GridLocation destination = new GridLocation(xDestination, yDestination);
-        GridTileType destinationType = Game.checkGridTileType(destination, grid, turn);
-        if((destinationType==GridTileType.EMPTY)||(destinationType==GridTileType.ENEMY_FIGURE))
+        Location destination = new Location(xDestination, yDestination);
+        TileType destinationType = Game.checkTileType(destination, grid, turn);
+        if((destinationType== TileType.EMPTY)||(destinationType== TileType.ENEMY))
         {
             possibleMoves.add(destination);
         }

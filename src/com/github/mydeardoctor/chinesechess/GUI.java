@@ -20,20 +20,20 @@ public class GUI
     private Font fontChinese;
     private BufferedImage icon;
     private BufferedImage background;
-    private BufferedImage generalRed;
-    private BufferedImage advisorRed;
-    private BufferedImage elephantRed;
-    private BufferedImage horseRed;
-    private BufferedImage chariotRed;
-    private BufferedImage cannonRed;
-    private BufferedImage soldierRed;
-    private BufferedImage generalBlack;
-    private BufferedImage advisorBlack;
-    private BufferedImage elephantBlack;
-    private BufferedImage horseBlack;
-    private BufferedImage chariotBlack;
-    private BufferedImage cannonBlack;
-    private BufferedImage soldierBlack;
+    private BufferedImage generalRedIcon;
+    private BufferedImage advisorRedIcon;
+    private BufferedImage elephantRedIcon;
+    private BufferedImage horseRedIcon;
+    private BufferedImage chariotRedIcon;
+    private BufferedImage cannonRedIcon;
+    private BufferedImage soldierRedIcon;
+    private BufferedImage generalBlackIcon;
+    private BufferedImage advisorBlackIcon;
+    private BufferedImage elephantBlackIcon;
+    private BufferedImage horseBlackIcon;
+    private BufferedImage chariotBlackIcon;
+    private BufferedImage cannonBlackIcon;
+    private BufferedImage soldierBlackIcon;
     private BufferedImage selection;
 
     //Common frame features.
@@ -150,185 +150,185 @@ public class GUI
         url = getClass().getResource("/generalRed.png");
         try
         {
-            generalRed = ImageIO.read(url);
+            generalRedIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            generalRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(generalRed, Color.RED, "帥");
+            generalRedIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(generalRedIcon, Color.RED, "帥");
         }
 
         //Advisor Red.
         url = getClass().getResource("/advisorRed.png");
         try
         {
-            advisorRed = ImageIO.read(url);
+            advisorRedIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            advisorRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(advisorRed, Color.RED, "仕");
+            advisorRedIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(advisorRedIcon, Color.RED, "仕");
         }
 
         //Elephant Red.
         url = getClass().getResource("/elephantRed.png");
         try
         {
-            elephantRed = ImageIO.read(url);
+            elephantRedIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            elephantRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(elephantRed, Color.RED, "相");
+            elephantRedIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(elephantRedIcon, Color.RED, "相");
         }
 
         //Horse Red.
         url = getClass().getResource("/horseRed.png");
         try
         {
-            horseRed = ImageIO.read(url);
+            horseRedIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            horseRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(horseRed, Color.RED, "傌");
+            horseRedIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(horseRedIcon, Color.RED, "傌");
         }
 
         //Chariot Red.
         url = getClass().getResource("/chariotRed.png");
         try
         {
-            chariotRed = ImageIO.read(url);
+            chariotRedIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            chariotRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(chariotRed, Color.RED, "俥");
+            chariotRedIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(chariotRedIcon, Color.RED, "俥");
         }
 
         //Cannon Red.
         url = getClass().getResource("/cannonRed.png");
         try
         {
-            cannonRed = ImageIO.read(url);
+            cannonRedIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            cannonRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(cannonRed, Color.RED, "炮");
+            cannonRedIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(cannonRedIcon, Color.RED, "炮");
         }
 
         //Soldier Red.
         url = getClass().getResource("/soldierRed.png");
         try
         {
-            soldierRed = ImageIO.read(url);
+            soldierRedIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            soldierRed = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(soldierRed, Color.RED, "兵");
+            soldierRedIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(soldierRedIcon, Color.RED, "兵");
         }
 
         //General Black.
         url = getClass().getResource("/generalBlack.png");
         try
         {
-            generalBlack = ImageIO.read(url);
+            generalBlackIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            generalBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(generalBlack, Color.BLACK, "將");
+            generalBlackIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(generalBlackIcon, Color.BLACK, "將");
         }
 
         //Advisor Black.
         url = getClass().getResource("/advisorBlack.png");
         try
         {
-            advisorBlack = ImageIO.read(url);
+            advisorBlackIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            advisorBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(advisorBlack, Color.BLACK, "士");
+            advisorBlackIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(advisorBlackIcon, Color.BLACK, "士");
         }
 
         //Elephant Black.
         url = getClass().getResource("/elephantBlack.png");
         try
         {
-            elephantBlack = ImageIO.read(url);
+            elephantBlackIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            elephantBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(elephantBlack, Color.BLACK, "象");
+            elephantBlackIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(elephantBlackIcon, Color.BLACK, "象");
         }
 
         //Horse Black.
         url = getClass().getResource("/horseBlack.png");
         try
         {
-            horseBlack = ImageIO.read(url);
+            horseBlackIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            horseBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(horseBlack, Color.BLACK, "馬");
+            horseBlackIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(horseBlackIcon, Color.BLACK, "馬");
         }
 
         //Chariot Black.
         url = getClass().getResource("/chariotBlack.png");
         try
         {
-            chariotBlack = ImageIO.read(url);
+            chariotBlackIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            chariotBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(chariotBlack, Color.BLACK, "車");
+            chariotBlackIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(chariotBlackIcon, Color.BLACK, "車");
         }
 
         //Cannon Black.
         url = getClass().getResource("/cannonBlack.png");
         try
         {
-            cannonBlack = ImageIO.read(url);
+            cannonBlackIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            cannonBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(cannonBlack, Color.BLACK, "砲");
+            cannonBlackIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(cannonBlackIcon, Color.BLACK, "砲");
         }
 
         //Soldier Black.
         url = getClass().getResource("/soldierBlack.png");
         try
         {
-            soldierBlack = ImageIO.read(url);
+            soldierBlackIcon = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            soldierBlack = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            initializeDefaultFigureImage(soldierBlack, Color.BLACK, "卒");
+            soldierBlackIcon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            initializeDefaultFigureImage(soldierBlackIcon, Color.BLACK, "卒");
         }
 
-       //Selection.
+        //Selection.
         url = getClass().getResource("/selection.png");
         try
         {
@@ -681,61 +681,61 @@ public class GUI
     {
         return text;
     }
-    public BufferedImage getGeneralRed()
+    public BufferedImage getGeneralRedIcon()
     {
-        return generalRed;
+        return generalRedIcon;
     }
-    public BufferedImage getAdvisorRed()
+    public BufferedImage getAdvisorRedIcon()
     {
-        return advisorRed;
+        return advisorRedIcon;
     }
-    public BufferedImage getElephantRed()
+    public BufferedImage getElephantRedIcon()
     {
-        return elephantRed;
+        return elephantRedIcon;
     }
-    public BufferedImage getHorseRed()
+    public BufferedImage getHorseRedIcon()
     {
-        return horseRed;
+        return horseRedIcon;
     }
-    public BufferedImage getChariotRed()
+    public BufferedImage getChariotRedIcon()
     {
-        return chariotRed;
+        return chariotRedIcon;
     }
-    public BufferedImage getCannonRed()
+    public BufferedImage getCannonRedIcon()
     {
-        return cannonRed;
+        return cannonRedIcon;
     }
-    public BufferedImage getSoldierRed()
+    public BufferedImage getSoldierRedIcon()
     {
-        return soldierRed;
+        return soldierRedIcon;
     }
-    public BufferedImage getGeneralBlack()
+    public BufferedImage getGeneralBlackIcon()
     {
-        return generalBlack;
+        return generalBlackIcon;
     }
-    public BufferedImage getAdvisorBlack()
+    public BufferedImage getAdvisorBlackIcon()
     {
-        return advisorBlack;
+        return advisorBlackIcon;
     }
-    public BufferedImage getElephantBlack()
+    public BufferedImage getElephantBlackIcon()
     {
-        return elephantBlack;
+        return elephantBlackIcon;
     }
-    public BufferedImage getHorseBlack()
+    public BufferedImage getHorseBlackIcon()
     {
-        return horseBlack;
+        return horseBlackIcon;
     }
-    public BufferedImage getChariotBlack()
+    public BufferedImage getChariotBlackIcon()
     {
-        return chariotBlack;
+        return chariotBlackIcon;
     }
-    public BufferedImage getCannonBlack()
+    public BufferedImage getCannonBlackIcon()
     {
-        return cannonBlack;
+        return cannonBlackIcon;
     }
-    public BufferedImage getSoldierBlack()
+    public BufferedImage getSoldierBlackIcon()
     {
-        return soldierBlack;
+        return soldierBlackIcon;
     }
     public BufferedImage getSelection()
     {

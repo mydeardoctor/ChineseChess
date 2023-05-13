@@ -11,24 +11,26 @@ public class Cannon extends Figure
         super(player, icon);
     }
     @Override
-    public HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn)
+    public HashSet<Location> getPossibleMoves(HashMap<Location, Tile> grid, Player turn, Figure generalRed, Figure generalBlack)
     {
-        HashSet<GridLocation> possibleMoves = new HashSet<>();
-        int x = origin.getXgrid();
-        int y = origin.getYgrid();
-        GridLocation destination;
-        GridTileType destinationType;
+        HashSet<Location> possibleMoves = new HashSet<>();
+
+        Location origin = Game.findLocationOfFigure(this, grid);
+        int x = origin.getX();
+        int y = origin.getY();
+        Location destination;
+        TileType destinationType;
         boolean platformInPath;
 
         //Check tiles above.
         platformInPath = false;
         for(int yAbove = y - 1; yAbove >= 0; yAbove--)
         {
-            destination = new GridLocation(x, yAbove);
-            destinationType = Game.checkGridTileType(destination, grid, turn);
+            destination = new Location(x, yAbove);
+            destinationType = Game.checkTileType(destination, grid, turn);
             if(platformInPath==false)
             {
-                if(destinationType== GridTileType.EMPTY)
+                if(destinationType== TileType.EMPTY)
                 {
                     possibleMoves.add(destination);
                 }
@@ -39,12 +41,12 @@ public class Cannon extends Figure
             }
             else //platformInPath==true
             {
-                if(destinationType== GridTileType.ENEMY_FIGURE)
+                if(destinationType== TileType.ENEMY)
                 {
                     possibleMoves.add(destination);
                     break;
                 }
-                else if(destinationType== GridTileType.FRIENDLY_FIGURE)
+                else if(destinationType== TileType.FRIENDLY)
                 {
                     break;
                 }
@@ -55,11 +57,11 @@ public class Cannon extends Figure
         platformInPath = false;
         for(int yBelow = y + 1; yBelow <= 9; yBelow++)
         {
-            destination = new GridLocation(x, yBelow);
-            destinationType = Game.checkGridTileType(destination, grid, turn);
+            destination = new Location(x, yBelow);
+            destinationType = Game.checkTileType(destination, grid, turn);
             if(platformInPath==false)
             {
-                if(destinationType== GridTileType.EMPTY)
+                if(destinationType== TileType.EMPTY)
                 {
                     possibleMoves.add(destination);
                 }
@@ -70,12 +72,12 @@ public class Cannon extends Figure
             }
             else //platformInPath==true
             {
-                if(destinationType== GridTileType.ENEMY_FIGURE)
+                if(destinationType== TileType.ENEMY)
                 {
                     possibleMoves.add(destination);
                     break;
                 }
-                else if(destinationType== GridTileType.FRIENDLY_FIGURE)
+                else if(destinationType== TileType.FRIENDLY)
                 {
                     break;
                 }
@@ -86,11 +88,11 @@ public class Cannon extends Figure
         platformInPath = false;
         for(int xLeft = x - 1; xLeft >= 0; xLeft--)
         {
-            destination = new GridLocation(xLeft, y);
-            destinationType = Game.checkGridTileType(destination, grid, turn);
+            destination = new Location(xLeft, y);
+            destinationType = Game.checkTileType(destination, grid, turn);
             if(platformInPath==false)
             {
-                if(destinationType== GridTileType.EMPTY)
+                if(destinationType== TileType.EMPTY)
                 {
                     possibleMoves.add(destination);
                 }
@@ -101,12 +103,12 @@ public class Cannon extends Figure
             }
             else //platformInPath==true
             {
-                if(destinationType== GridTileType.ENEMY_FIGURE)
+                if(destinationType== TileType.ENEMY)
                 {
                     possibleMoves.add(destination);
                     break;
                 }
-                else if(destinationType== GridTileType.FRIENDLY_FIGURE)
+                else if(destinationType== TileType.FRIENDLY)
                 {
                     break;
                 }
@@ -116,11 +118,11 @@ public class Cannon extends Figure
         platformInPath = false;
         for(int xRight = x + 1; xRight <= 8; xRight++)
         {
-            destination = new GridLocation(xRight, y);
-            destinationType = Game.checkGridTileType(destination, grid, turn);
+            destination = new Location(xRight, y);
+            destinationType = Game.checkTileType(destination, grid, turn);
             if(platformInPath==false)
             {
-                if(destinationType== GridTileType.EMPTY)
+                if(destinationType== TileType.EMPTY)
                 {
                     possibleMoves.add(destination);
                 }
@@ -131,12 +133,12 @@ public class Cannon extends Figure
             }
             else //platformInPath==true
             {
-                if(destinationType== GridTileType.ENEMY_FIGURE)
+                if(destinationType== TileType.ENEMY)
                 {
                     possibleMoves.add(destination);
                     break;
                 }
-                else if(destinationType== GridTileType.FRIENDLY_FIGURE)
+                else if(destinationType== TileType.FRIENDLY)
                 {
                     break;
                 }

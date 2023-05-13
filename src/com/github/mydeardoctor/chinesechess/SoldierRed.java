@@ -11,11 +11,13 @@ public class SoldierRed extends Soldier
         super(player, icon);
     }
     @Override
-    public HashSet<GridLocation> getPossibleMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn)
+    public HashSet<Location> getPossibleMoves(HashMap<Location, Tile> grid, Player turn, Figure generalRed, Figure generalBlack)
     {
-        HashSet<GridLocation> possibleMoves = new HashSet<>();
-        int x = origin.getXgrid();
-        int y = origin.getYgrid();
+        HashSet<Location> possibleMoves = new HashSet<>();
+
+        Location origin = Game.findLocationOfFigure(this, grid);
+        int x = origin.getX();
+        int y = origin.getY();
 
         if((y >= 5)&&(y <= 9)) //If below River.
         {

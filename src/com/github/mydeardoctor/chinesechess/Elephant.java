@@ -11,15 +11,15 @@ public abstract class Elephant extends Figure
         super(player, icon);
     }
     public void checkTile(int xDestination, int yDestination, int xIntermediate, int yIntermediate,
-                           HashSet<GridLocation> possibleMoves, HashMap<GridLocation, GridTile> grid, Player turn)
+                          HashSet<Location> possibleMoves, HashMap<Location, Tile> grid, Player turn)
     {
-        GridLocation destination = new GridLocation(xIntermediate, yIntermediate);
-        GridTileType destinationType = Game.checkGridTileType(destination, grid, turn);
-        if(destinationType == GridTileType.EMPTY)
+        Location destination = new Location(xIntermediate, yIntermediate);
+        TileType destinationType = Game.checkTileType(destination, grid, turn);
+        if(destinationType == TileType.EMPTY)
         {
-            destination = new GridLocation(xDestination, yDestination);
-            destinationType = Game.checkGridTileType(destination, grid, turn);
-            if((destinationType == GridTileType.EMPTY)||(destinationType == GridTileType.ENEMY_FIGURE))
+            destination = new Location(xDestination, yDestination);
+            destinationType = Game.checkTileType(destination, grid, turn);
+            if((destinationType == TileType.EMPTY)||(destinationType == TileType.ENEMY))
             {
                 possibleMoves.add(destination);
             }

@@ -1,18 +1,18 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.awt.*;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Set;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 
 public class PanelBoard extends PanelBackground implements MouseListener
 {
-    private int tile;
-    private int x0board;
-    private int y0board;
+    private int x0Board;
+    private int y0Board;
+    private int tileLength;
     private int figureRadius;
     private Game game;
     public PanelBoard(BufferedImage background)
@@ -27,68 +27,78 @@ public class PanelBoard extends PanelBackground implements MouseListener
         Graphics2D g2d = (Graphics2D)g;
 
         //Calculation of dimensions.
-        int side = Math.min(this.getWidth(), this.getHeight());
-        tile = side/11;
-        x0board = (this.getWidth()-tile*10)/2;
-        y0board = (this.getHeight()-tile*11)/2;
-        int figureDiameter = (int)(tile*0.85);
+        int boardSide = Math.min(this.getWidth(), this.getHeight());
+        tileLength = boardSide/11;
+        x0Board = (this.getWidth() - tileLength*10)/2;
+        y0Board = (this.getHeight() - tileLength*11)/2;
+        int figureDiameter = (int)(tileLength*0.85);
         figureRadius = figureDiameter/2;
         int selectionDiameter = (int)(figureDiameter*1.2);
-        int selectionRadius = (int)(figureRadius*1.2);
+        int selectionRadius = selectionDiameter/2;
 
+        //Painting the board.
         //Rectangles.
         g2d.setColor(new Color(207, 92, 1));
-        g2d.fillRect(x0board, y0board, tile*10, tile*11);
+        g2d.fillRect(x0Board, y0Board, tileLength*10, tileLength*11);
         g2d.setColor(new Color(252, 174, 63));
-        g2d.fillRect(x0board +tile, y0board +tile, tile*8, tile*9);
+        g2d.fillRect(x0Board + tileLength, y0Board + tileLength, tileLength*8, tileLength*9);
         g2d.setColor(new Color(69, 175, 252));
-        g2d.fillRect(x0board +tile, y0board +tile*5, tile*8, tile);
+        g2d.fillRect(x0Board + tileLength, y0Board + tileLength*5, tileLength*8, tileLength);
 
         //Lines.
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
         //Horizontal lines.
-        g2d.drawLine(x0board, y0board, x0board +tile*10, y0board);
+        g2d.drawLine(x0Board, y0Board, x0Board + tileLength*10, y0Board);
         for(int i = 1; i <= 10; i++)
         {
-            g2d.drawLine(x0board +tile, y0board +tile*i, x0board +tile*9, y0board +tile*i);
+            g2d.drawLine(x0Board + tileLength, y0Board + tileLength*i,
+                         x0Board + tileLength*9, y0Board + tileLength*i);
         }
-        g2d.drawLine(x0board, y0board +tile*11, x0board +tile*10, y0board +tile*11);
+        g2d.drawLine(x0Board, y0Board + tileLength*11, x0Board + tileLength*10, y0Board + tileLength*11);
         //Vertical lines.
-        g2d.drawLine(x0board, y0board, x0board, y0board +tile*11);
-        g2d.drawLine(x0board +tile, y0board +tile, x0board +tile, y0board +tile*10);
+        g2d.drawLine(x0Board, y0Board, x0Board, y0Board + tileLength*11);
+        g2d.drawLine(x0Board + tileLength, y0Board + tileLength,
+                     x0Board + tileLength, y0Board + tileLength*10);
         for(int i = 2; i <= 8; i++)
         {
-            g2d.drawLine(x0board +tile*i, y0board +tile, x0board +tile*i, y0board +tile*5);
-            g2d.drawLine(x0board +tile*i, y0board +tile*6, x0board +tile*i, y0board +tile*10);
+            g2d.drawLine(x0Board + tileLength*i, y0Board + tileLength,
+                         x0Board + tileLength*i, y0Board + tileLength*5);
+            g2d.drawLine(x0Board + tileLength*i, y0Board + tileLength*6,
+                         x0Board + tileLength*i, y0Board + tileLength*10);
         }
-        g2d.drawLine(x0board +tile*9, y0board +tile, x0board +tile*9, y0board +tile*10);
-        g2d.drawLine(x0board +tile*10, y0board, x0board +tile*10, y0board +tile*11);
+        g2d.drawLine(x0Board + tileLength*9, y0Board + tileLength,
+                     x0Board + tileLength*9, y0Board + tileLength*10);
+        g2d.drawLine(x0Board + tileLength*10, y0Board, x0Board + tileLength*10, y0Board + tileLength*11);
         //Diagonal lines.
-        g2d.drawLine(x0board +tile*4, y0board +tile*3, x0board +tile*6, y0board +tile);
-        g2d.drawLine(x0board +tile*4, y0board +tile, x0board +tile*6, y0board +tile*3);
-        g2d.drawLine(x0board +tile*4, y0board +tile*10, x0board +tile*6, y0board +tile*8);
-        g2d.drawLine(x0board +tile*4, y0board +tile*8, x0board +tile*6, y0board +tile*10);
+        g2d.drawLine(x0Board + tileLength*4, y0Board + tileLength*3,
+                     x0Board + tileLength*6, y0Board + tileLength);
+        g2d.drawLine(x0Board + tileLength*4, y0Board + tileLength,
+                     x0Board + tileLength*6, y0Board + tileLength*3);
+        g2d.drawLine(x0Board + tileLength*4, y0Board + tileLength*10,
+                     x0Board + tileLength*6, y0Board + tileLength*8);
+        g2d.drawLine(x0Board + tileLength*4, y0Board + tileLength*8,
+                     x0Board + tileLength*6, y0Board + tileLength*10);
 
-        //Figures.
-        HashMap<GridLocation, GridTile> gridReference = game.getGrid();
-        Set<Map.Entry<GridLocation,GridTile>> gridSet = gridReference.entrySet();
-        for(Map.Entry<GridLocation,GridTile> gridEntry : gridSet)
+        //Painting figures and selections.
+        HashMap<Location, Tile> grid = game.getGrid();
+        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
+        for(Map.Entry<Location, Tile> gridEntry : gridSet)
         {
             Figure figure = gridEntry.getValue().getFigure();
             if(figure!=null)
             {
                 g2d.drawImage(figure.getIcon(),
-                        x0board + tile + tile*gridEntry.getKey().getXgrid() - figureRadius,
-                        y0board + tile + tile*gridEntry.getKey().getYgrid() - figureRadius,
+                        x0Board + tileLength + tileLength*gridEntry.getKey().getX() - figureRadius,
+                        y0Board + tileLength + tileLength*gridEntry.getKey().getY() - figureRadius,
                         figureDiameter, figureDiameter, this);
             }
             BufferedImage selection = gridEntry.getValue().getSelection();
             if(selection!=null)
             {
                 g2d.drawImage(selection,
-                        x0board + tile + tile*gridEntry.getKey().getXgrid() - selectionRadius,
-                        y0board + tile + tile*gridEntry.getKey().getYgrid() - selectionRadius,
+                        x0Board + tileLength + tileLength*gridEntry.getKey().getX() - selectionRadius,
+                        y0Board + tileLength + tileLength*gridEntry.getKey().getY() - selectionRadius,
                         selectionDiameter, selectionDiameter, this);
             }
         }
@@ -109,31 +119,29 @@ public class PanelBoard extends PanelBackground implements MouseListener
             return;
         }
 
+        Location selectedLocation = null;
         int xMouse = e.getX();
         int yMouse = e.getY();
-        HashMap<GridLocation, GridTile> gridReference = game.getGrid();
-        Set<Map.Entry<GridLocation,GridTile>> gridSet = gridReference.entrySet();
-        GridLocation gridLocationSelected = null;
-        for(Map.Entry<GridLocation,GridTile> gridEntry : gridSet)
+        HashMap<Location, Tile> grid = game.getGrid();
+        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
+        for(Map.Entry<Location, Tile> gridEntry : gridSet)
         {
-            int xGrid = gridEntry.getKey().getXgrid();
-            int yGrid = gridEntry.getKey().getYgrid();
-            int xCenterTile = x0board + tile + tile*xGrid;
-            int yCenterTile = y0board + tile + tile*yGrid;
+            int x = gridEntry.getKey().getX();
+            int y = gridEntry.getKey().getY();
+            int x0Tile = x0Board + tileLength + tileLength*x;
+            int y0Tile = y0Board + tileLength + tileLength*y;
 
-            //Closed disk formula. (x-x0)^2 + (y-y0)^2 <= r^2
-            if((Math.pow(xMouse - xCenterTile, 2) +
-                    Math.pow(yMouse - yCenterTile, 2))
-                    <= Math.pow(figureRadius, 2))
+            //Closed disk formula.
+            if((Math.pow(xMouse - x0Tile, 2) + Math.pow(yMouse - y0Tile, 2)) <= Math.pow(figureRadius, 2))
             {
-                gridLocationSelected = gridEntry.getKey();
+                selectedLocation = gridEntry.getKey();
                 break;
             }
         }
 
-        if(gridLocationSelected !=null)
+        if(selectedLocation!=null)
         {
-            game.gridLocationSelected(gridLocationSelected);
+            game.handleSelectedLocation(selectedLocation);
         }
     }
     @Override
