@@ -1,8 +1,8 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.awt.image.BufferedImage;
 
 public class ElephantBlack extends Elephant
 {
@@ -11,36 +11,37 @@ public class ElephantBlack extends Elephant
         super(player, icon);
     }
     @Override
-    public HashSet<Location> getPossibleMoves(HashMap<Location, Tile> grid, Player turn, Figure generalRed, Figure generalBlack)
+    public HashSet<Location> getPossibleMoves(Game game)
     {
         HashSet<Location> possibleMoves = new HashSet<>();
 
-        Location origin = Game.findLocationOfFigure(this, grid);
+        HashMap<Location, Tile> grid = game.getGrid();
+        Location origin = getLocation(this, grid);
         int x = origin.getX();
         int y = origin.getY();
 
         //Check tile above-left.
         if((x>=2)&&(y>=2))
         {
-            checkTile(x-2,y-2,x-1,y-1, possibleMoves, grid, turn);
+            checkTile(x-2,y-2,x-1,y-1, possibleMoves, game);
         }
 
         //Check tile above-right.
         if((x<=6)&&(y>=2))
         {
-            checkTile(x+2,y-2,x+1,y-1, possibleMoves, grid, turn);
+            checkTile(x+2,y-2,x+1,y-1, possibleMoves, game);
         }
 
         //Check tile below-left.
         if((x>=2)&&(y<=2))
         {
-            checkTile(x-2,y+2,x-1,y+1, possibleMoves, grid, turn);
+            checkTile(x-2,y+2,x-1,y+1, possibleMoves, game);
         }
 
         //Check tile below-right.
         if((x<=6)&&(y<=2))
         {
-            checkTile(x+2,y+2,x+1,y+1, possibleMoves, grid, turn);
+            checkTile(x+2,y+2,x+1,y+1, possibleMoves, game);
         }
 
         return possibleMoves;

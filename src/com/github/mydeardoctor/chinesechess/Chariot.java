@@ -1,8 +1,8 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.awt.image.BufferedImage;
 
 public class Chariot extends Figure
 {
@@ -11,11 +11,12 @@ public class Chariot extends Figure
         super(player, icon);
     }
     @Override
-    public HashSet<Location> getPossibleMoves(HashMap<Location, Tile> grid, Player turn, Figure generalRed, Figure generalBlack)
+    public HashSet<Location> getPossibleMoves(Game game)
     {
         HashSet<Location> possibleMoves = new HashSet<>();
 
-        Location origin = Game.findLocationOfFigure(this, grid);
+        HashMap<Location, Tile> grid = game.getGrid();
+        Location origin = getLocation(this, grid);
         int x = origin.getX();
         int y = origin.getY();
         Location destination;
@@ -25,17 +26,17 @@ public class Chariot extends Figure
         for(int yAbove = y - 1; yAbove >= 0; yAbove--)
         {
             destination = new Location(x, yAbove);
-            destinationType = Game.checkTileType(destination, grid, turn);
-            if(destinationType== TileType.EMPTY)
+            destinationType = game.getTileType(destination);
+            if(destinationType==TileType.EMPTY)
             {
                 possibleMoves.add(destination);
             }
-            else if(destinationType== TileType.ENEMY)
+            else if(destinationType==TileType.ENEMY)
             {
                 possibleMoves.add(destination);
                 break;
             }
-            else if(destinationType== TileType.FRIENDLY)
+            else if(destinationType==TileType.FRIENDLY)
             {
                 break;
             }
@@ -45,17 +46,17 @@ public class Chariot extends Figure
         for(int yBelow = y + 1; yBelow <= 9; yBelow++)
         {
             destination = new Location(x, yBelow);
-            destinationType = Game.checkTileType(destination, grid, turn);
-            if(destinationType== TileType.EMPTY)
+            destinationType = game.getTileType(destination);
+            if(destinationType==TileType.EMPTY)
             {
                 possibleMoves.add(destination);
             }
-            else if(destinationType== TileType.ENEMY)
+            else if(destinationType==TileType.ENEMY)
             {
                 possibleMoves.add(destination);
                 break;
             }
-            else if(destinationType== TileType.FRIENDLY)
+            else if(destinationType==TileType.FRIENDLY)
             {
                 break;
             }
@@ -65,36 +66,37 @@ public class Chariot extends Figure
         for(int xLeft = x - 1; xLeft >= 0; xLeft--)
         {
             destination = new Location(xLeft, y);
-            destinationType = Game.checkTileType(destination, grid, turn);
-            if(destinationType== TileType.EMPTY)
+            destinationType = game.getTileType(destination);
+            if(destinationType==TileType.EMPTY)
             {
                 possibleMoves.add(destination);
             }
-            else if(destinationType== TileType.ENEMY)
+            else if(destinationType==TileType.ENEMY)
             {
                 possibleMoves.add(destination);
                 break;
             }
-            else if(destinationType== TileType.FRIENDLY)
+            else if(destinationType==TileType.FRIENDLY)
             {
                 break;
             }
         }
+
         //Check tiles on the right.
         for(int xRight = x + 1; xRight <= 8; xRight++)
         {
             destination = new Location(xRight, y);
-            destinationType = Game.checkTileType(destination, grid, turn);
-            if(destinationType== TileType.EMPTY)
+            destinationType = game.getTileType(destination);
+            if(destinationType==TileType.EMPTY)
             {
                 possibleMoves.add(destination);
             }
-            else if(destinationType== TileType.ENEMY)
+            else if(destinationType==TileType.ENEMY)
             {
                 possibleMoves.add(destination);
                 break;
             }
-            else if(destinationType== TileType.FRIENDLY)
+            else if(destinationType==TileType.FRIENDLY)
             {
                 break;
             }

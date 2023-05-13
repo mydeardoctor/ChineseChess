@@ -49,11 +49,11 @@ public class Game
     private Figure soldierBlack4;
     private Figure soldierBlack5;
     private HashMap<Location, Tile> grid;
-    private Player turn;
+    private HashMap<Location, HashSet<Location>> allAllowedMoves;
+    private Player turn; //TODO: если добавлять turn endgame, то везде надо проверить логику turn
     private Phase phase;
     private Location prevSelectedLocation;
     private Figure prevSelectedFigure;
-    private HashMap<Location, HashSet<Location>> allAllowedMoves;
 
     public Game(GUI gui)
     {
@@ -106,7 +106,7 @@ public class Game
         grid = new HashMap<>();
         for(int y = 0; y <= 9; y++)
         {
-            for(int x = 0; x <=8; x++)
+            for(int x = 0; x <= 8; x++)
             {
                 Location location = new Location(x, y);
                 Tile tile = new Tile(null, null);
@@ -175,10 +175,38 @@ public class Game
 
         getAllAllowedMoves();
     }
+    private void getAllAllowedMoves()
+    {
+        allAllowedMoves.clear();
+
+        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
+        for(Map.Entry<Location, Tile> gridEntry : gridSet)
+        {
+            Figure figure = gridEntry.getValue().getFigure();
+            if(figure!=null)
+            {
+                Player player = figure.getPlayer();
+                if(player == turn)
+                {
+                    Location origin = gridEntry.getKey();
+                    HashSet<Location> allowedMoves = figure.getAllowedMoves(this);
+                    if(allowedMoves.size()>0)
+                    {
+                        allAllowedMoves.put(origin, allowedMoves);
+                    }
+                }
+            }
+        }
+
+        if(allAllowedMoves.size()==0)
+        {
+            statusBar.setText("Endgame"); //TODO: если мувов нет, то эндгейм.
+        }
+    }
     public void handleSelectedLocation(Location selectedLocation)
     {
         TileType tileType;
-        tileType = Game.checkTileType(selectedLocation, grid, turn);
+        tileType = getTileType(selectedLocation);
 
         switch(phase)
         {
@@ -186,7 +214,8 @@ public class Game
             {
                 if(tileType == TileType.FRIENDLY)
                 {
-                    saveAndHighlightSelectedFigure(selectedLocation);
+                    saveSelectedFigure(selectedLocation);
+                    highlightSelectedFigureAndPossibleMoves(selectedLocation);
 
                     phase = Phase.CHOOSE_DESTINATION;
                     switch(turn)
@@ -209,7 +238,8 @@ public class Game
                             gridEntry.getValue().setSelection(null);
                         }
 
-                        saveAndHighlightSelectedFigure(selectedLocation);
+                        saveSelectedFigure(selectedLocation);
+                        highlightSelectedFigureAndPossibleMoves(selectedLocation);
                     }
                     case ENEMY, EMPTY ->
                     {
@@ -225,53 +255,7 @@ public class Game
             }
         }
     }
-    private void getAllAllowedMoves()
-    {
-        allAllowedMoves.clear();
-
-        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
-        for(Map.Entry<Location, Tile> gridEntry : gridSet)
-        {
-            Figure figure = gridEntry.getValue().getFigure();
-            if(figure!=null)
-            {
-                Player player = figure.getPlayer();
-                if(player == turn)
-                {
-                    Location origin = gridEntry.getKey();
-                    HashSet<Location> allowedMoves = figure.getAllowedMoves(grid, turn, generalRed, generalBlack);
-                    if(allowedMoves.size()>0)
-                    {
-                        allAllowedMoves.put(origin, allowedMoves);
-                    }
-                }
-            }
-        }
-
-        if(allAllowedMoves.size()==0)
-        {
-            statusBar.setText("Endgame"); //TODO: если мувов нет, то эндгейм.
-        }
-    }
-    public static Location findLocationOfFigure(Figure figure, HashMap<Location, Tile> grid)
-    {
-        Location location = null;
-        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
-        for(Map.Entry<Location, Tile> gridEntry : gridSet)
-        {
-            Figure figureTemp = gridEntry.getValue().getFigure();
-            if(figureTemp!=null)
-            {
-                if(figureTemp.equals(figure))
-                {
-                    location = gridEntry.getKey();
-                    break;
-                }
-            }
-        }
-        return location;
-    }
-    public static TileType checkTileType(Location destination, HashMap<Location, Tile> grid, Player turn)
+    public TileType getTileType(Location destination)
     {
         Figure figureAtDestination = grid.get(destination).getFigure();
         if(figureAtDestination == null)
@@ -291,12 +275,14 @@ public class Game
             }
         }
     }
-    private void saveAndHighlightSelectedFigure(Location locationSelected)
+    private void saveSelectedFigure(Location locationSelected)
     {
         Figure figureSelected = grid.get(locationSelected).getFigure();
         prevSelectedLocation = locationSelected;                                        //Save selected location.
         prevSelectedFigure = figureSelected;                                                    //Save selected figure.
-
+    }
+    private void highlightSelectedFigureAndPossibleMoves(Location locationSelected)
+    {
         grid.get(locationSelected).setSelection(selection);                           //Highlight selected figure.
         HashSet<Location> possibleMoves = allAllowedMoves.get(locationSelected); //Highlight possible moves.
         if(possibleMoves!=null)
@@ -318,7 +304,7 @@ public class Game
         }
 
         grid.get(prevSelectedLocation).setFigure(null);           //Move figure from previous location...
-        grid.get(locationSelected).setFigure(prevSelectedFigure); //...to new location.
+        grid.get(locationSelected).setFigure(prevSelectedFigure); //...to a new location.
 
         panelBoard.repaint();
 
@@ -339,13 +325,41 @@ public class Game
         }
         getAllAllowedMoves();  //check for endgame. if not.
     }
-    public void refreshText(Text text)
+    public void refreshText(Text text) //TODO: Endgame message.
     {
         this.text = text;
-        statusBar.setText(" ");
+
+        String message = "";
+        switch(turn)
+        {
+            case RED -> message = text.getRedPlayer();
+            case BLACK -> message = text.getBlackPlayer();
+        }
+        switch(phase)
+        {
+            case CHOOSE_FIGURE -> message = message + ", " + text.getChooseFigure();
+            case CHOOSE_DESTINATION -> message = message + ", " + text.getChooseDestination();
+        }
+        statusBar.setText(message);
+    }
+    public Figure getGeneralRed()
+    {
+        return generalRed;
+    }
+    public Figure getGeneralBlack()
+    {
+        return generalBlack;
     }
     public HashMap<Location, Tile> getGrid()
     {
         return grid;
+    }
+    public void setTurn(Player turn)
+    {
+        this.turn = turn;
+    } //TODO: use
+    public Player getTurn()
+    {
+        return turn;
     }
 }
