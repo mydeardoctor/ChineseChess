@@ -1,13 +1,9 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.awt.*;
-import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
-import javax.imageio.ImageIO;
-import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,7 +63,7 @@ public class Game
         soldierBlack = gui.getSoldierBlack();
         selection = gui.getSelection();
     }
-    public void gameStart()
+    public void start()
     {
         gridInit();
         gameStateInit();
@@ -275,7 +271,7 @@ public class Game
                 statusBarReference.setText(text.getRedPlayer() + ", " + text.getChooseFigure());
             }
         }
-        getAllAllowedMoves();  //check for endgame. if not. TODO: Implement.
+        getAllAllowedMoves();  //check for endgame. if not.
     }
     public void refreshText(Text text)
     {

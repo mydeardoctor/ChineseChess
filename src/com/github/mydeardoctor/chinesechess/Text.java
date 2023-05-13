@@ -8,10 +8,8 @@ public abstract class Text
     public abstract String getWarning();
     public abstract String getSomeResourcesAreMissing();
 
-    //Title.
+    //Common frame features.
     public abstract String getTitle();
-
-    //Menu Bar.
     public abstract String getHelp();
     public abstract String getAbout();
     public abstract String getAboutVerbose();

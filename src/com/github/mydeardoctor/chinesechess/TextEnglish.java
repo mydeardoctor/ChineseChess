@@ -1,6 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
-public class EnglishText extends Text
+public class TextEnglish extends Text
 {
     //GUI.
 
@@ -16,14 +16,12 @@ public class EnglishText extends Text
         return "Some resources are missing!";
     }
 
-    //Title.
+    //Common frame features.
     @Override
     public String getTitle()
     {
         return "Chinese Chess";
     }
-
-    //Menu Bar.
     @Override
     public String getHelp()
     {

@@ -15,8 +15,6 @@ public abstract class Figure
         this.player = player;
         this.icon = icon;
     }
-
-    //TODO: Check for king check.
     public HashSet<GridLocation> getAllowedMoves(GridLocation origin, HashMap<GridLocation, GridTile> grid, Player turn, BufferedImage generalRed, BufferedImage generalBlack)
     {
         HashSet<GridLocation> allowedMoves = new HashSet<>();

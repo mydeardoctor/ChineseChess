@@ -4,14 +4,14 @@ package com.github.mydeardoctor.chinesechess;
 //TODO: нормальные названия без префиксов
 //TODO: Static and final variables.
 //TODO: Сделать static функции. Передавать в них аргументы. Чтобы не передавать указатели на объекты для взаимодействия с полями.
-//TODO: загрузка ресурсов в одном месте. Обработка ситуаций, когда они null
+//TODO: добавить в frame board в menu settings (там и громкость)
 public class ChineseChess
 {
     public static void main(String[] args)
     {
         GUI gui = new GUI();
         Game game = new Game(gui);
-        gui.setGameReference(game);
+        gui.setGame(game);
 
         gui.showFrameMainMenu();
     }

@@ -1,6 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
-class RussianText extends Text
+class TextRussian extends Text
 {
     //GUI.
 
@@ -16,14 +16,12 @@ class RussianText extends Text
         return "Не удалось обнаружить некоторые ресурсы!";
     }
 
-    //Title.
+    //Common frame features.
     @Override
     public String getTitle()
     {
         return "Китайские шахматы";
     }
-
-    //Menu Bar.
     @Override
     public String getHelp()
     {

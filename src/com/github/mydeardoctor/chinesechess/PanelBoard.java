@@ -14,7 +14,7 @@ public class PanelBoard extends PanelBackground implements MouseListener
     private int x0board;
     private int y0board;
     private int figureRadius;
-    private Game gameReference;
+    private Game game;
     public PanelBoard(BufferedImage background)
     {
         super(background);
@@ -71,7 +71,7 @@ public class PanelBoard extends PanelBackground implements MouseListener
         g2d.drawLine(x0board +tile*4, y0board +tile*8, x0board +tile*6, y0board +tile*10);
 
         //Figures.
-        HashMap<GridLocation, GridTile> gridReference = gameReference.getGrid();
+        HashMap<GridLocation, GridTile> gridReference = game.getGrid();
         Set<Map.Entry<GridLocation,GridTile>> gridSet = gridReference.entrySet();
         for(Map.Entry<GridLocation,GridTile> gridEntry : gridSet)
         {
@@ -111,7 +111,7 @@ public class PanelBoard extends PanelBackground implements MouseListener
 
         int xMouse = e.getX();
         int yMouse = e.getY();
-        HashMap<GridLocation, GridTile> gridReference = gameReference.getGrid();
+        HashMap<GridLocation, GridTile> gridReference = game.getGrid();
         Set<Map.Entry<GridLocation,GridTile>> gridSet = gridReference.entrySet();
         GridLocation gridLocationSelected = null;
         for(Map.Entry<GridLocation,GridTile> gridEntry : gridSet)
@@ -133,7 +133,7 @@ public class PanelBoard extends PanelBackground implements MouseListener
 
         if(gridLocationSelected !=null)
         {
-            gameReference.gridLocationSelected(gridLocationSelected);
+            game.gridLocationSelected(gridLocationSelected);
         }
     }
     @Override
@@ -144,8 +144,8 @@ public class PanelBoard extends PanelBackground implements MouseListener
     public void mouseExited(MouseEvent e)
     {
     }
-    public void setGameReference(Game gameReference)
+    public void setGame(Game game)
     {
-        this.gameReference = gameReference;
+        this.game = game;
     }
 }
