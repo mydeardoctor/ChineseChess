@@ -39,6 +39,7 @@ public class GUI
     //Common frame features.
     private JFrame frame;
     private JMenu menu;
+    private JMenuItem menuItemSettings;
     private JMenuItem menuItemAbout;
     private PanelBackground panelBackground;
     private GridBagLayout gridBagLayout;
@@ -78,6 +79,9 @@ public class GUI
     private GridBagConstraints constraintsForComboBoxLanguage;
     private GridBagConstraints constraintsForButtonBackSettings;
     private GridBagConstraints constraintsForButtonApply;
+
+    //Previous frame.
+    private FrameType previousFrame;
 
     //Game.
     private Game game;
@@ -382,14 +386,16 @@ public class GUI
         //Icon.
         frame.setIconImage(icon);
 
-        //TODO: Добавить в меню settings. В settings добавить громкость. Кнопка back должна возвращать на последнее окно.
         //Menu Bar.
         JMenuBar menuBar = new JMenuBar();
         menu = new JMenu(text.getHelp());
+        menuItemSettings = new JMenuItem(text.getSettings());
         menuItemAbout = new JMenuItem(text.getAbout());
+        menuItemSettings.addActionListener(e ->showFrameSettings());
         menuItemAbout.addActionListener(e->
                 JOptionPane.showMessageDialog(frame, text.getAboutVerbose(), text.getAbout(),
                         JOptionPane.INFORMATION_MESSAGE));
+        menu.add(menuItemSettings);
         menu.add(menuItemAbout);
         menuBar.add(menu);
         frame.setJMenuBar(menuBar);
@@ -539,7 +545,7 @@ public class GUI
         statusBar.setBorder(new LineBorder(Color.BLACK, 1));
         statusBar.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
     }
-    private void initializeFrameSettings()
+    private void initializeFrameSettings() //TODO: добавить мут и регулятор громкости
     {
         //Label.
         labelLanguage = new JLabel(text.getLanguage());
@@ -595,11 +601,21 @@ public class GUI
         buttonApply.setFont(font);
 
         //Action listeners.
-        buttonBackSettings.addActionListener(e->showFrameMainMenu());
+        buttonBackSettings.addActionListener(e->
+        {
+            switch(previousFrame)
+            {
+                case MAIN_MENU -> showFrameMainMenu();
+                case GAME_MODE -> showFrameGameMode();
+                case BOARD -> showFrameBoard();
+            }
+        });
         buttonApply.addActionListener(e-> refreshText());
     }
     public void showFrameMainMenu()
     {
+        previousFrame = FrameType.MAIN_MENU;
+
         frame.getContentPane().removeAll();
         frame.setContentPane(panelBackground);
         frame.getContentPane().setLayout(gridBagLayout);
@@ -612,6 +628,8 @@ public class GUI
     }
     private void showFrameGameMode()
     {
+        previousFrame = FrameType.GAME_MODE;
+
         frame.getContentPane().removeAll();
         frame.setContentPane(panelBackground);
         frame.getContentPane().setLayout(gridBagLayout);
@@ -624,6 +642,8 @@ public class GUI
     }
     private void showFrameBoard()
     {
+        previousFrame = FrameType.BOARD;
+
         frame.getContentPane().removeAll();
         frame.setContentPane(panelEmpty);
         frame.getContentPane().setLayout(borderLayout);
@@ -656,6 +676,7 @@ public class GUI
         //Common frame features.
         frame.setTitle(text.getTitle());
         menu.setText(text.getHelp());
+        menuItemSettings.setText(text.getSettings());
         menuItemAbout.setText(text.getAbout());
 
         //Frame Main Menu.
