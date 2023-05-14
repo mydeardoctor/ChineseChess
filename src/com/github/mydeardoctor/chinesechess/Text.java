@@ -34,5 +34,7 @@ public abstract class Text
     public abstract String getRedPlayer();
     public abstract String getBlackPlayer();
     public abstract String getChooseFigure();
-    public abstract String getChooseDestination();
+    public abstract String getChooseAnotherFigureOrDestination();
+    public abstract String getGameOver();
+    public abstract String getWon();
 }

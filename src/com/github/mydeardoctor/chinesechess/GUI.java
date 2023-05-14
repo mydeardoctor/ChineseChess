@@ -115,10 +115,10 @@ public class GUI
         }
 
         //Icon.
-        URL urlIcon = getClass().getResource("/icon.jpg");
+        URL url = getClass().getResource("/icon.jpg");
         try
         {
-            icon = ImageIO.read(urlIcon);
+            icon = ImageIO.read(url);
         } catch (Exception e)
         {
             resourcesMissing = true;
@@ -132,7 +132,7 @@ public class GUI
         }
 
         //Background.
-        URL url = getClass().getResource("/background.jpg");
+        url = getClass().getResource("/background.jpg");
         try
         {
             background = ImageIO.read(url);
@@ -382,6 +382,7 @@ public class GUI
         //Icon.
         frame.setIconImage(icon);
 
+        //TODO: Добавить в меню settings. В settings добавить громкость. Кнопка back должна возвращать на последнее окно.
         //Menu Bar.
         JMenuBar menuBar = new JMenuBar();
         menu = new JMenu(text.getHelp());

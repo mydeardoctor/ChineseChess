@@ -111,8 +111,18 @@ public class TextEnglish extends Text
         return "choose figure.";
     }
     @Override
-    public String getChooseDestination()
+    public String getChooseAnotherFigureOrDestination()
     {
-        return "choose destination.";
+        return "choose another figure or destination.";
+    }
+    @Override
+    public String getGameOver()
+    {
+        return "Game over.";
+    }
+    @Override
+    public String getWon()
+    {
+        return "won.";
     }
 }

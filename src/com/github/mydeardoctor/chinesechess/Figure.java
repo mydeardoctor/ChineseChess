@@ -68,20 +68,23 @@ public abstract class Figure
 
             //Check if friendly general is now under attack.
             boolean generalUnderAttack = false;
-            Location friendlyGeneralLocation;
-            if(game.getTurn()==Player.RED)
+            Location friendlyGeneralLocation=null;
+            switch(game.getTurn())
             {
-                friendlyGeneralLocation = generalRedLocation;
-                //Pretend that the game is in the next turn.
-                //This is necessary for correct calculation of enemy possible moves.
-                game.setTurn(Player.BLACK);
-            }
-            else
-            {
-                friendlyGeneralLocation = generalBlackLocation;
-                //Pretend that the game is in the next turn.
-                //This is necessary for correct calculation of enemy possible moves.
-                game.setTurn(Player.RED);
+                case RED ->
+                {
+                    friendlyGeneralLocation = generalRedLocation;
+                    //Pretend that the game is in the next turn.
+                    //This is necessary for correct calculation of enemy possible moves.
+                    game.setTurn(Player.BLACK);
+                }
+                case BLACK ->
+                {
+                    friendlyGeneralLocation = generalBlackLocation;
+                    //Pretend that the game is in the next turn.
+                    //This is necessary for correct calculation of enemy possible moves.
+                    game.setTurn(Player.RED);
+                }
             }
 
             enemyPossibleMoves.clear();
@@ -113,13 +116,10 @@ public abstract class Figure
             grid.get(origin).setFigure(figureThatWasAtOrigin);
             grid.get(possibleMove).setFigure(figureThatWasAtDestination);
             //Set turn back.
-            if(game.getTurn()==Player.RED)
+            switch(game.getTurn())
             {
-                game.setTurn(Player.BLACK);
-            }
-            else
-            {
-                game.setTurn(Player.RED);
+                case RED -> game.setTurn(Player.BLACK);
+                case BLACK -> game.setTurn(Player.RED);
             }
         }
 

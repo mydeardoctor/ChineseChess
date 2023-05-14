@@ -111,8 +111,18 @@ class TextRussian extends Text
         return "выберите фигуру.";
     }
     @Override
-    public String getChooseDestination()
+    public String getChooseAnotherFigureOrDestination()
     {
-        return "выберите цель.";
+        return "выберите другую фигуру или цель.";
+    }
+    @Override
+    public String getGameOver()
+    {
+        return "Игра окончена.";
+    }
+    @Override
+    public String getWon()
+    {
+        return "выиграл.";
     }
 }

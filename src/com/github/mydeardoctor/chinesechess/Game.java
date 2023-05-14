@@ -49,9 +49,10 @@ public class Game
     private Figure soldierBlack4;
     private Figure soldierBlack5;
     private HashMap<Location, Tile> grid;
-    private HashMap<Location, HashSet<Location>> allAllowedMoves;
-    private Player turn; //TODO: если добавлять turn endgame, то везде надо проверить логику turn
+    private State state;
+    private Player turn;
     private Phase phase;
+    private HashMap<Location, HashSet<Location>> allAllowedMoves;
     private Location prevSelectedLocation;
     private Figure prevSelectedFigure;
 
@@ -63,6 +64,7 @@ public class Game
         selection = gui.getSelection();
         initializeFigures(gui);
         initializeGrid();
+        initializeGameState();
         allAllowedMoves = new HashMap<>();
     }
     private void initializeFigures(GUI gui)
@@ -114,10 +116,16 @@ public class Game
             }
         }
     }
+    private void initializeGameState()
+    {
+        setState(State.OVER);
+        setTurn(Player.RED);
+        setPhase(Phase.CHOOSE_FIGURE);
+    }
     public void start()
     {
         resetGrid();
-        initializeGameState();
+        resetGameState();
     }
     private void resetGrid()
     {
@@ -167,13 +175,12 @@ public class Game
 
         panelBoard.repaint();
     }
-    private void initializeGameState()
+    private void resetGameState()
     {
-        turn = Player.RED;
-        phase = Phase.CHOOSE_FIGURE;
-        statusBar.setText(text.getRedPlayer() + ", " + text.getChooseFigure());
+        setState(State.RUNNING);
 
-        getAllAllowedMoves();
+        setTurn(Player.BLACK); //Black turn is set so that nextTurn() will set red turn.
+        nextTurn();
     }
     private void getAllAllowedMoves()
     {
@@ -186,43 +193,41 @@ public class Game
             if(figure!=null)
             {
                 Player player = figure.getPlayer();
-                if(player == turn)
+                if(player == getTurn()) //For every friendly figure.
                 {
-                    Location origin = gridEntry.getKey();
                     HashSet<Location> allowedMoves = figure.getAllowedMoves(this);
                     if(allowedMoves.size()>0)
                     {
+                        Location origin = gridEntry.getKey();
                         allAllowedMoves.put(origin, allowedMoves);
                     }
                 }
             }
         }
 
-        if(allAllowedMoves.size()==0)
+        if(allAllowedMoves.size()==0) //If there are no allowed moves, the game is over.
         {
-            statusBar.setText("Endgame"); //TODO: если мувов нет, то эндгейм.
+            gameOver();
         }
     }
     public void handleSelectedLocation(Location selectedLocation)
     {
-        TileType tileType;
-        tileType = getTileType(selectedLocation);
+        if(getState()==State.OVER)
+        {
+            return;
+        }
 
-        switch(phase)
+        TileType tileType = getTileType(selectedLocation);
+
+        switch(getPhase())
         {
             case CHOOSE_FIGURE->
             {
                 if(tileType == TileType.FRIENDLY)
                 {
                     saveSelectedFigure(selectedLocation);
-                    highlightSelectedFigureAndPossibleMoves(selectedLocation);
-
-                    phase = Phase.CHOOSE_DESTINATION;
-                    switch(turn)
-                    {
-                        case RED -> statusBar.setText(text.getRedPlayer()+", "+text.getChooseDestination());
-                        case BLACK -> statusBar.setText(text.getBlackPlayer()+", "+text.getChooseDestination());
-                    }
+                    highlightSelectedFigureAndAllowedMoves(selectedLocation);
+                    nextPhase();
                 }
             }
 
@@ -232,22 +237,19 @@ public class Game
                 {
                     case FRIENDLY ->
                     {
-                        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet(); //Unhighlight everything.
-                        for(Map.Entry<Location, Tile> gridEntry : gridSet)
-                        {
-                            gridEntry.getValue().setSelection(null);
-                        }
-
+                        unhighlightEverything();
                         saveSelectedFigure(selectedLocation);
-                        highlightSelectedFigureAndPossibleMoves(selectedLocation);
+                        highlightSelectedFigureAndAllowedMoves(selectedLocation);
                     }
                     case ENEMY, EMPTY ->
                     {
-                        if(allAllowedMoves.containsKey(prevSelectedLocation)) //If chosen figure has possible moves.
+                        if(allAllowedMoves.containsKey(prevSelectedLocation)) //If selected figure has allowed moves.
                         {
-                            if(allAllowedMoves.get(prevSelectedLocation).contains(selectedLocation)) //If this move is possible for this figure.
+                            //If this is one of the allowed moves for selected figure.
+                            if(allAllowedMoves.get(prevSelectedLocation).contains(selectedLocation))
                             {
                                 moveFigure(selectedLocation);
+                                nextTurn();
                             }
                         }
                     }
@@ -265,7 +267,7 @@ public class Game
         else
         {
             Player playerOfFigureAtDestination = figureAtDestination.getPlayer();
-            if(playerOfFigureAtDestination==turn)
+            if(playerOfFigureAtDestination==getTurn())
             {
                 return TileType.FRIENDLY;
             }
@@ -278,69 +280,107 @@ public class Game
     private void saveSelectedFigure(Location locationSelected)
     {
         Figure figureSelected = grid.get(locationSelected).getFigure();
-        prevSelectedLocation = locationSelected;                                        //Save selected location.
-        prevSelectedFigure = figureSelected;                                                    //Save selected figure.
+        prevSelectedLocation = locationSelected;
+        prevSelectedFigure = figureSelected;
     }
-    private void highlightSelectedFigureAndPossibleMoves(Location locationSelected)
+    private void highlightSelectedFigureAndAllowedMoves(Location locationSelected)
     {
-        grid.get(locationSelected).setSelection(selection);                           //Highlight selected figure.
-        HashSet<Location> possibleMoves = allAllowedMoves.get(locationSelected); //Highlight possible moves.
-        if(possibleMoves!=null)
+        grid.get(locationSelected).setSelection(selection);
+        HashSet<Location> allowedMoves = allAllowedMoves.get(locationSelected);
+        if(allowedMoves!=null)
         {
-            for(Location possibleMove : possibleMoves)
+            for(Location allowedMove : allowedMoves)
             {
-                grid.get(possibleMove).setSelection(selection);
+                grid.get(allowedMove).setSelection(selection);
             }
         }
 
         panelBoard.repaint();
     }
-    private void moveFigure(Location locationSelected)
+    private void unhighlightEverything()
     {
-        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet(); //Unhighlight everything.
+        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
         for(Map.Entry<Location, Tile> gridEntry : gridSet)
         {
             gridEntry.getValue().setSelection(null);
         }
+    }
+    private void moveFigure(Location locationSelected)
+    {
+        unhighlightEverything();
 
         grid.get(prevSelectedLocation).setFigure(null);           //Move figure from previous location...
         grid.get(locationSelected).setFigure(prevSelectedFigure); //...to a new location.
 
         panelBoard.repaint();
-
-        switch(turn)
+    }
+    private void nextPhase()
+    {
+        setPhase(Phase.CHOOSE_DESTINATION);
+        switch(getTurn())
+        {
+            case RED -> statusBar.setText(text.getRedPlayer() + ", " + text.getChooseAnotherFigureOrDestination());
+            case BLACK -> statusBar.setText(text.getBlackPlayer() + ", " + text.getChooseAnotherFigureOrDestination());
+        }
+    }
+    private void nextTurn()
+    {
+        switch(getTurn())
         {
             case RED ->
             {
-                turn = Player.BLACK;
-                phase = Phase.CHOOSE_FIGURE;
+                setTurn(Player.BLACK);
+                setPhase(Phase.CHOOSE_FIGURE);
                 statusBar.setText(text.getBlackPlayer() + ", " + text.getChooseFigure());
             }
             case BLACK ->
             {
-                turn = Player.RED;
-                phase = Phase.CHOOSE_FIGURE;
+                setTurn(Player.RED);
+                setPhase(Phase.CHOOSE_FIGURE);
                 statusBar.setText(text.getRedPlayer() + ", " + text.getChooseFigure());
             }
         }
-        getAllAllowedMoves();  //check for endgame. if not.
+        getAllAllowedMoves();
     }
-    public void refreshText(Text text) //TODO: Endgame message.
+    private void gameOver()
+    {
+        setState(State.OVER);
+        switch(getTurn())
+        {
+            case RED -> statusBar.setText(text.getGameOver() + " " + text.getBlackPlayer() + " " + text.getWon());
+            case BLACK -> statusBar.setText(text.getGameOver() + " " + text.getRedPlayer() + " " + text.getWon());
+        }
+    }
+    public void refreshText(Text text)
     {
         this.text = text;
 
-        String message = "";
-        switch(turn)
+        switch (getState())
         {
-            case RED -> message = text.getRedPlayer();
-            case BLACK -> message = text.getBlackPlayer();
+            case RUNNING ->
+            {
+                String message = "";
+                switch(getTurn())
+                {
+                    case RED -> message = text.getRedPlayer();
+                    case BLACK -> message = text.getBlackPlayer();
+                }
+                switch(getPhase())
+                {
+                    case CHOOSE_FIGURE -> message = message + ", " + text.getChooseFigure();
+                    case CHOOSE_DESTINATION -> message = message + ", " + text.getChooseAnotherFigureOrDestination();
+                }
+                statusBar.setText(message);
+            }
+            case OVER ->
+            {
+                switch(getTurn())
+                {
+                    case RED -> statusBar.setText(text.getGameOver() + " " + text.getBlackPlayer() + " " + text.getWon());
+                    case BLACK -> statusBar.setText(text.getGameOver() + " " + text.getRedPlayer() + " " + text.getWon());
+                }
+            }
         }
-        switch(phase)
-        {
-            case CHOOSE_FIGURE -> message = message + ", " + text.getChooseFigure();
-            case CHOOSE_DESTINATION -> message = message + ", " + text.getChooseDestination();
-        }
-        statusBar.setText(message);
     }
     public Figure getGeneralRed()
     {
@@ -354,12 +394,28 @@ public class Game
     {
         return grid;
     }
-    public void setTurn(Player turn)
+    public State getState()
     {
-        this.turn = turn;
-    } //TODO: use
+        return state;
+    }
+    public void setState(State state)
+    {
+        this.state = state;
+    }
     public Player getTurn()
     {
         return turn;
+    }
+    public void setTurn(Player turn)
+    {
+        this.turn = turn;
+    }
+    public Phase getPhase()
+    {
+        return phase;
+    }
+    public void setPhase(Phase phase)
+    {
+        this.phase = phase;
     }
 }
