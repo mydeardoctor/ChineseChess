@@ -15,6 +15,9 @@ public class Game
     private JLabel statusBar;
     private BufferedImage selection;
 
+    //Music player attributes.
+    private MusicPlayer musicPlayer;
+
     //Game attributes.
     private Figure generalRed;
     private Figure advisorRed1;
@@ -56,12 +59,13 @@ public class Game
     private Location prevSelectedLocation;
     private Figure prevSelectedFigure;
 
-    public Game(GUI gui)
+    public Game(GUI gui, MusicPlayer musicPlayer)
     {
         text = gui.getText();
         panelBoard = gui.getPanelBoard();
         statusBar = gui.getStatusBar();
         selection = gui.getSelection();
+        this.musicPlayer = musicPlayer;
         initializeFigures(gui);
         initializeGrid();
         initializeGameState();

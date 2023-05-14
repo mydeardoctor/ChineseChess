@@ -5,7 +5,8 @@ public class ChineseChess
     public static void main(String[] args)
     {
         GUI gui = new GUI();
-        Game game = new Game(gui);
+        MusicPlayer musicPlayer = new MusicPlayer(); //TODO:
+        Game game = new Game(gui, musicPlayer);
         gui.setGame(game);
 
         gui.showFrameMainMenu();

@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import java.io.InputStream;
 import java.net.URL;
 
+//TODO: EDT
 public class GUI
 {
     //Text.
