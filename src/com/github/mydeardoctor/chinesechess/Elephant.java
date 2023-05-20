@@ -1,5 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.awt.image.BufferedImage;
 
@@ -10,14 +11,14 @@ public abstract class Elephant extends Figure
         super(player, icon);
     }
     public void checkTile(int xDestination, int yDestination, int xIntermediate, int yIntermediate,
-                          HashSet<Location> possibleMoves, Game game)
+                          Game game, HashMap<Location, Tile> grid, Player turn, HashSet<Location> possibleMoves)
     {
         Location destination = new Location(xIntermediate, yIntermediate);
-        TileType destinationType = game.getTileType(destination);
+        TileType destinationType = game.getTileType(destination, grid, turn);
         if(destinationType == TileType.EMPTY)
         {
             destination = new Location(xDestination, yDestination);
-            destinationType = game.getTileType(destination);
+            destinationType = game.getTileType(destination, grid, turn);
             if((destinationType == TileType.EMPTY)||(destinationType == TileType.ENEMY))
             {
                 possibleMoves.add(destination);

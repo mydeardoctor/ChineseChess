@@ -7,9 +7,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicBorders;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
-//TODO: EDT
 public class GUI
 {
     //Text.
@@ -18,6 +18,7 @@ public class GUI
     private TextRussian textRussian;
 
     //Resources.
+    boolean resourcesMissing;
     private Font fontChinese;
     private BufferedImage icon;
     private BufferedImage background;
@@ -96,6 +97,7 @@ public class GUI
         initializeFrameGameMode();
         initializeFrameBoard();
         initializeFrameSettings();
+        showFrameMainMenu();
     }
     private void initializeText()
     {
@@ -105,7 +107,7 @@ public class GUI
     }
     private void initializeResources()
     {
-        boolean resourcesMissing = false;
+        resourcesMissing = false;
 
         //Font.
         URL urlFont = getClass().getResource("/kashimarusbycop.otf");
@@ -348,12 +350,6 @@ public class GUI
             g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
             g2d.drawArc(5,5,90,90,0,360);
         }
-
-        if(resourcesMissing==true)
-        {
-            JOptionPane.showMessageDialog(null, text.getSomeResourcesAreMissing(), text.getWarning(),
-                    JOptionPane.WARNING_MESSAGE);
-        }
     }
     private void initializeDefaultFigureImage(BufferedImage figure, Color color, String label)
     {
@@ -372,333 +368,424 @@ public class GUI
     }
     private void initializeCommonFrameFeatures()
     {
-        frame = new JFrame(text.getTitle());
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                frame = new JFrame(text.getTitle());
+                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        //Bounds.
-        frame.setMinimumSize(new Dimension(800,800));
-        frame.setBounds((int)frame.getGraphicsConfiguration().getBounds().getCenterX() -
-                          (int)frame.getBounds().getCenterX(),
+                //Bounds.
+                frame.setMinimumSize(new Dimension(800,800));
+                frame.setBounds((int)frame.getGraphicsConfiguration().getBounds().getCenterX() -
+                                (int)frame.getBounds().getCenterX(),
                         (int)frame.getGraphicsConfiguration().getBounds().getCenterY() -
-                          (int)frame.getBounds().getCenterY(),
-                     800,800);
-        frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+                                (int)frame.getBounds().getCenterY(),
+                        800,800);
+                frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
 
-        //Icon.
-        frame.setIconImage(icon);
+                //Icon.
+                frame.setIconImage(icon);
 
-        //Menu Bar.
-        JMenuBar menuBar = new JMenuBar();
-        menu = new JMenu(text.getHelp());
-        menuItemSettings = new JMenuItem(text.getSettings());
-        menuItemAbout = new JMenuItem(text.getAbout());
-        menuItemSettings.addActionListener(e ->showFrameSettings());
-        menuItemAbout.addActionListener(e->
-                JOptionPane.showMessageDialog(frame, text.getAboutVerbose(), text.getAbout(),
-                        JOptionPane.INFORMATION_MESSAGE));
-        menu.add(menuItemSettings);
-        menu.add(menuItemAbout);
-        menuBar.add(menu);
-        frame.setJMenuBar(menuBar);
+                //Menu Bar.
+                JMenuBar menuBar = new JMenuBar();
+                menu = new JMenu(text.getHelp());
+                menuItemSettings = new JMenuItem(text.getSettings());
+                menuItemAbout = new JMenuItem(text.getAbout());
+                menuItemSettings.addActionListener(e->showFrameSettings());
+                menuItemAbout.addActionListener(e->
+                    JOptionPane.showMessageDialog(frame, text.getAboutVerbose(), text.getAbout(),
+                            JOptionPane.INFORMATION_MESSAGE));
+                menu.add(menuItemSettings);
+                menu.add(menuItemAbout);
+                menuBar.add(menu);
+                frame.setJMenuBar(menuBar);
 
-        //Content Pane with background image.
-        panelBackground = new PanelBackground(background);
+                //Content Pane with background image.
+                panelBackground = new PanelBackground(background);
 
-        //Layout managers.
-        gridBagLayout = new GridBagLayout();
-        borderLayout = new BorderLayout();
-
-        frame.setVisible(true);
+                //Layout managers.
+                gridBagLayout = new GridBagLayout();
+                borderLayout = new BorderLayout();
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
     private void initializeFrameMainMenu()
     {
-        //Buttons.
-        buttonPlay = new JButton(text.getPlay());
-        buttonLoad = new JButton(text.getLoad());
-        buttonRules = new JButton(text.getRules());
-        buttonSettings = new JButton(text.getSettings());
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                //Buttons.
+                buttonPlay = new JButton(text.getPlay());
+                buttonLoad = new JButton(text.getLoad());
+                buttonRules = new JButton(text.getRules());
+                buttonSettings = new JButton(text.getSettings());
 
-        //Preferred Size.
-        Dimension dimension = new Dimension(300,100);
-        buttonPlay.setPreferredSize(dimension);
-        buttonLoad.setPreferredSize(dimension);
-        buttonRules.setPreferredSize(dimension);
-        buttonSettings.setPreferredSize(dimension);
+                //Preferred Size.
+                Dimension dimension = new Dimension(300,100);
+                buttonPlay.setPreferredSize(dimension);
+                buttonLoad.setPreferredSize(dimension);
+                buttonRules.setPreferredSize(dimension);
+                buttonSettings.setPreferredSize(dimension);
 
-        //Layout manager constraints.
-        Insets insets = new Insets(30,0,30,0);
-        constraintsForButtonPlay = new GridBagConstraints
-                (0, 0,1,1,0,0,
-                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                insets, 0,0);
-        constraintsForButtonLoad = new GridBagConstraints
-                (0, 1,1,1,0,0,
-                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                insets, 0,0);
-        constraintsForButtonRules = new GridBagConstraints
-                (0, 2,1,1,0,0,
-                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                insets, 0,0);
-        constraintsForButtonSettings = new GridBagConstraints
-                (0, 3,1,1,0,0,
-                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                insets, 0,0);
+                //Layout manager constraints.
+                Insets insets = new Insets(30,0,30,0);
+                constraintsForButtonPlay = new GridBagConstraints
+                        (0, 0,1,1,0,0,
+                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                insets, 0,0);
+                constraintsForButtonLoad = new GridBagConstraints
+                        (0, 1,1,1,0,0,
+                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                insets, 0,0);
+                constraintsForButtonRules = new GridBagConstraints
+                        (0, 2,1,1,0,0,
+                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                insets, 0,0);
+                constraintsForButtonSettings = new GridBagConstraints
+                        (0, 3,1,1,0,0,
+                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                insets, 0,0);
 
-        //Background Color.
-        buttonPlay.setBackground(Color.WHITE);
-        buttonLoad.setBackground(Color.WHITE);
-        buttonRules.setBackground(Color.WHITE);
-        buttonSettings.setBackground(Color.WHITE);
+                //Background Color.
+                buttonPlay.setBackground(Color.WHITE);
+                buttonLoad.setBackground(Color.WHITE);
+                buttonRules.setBackground(Color.WHITE);
+                buttonSettings.setBackground(Color.WHITE);
 
-        //Border.
-        BasicBorders.ButtonBorder border = new BasicBorders.ButtonBorder(
-                Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK);
-        buttonPlay.setBorder(border);
-        buttonLoad.setBorder(border);
-        buttonRules.setBorder(border);
-        buttonSettings.setBorder(border);
+                //Border.
+                BasicBorders.ButtonBorder border = new BasicBorders.ButtonBorder(
+                        Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK);
+                buttonPlay.setBorder(border);
+                buttonLoad.setBorder(border);
+                buttonRules.setBorder(border);
+                buttonSettings.setBorder(border);
 
-        //Font.
-        Font font = fontChinese.deriveFont(Font.BOLD, 50.f);
-        buttonPlay.setFont(font);
-        buttonLoad.setFont(font);
-        buttonRules.setFont(font);
-        buttonSettings.setFont(font);
+                //Font.
+                Font font = fontChinese.deriveFont(Font.BOLD, 50.f);
+                buttonPlay.setFont(font);
+                buttonLoad.setFont(font);
+                buttonRules.setFont(font);
+                buttonSettings.setFont(font);
 
-        //Action listeners.
-        buttonPlay.addActionListener(e->showFrameGameMode());
-        buttonSettings.addActionListener(e->showFrameSettings());
+                //Action listeners.
+                buttonPlay.addActionListener(e->showFrameGameMode());
+                buttonSettings.addActionListener(e->showFrameSettings());
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
     private void initializeFrameGameMode()
     {
-        //Buttons.
-        buttonSinglePlayer = new JButton(text.getSinglePlayer());
-        buttonLocalMultiplayer = new JButton(text.getLocalMultiplayer());
-        buttonOnlineMultiplayer = new JButton(text.getOnlineMultiplayer());
-        buttonBackGameMode = new JButton(text.getBack());
-
-        //Preferred Size.
-        buttonSinglePlayer.setPreferredSize(new Dimension(500,100));
-        buttonLocalMultiplayer.setPreferredSize(new Dimension(500,100));
-        buttonOnlineMultiplayer.setPreferredSize(new Dimension(500,100));
-        buttonBackGameMode.setPreferredSize(new Dimension(200,100));
-
-        //Layout manager constraints.
-        Insets insets = new Insets(30,0,30,0);
-        constraintsForButtonSinglePlayer = new GridBagConstraints
-                (0, 0,1,1,0,0,
-                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                insets, 0,0);
-        constraintsForButtonLocalMultiplayer = new GridBagConstraints
-                (0, 1,1,1,0,0,
-                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                insets, 0,0);
-        constraintsForButtonOnlineMultiplayer = new GridBagConstraints
-                (0, 2,1,1,0,0,
-                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                insets, 0,0);
-        constraintsForButtonBackGameMode = new GridBagConstraints
-                (0, 3,1,1,0,0,
-                GridBagConstraints.WEST, GridBagConstraints.NONE,
-                insets, 0,0);
-
-        //Background Color.
-        buttonSinglePlayer.setBackground(Color.WHITE);
-        buttonLocalMultiplayer.setBackground(Color.WHITE);
-        buttonOnlineMultiplayer.setBackground(Color.WHITE);
-        buttonBackGameMode.setBackground(Color.WHITE);
-
-        //Border.
-        BasicBorders.ButtonBorder border = new BasicBorders.ButtonBorder(
-                Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK);
-        buttonSinglePlayer.setBorder(border);
-        buttonLocalMultiplayer.setBorder(border);
-        buttonOnlineMultiplayer.setBorder(border);
-        buttonBackGameMode.setBorder(border);
-
-        //Font.
-        Font font = fontChinese.deriveFont(Font.BOLD, 46.f);
-        buttonSinglePlayer.setFont(font);
-        buttonLocalMultiplayer.setFont(font);
-        buttonOnlineMultiplayer.setFont(font);
-        buttonBackGameMode.setFont(font);
-
-        //Action listener.
-        buttonLocalMultiplayer.addActionListener(e->
+        try
         {
-            showFrameBoard();
-            game.start();
-        });
-        buttonBackGameMode.addActionListener(e->showFrameMainMenu());
+            SwingUtilities.invokeAndWait(()->
+            {
+                //Buttons.
+                buttonSinglePlayer = new JButton(text.getSinglePlayer());
+                buttonLocalMultiplayer = new JButton(text.getLocalMultiplayer());
+                buttonOnlineMultiplayer = new JButton(text.getOnlineMultiplayer());
+                buttonBackGameMode = new JButton(text.getBack());
+
+                //Preferred Size.
+                buttonSinglePlayer.setPreferredSize(new Dimension(500,100));
+                buttonLocalMultiplayer.setPreferredSize(new Dimension(500,100));
+                buttonOnlineMultiplayer.setPreferredSize(new Dimension(500,100));
+                buttonBackGameMode.setPreferredSize(new Dimension(200,100));
+
+                //Layout manager constraints.
+                Insets insets = new Insets(30,0,30,0);
+                constraintsForButtonSinglePlayer = new GridBagConstraints
+                        (0, 0,1,1,0,0,
+                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                insets, 0,0);
+                constraintsForButtonLocalMultiplayer = new GridBagConstraints
+                        (0, 1,1,1,0,0,
+                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                insets, 0,0);
+                constraintsForButtonOnlineMultiplayer = new GridBagConstraints
+                        (0, 2,1,1,0,0,
+                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                insets, 0,0);
+                constraintsForButtonBackGameMode = new GridBagConstraints
+                        (0, 3,1,1,0,0,
+                                GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                insets, 0,0);
+
+                //Background Color.
+                buttonSinglePlayer.setBackground(Color.WHITE);
+                buttonLocalMultiplayer.setBackground(Color.WHITE);
+                buttonOnlineMultiplayer.setBackground(Color.WHITE);
+                buttonBackGameMode.setBackground(Color.WHITE);
+
+                //Border.
+                BasicBorders.ButtonBorder border = new BasicBorders.ButtonBorder(
+                        Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK);
+                buttonSinglePlayer.setBorder(border);
+                buttonLocalMultiplayer.setBorder(border);
+                buttonOnlineMultiplayer.setBorder(border);
+                buttonBackGameMode.setBorder(border);
+
+                //Font.
+                Font font = fontChinese.deriveFont(Font.BOLD, 46.f);
+                buttonSinglePlayer.setFont(font);
+                buttonLocalMultiplayer.setFont(font);
+                buttonOnlineMultiplayer.setFont(font);
+                buttonBackGameMode.setFont(font);
+
+                //Action listener.
+                buttonLocalMultiplayer.addActionListener(e->
+                {
+                    game.start(); //TODO: Уже на EDT. Но вдруг этот метод вызывается в другом месте. Тогда нужно защитить внутренности, если там есть доступ к GUI.
+                    showFrameBoard();
+                });
+                buttonBackGameMode.addActionListener(e->showFrameMainMenu());
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
     private void initializeFrameBoard()
     {
-        //Empty content pane.
-        panelEmpty = new JPanel();
-
-        //Board Panel.
-        panelBoard = new PanelBoard(background);
-        panelBoard.addMouseListener(panelBoard);
-
-        //Status Bar.
-        statusBar = new JLabel(" ");
-        statusBar.setOpaque(true);
-        statusBar.setBorder(new LineBorder(Color.BLACK, 1));
-        statusBar.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
-    }
-    private void initializeFrameSettings() //TODO: добавить мут и регулятор громкости
-    {
-        //Label.
-        labelLanguage = new JLabel(text.getLanguage());
-
-        //ComboBox.
-        comboBoxLanguage = new JComboBox<>();
-        comboBoxLanguage.addItem("English");
-        comboBoxLanguage.addItem("Русский");
-
-        //Buttons.
-        buttonBackSettings = new JButton(text.getBack());
-        buttonApply = new JButton(text.getApply());
-
-        //Preferred Size.
-        labelLanguage.setPreferredSize(new Dimension(200,100));
-        comboBoxLanguage.setPreferredSize(new Dimension(300,100));
-        buttonBackSettings.setPreferredSize(new Dimension(200,100));
-        buttonApply.setPreferredSize(new Dimension(230,100));
-
-        //Layout manager constraints.
-        constraintsForLabelLanguage = new GridBagConstraints
-                (0, 0,1,1,0,0,
-                GridBagConstraints.EAST, GridBagConstraints.NONE,
-                new Insets(0,30,0,30), 0,0);
-        constraintsForComboBoxLanguage = new GridBagConstraints
-                (1, 0,1,1,0,0,
-        GridBagConstraints.WEST, GridBagConstraints.NONE,
-                new Insets(0,30,0,30), 0,0);
-        constraintsForButtonBackSettings = new GridBagConstraints
-                (0, 1,1,1,0,0,
-                GridBagConstraints.WEST, GridBagConstraints.NONE,
-                new Insets(80,30,0,30), 0,0);
-        constraintsForButtonApply = new GridBagConstraints
-                (1, 1,1,1,0,0,
-                GridBagConstraints.EAST, GridBagConstraints.NONE,
-                new Insets(80,30,0,30), 0,0);
-
-        //Background Color.
-        buttonBackSettings.setBackground(Color.WHITE);
-        buttonApply.setBackground(Color.WHITE);
-
-        //Border.
-        BasicBorders.ButtonBorder border = new BasicBorders.ButtonBorder(
-                Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK);
-        buttonBackSettings.setBorder(border);
-        buttonApply.setBorder(border);
-
-        //Font.
-        Font font = fontChinese.deriveFont(Font.BOLD, 46.f);
-        labelLanguage.setFont(font);
-        comboBoxLanguage.setFont(font);
-        buttonBackSettings.setFont(font);
-        buttonApply.setFont(font);
-
-        //Action listeners.
-        buttonBackSettings.addActionListener(e->
+        try
         {
-            switch(previousFrame)
+            SwingUtilities.invokeAndWait(()->
             {
-                case MAIN_MENU -> showFrameMainMenu();
-                case GAME_MODE -> showFrameGameMode();
-                case BOARD -> showFrameBoard();
-            }
-        });
-        buttonApply.addActionListener(e-> refreshText());
+                //Empty content pane.
+                panelEmpty = new JPanel();
+
+                //Board Panel.
+                panelBoard = new PanelBoard(background);
+                panelBoard.addMouseListener(panelBoard);
+
+                //Status Bar.
+                statusBar = new JLabel(" ");
+                statusBar.setOpaque(true);
+                statusBar.setBorder(new LineBorder(Color.BLACK, 1));
+                statusBar.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
-    public void showFrameMainMenu()
+    private void initializeFrameSettings()
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                //Label.
+                labelLanguage = new JLabel(text.getLanguage());
+
+                //ComboBox.
+                comboBoxLanguage = new JComboBox<>();
+                comboBoxLanguage.addItem("English");
+                comboBoxLanguage.addItem("Русский");
+
+                //Buttons.
+                buttonBackSettings = new JButton(text.getBack());
+                buttonApply = new JButton(text.getApply());
+
+                //Preferred Size.
+                labelLanguage.setPreferredSize(new Dimension(200,100));
+                comboBoxLanguage.setPreferredSize(new Dimension(300,100));
+                buttonBackSettings.setPreferredSize(new Dimension(200,100));
+                buttonApply.setPreferredSize(new Dimension(230,100));
+
+                //Layout manager constraints.
+                constraintsForLabelLanguage = new GridBagConstraints
+                        (0, 0,1,1,0,0,
+                                GridBagConstraints.EAST, GridBagConstraints.NONE,
+                                new Insets(0,30,0,30), 0,0);
+                constraintsForComboBoxLanguage = new GridBagConstraints
+                        (1, 0,1,1,0,0,
+                                GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                new Insets(0,30,0,30), 0,0);
+                constraintsForButtonBackSettings = new GridBagConstraints
+                        (0, 1,1,1,0,0,
+                                GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                new Insets(80,30,0,30), 0,0);
+                constraintsForButtonApply = new GridBagConstraints
+                        (1, 1,1,1,0,0,
+                                GridBagConstraints.EAST, GridBagConstraints.NONE,
+                                new Insets(80,30,0,30), 0,0);
+
+                //Background Color.
+                buttonBackSettings.setBackground(Color.WHITE);
+                buttonApply.setBackground(Color.WHITE);
+
+                //Border.
+                BasicBorders.ButtonBorder border = new BasicBorders.ButtonBorder(
+                        Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK);
+                buttonBackSettings.setBorder(border);
+                buttonApply.setBorder(border);
+
+                //Font.
+                Font font = fontChinese.deriveFont(Font.BOLD, 46.f);
+                labelLanguage.setFont(font);
+                comboBoxLanguage.setFont(font);
+                buttonBackSettings.setFont(font);
+                buttonApply.setFont(font);
+
+                //Action listeners.
+                buttonBackSettings.addActionListener(e->
+                {
+                    switch(previousFrame)
+                    {
+                        case MAIN_MENU -> showFrameMainMenu();
+                        case GAME_MODE -> showFrameGameMode();
+                        case BOARD -> showFrameBoard();
+                    }
+                });
+                buttonApply.addActionListener(e->refreshText());
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    private void showFrameMainMenu()
     {
         previousFrame = FrameType.MAIN_MENU;
 
-        frame.getContentPane().removeAll();
-        frame.setContentPane(panelBackground);
-        frame.getContentPane().setLayout(gridBagLayout);
-        frame.getContentPane().add(buttonPlay, constraintsForButtonPlay);
-        frame.getContentPane().add(buttonLoad, constraintsForButtonLoad);
-        frame.getContentPane().add(buttonRules, constraintsForButtonRules);
-        frame.getContentPane().add(buttonSettings, constraintsForButtonSettings);
-        frame.validate();
-        frame.repaint();
+        SwingUtilities.invokeLater(()->
+        {
+            frame.getContentPane().removeAll();
+            frame.setContentPane(panelBackground);
+            frame.getContentPane().setLayout(gridBagLayout);
+            frame.getContentPane().add(buttonPlay, constraintsForButtonPlay);
+            frame.getContentPane().add(buttonLoad, constraintsForButtonLoad);
+            frame.getContentPane().add(buttonRules, constraintsForButtonRules);
+            frame.getContentPane().add(buttonSettings, constraintsForButtonSettings);
+            frame.validate();
+            frame.repaint();
+        });
     }
     private void showFrameGameMode()
     {
         previousFrame = FrameType.GAME_MODE;
 
-        frame.getContentPane().removeAll();
-        frame.setContentPane(panelBackground);
-        frame.getContentPane().setLayout(gridBagLayout);
-        frame.getContentPane().add(buttonSinglePlayer, constraintsForButtonSinglePlayer);
-        frame.getContentPane().add(buttonLocalMultiplayer, constraintsForButtonLocalMultiplayer);
-        frame.getContentPane().add(buttonOnlineMultiplayer, constraintsForButtonOnlineMultiplayer);
-        frame.getContentPane().add(buttonBackGameMode, constraintsForButtonBackGameMode);
-        frame.validate();
-        frame.repaint();
+        SwingUtilities.invokeLater(()->
+        {
+            frame.getContentPane().removeAll();
+            frame.setContentPane(panelBackground);
+            frame.getContentPane().setLayout(gridBagLayout);
+            frame.getContentPane().add(buttonSinglePlayer, constraintsForButtonSinglePlayer);
+            frame.getContentPane().add(buttonLocalMultiplayer, constraintsForButtonLocalMultiplayer);
+            frame.getContentPane().add(buttonOnlineMultiplayer, constraintsForButtonOnlineMultiplayer);
+            frame.getContentPane().add(buttonBackGameMode, constraintsForButtonBackGameMode);
+            frame.validate();
+            frame.repaint();
+        });
     }
     private void showFrameBoard()
     {
         previousFrame = FrameType.BOARD;
 
-        frame.getContentPane().removeAll();
-        frame.setContentPane(panelEmpty);
-        frame.getContentPane().setLayout(borderLayout);
-        frame.getContentPane().add(panelBoard, BorderLayout.CENTER);
-        frame.getContentPane().add(statusBar, BorderLayout.SOUTH);
-        frame.validate();
-        frame.repaint();
+        SwingUtilities.invokeLater(()->
+        {
+            frame.getContentPane().removeAll();
+            frame.setContentPane(panelEmpty);
+            frame.getContentPane().setLayout(borderLayout);
+            frame.getContentPane().add(panelBoard, BorderLayout.CENTER);
+            frame.getContentPane().add(statusBar, BorderLayout.SOUTH);
+            frame.validate();
+            frame.repaint();
+        });
     }
     private void showFrameSettings()
     {
-        frame.getContentPane().removeAll();
-        frame.setContentPane(panelBackground);
-        frame.getContentPane().setLayout(gridBagLayout);
-        frame.getContentPane().add(labelLanguage, constraintsForLabelLanguage);
-        frame.getContentPane().add(comboBoxLanguage, constraintsForComboBoxLanguage);
-        frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
-        frame.getContentPane().add(buttonApply, constraintsForButtonApply);
-        frame.validate();
-        frame.repaint();
-    }
-    private void refreshText()
-    {
-        String language = (String)(comboBoxLanguage.getSelectedItem());
-        switch (language)
+        SwingUtilities.invokeLater(()->
         {
-            case "English" -> text = textEnglish;
-            case "Русский" -> text = textRussian;
+            frame.getContentPane().removeAll();
+            frame.setContentPane(panelBackground);
+            frame.getContentPane().setLayout(gridBagLayout);
+            frame.getContentPane().add(labelLanguage, constraintsForLabelLanguage);
+            frame.getContentPane().add(comboBoxLanguage, constraintsForComboBoxLanguage);
+            frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
+            frame.getContentPane().add(buttonApply, constraintsForButtonApply);
+            frame.validate();
+            frame.repaint();
+        });
+    }
+    public void showFrame()
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                frame.setVisible(true);
+
+                if(resourcesMissing==true)
+                {
+                    JOptionPane.showMessageDialog(frame,
+                            text.getSomeResourcesAreMissing(), text.getWarning(), JOptionPane.WARNING_MESSAGE);
+                }
+            });
         }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    public void repaint()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            frame.validate();
+            frame.repaint();
+        });
+    }
+    private void refreshText() //TODO: Проверить из каких мест вызывается. Если только по кнопке, то тогда всегда вызывается на EDT. Перенести game.refreshText сюда. Game может каждый раз просто сеттить буфер.
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            String language = (String)(comboBoxLanguage.getSelectedItem());
+            switch (language)
+            {
+                case "English" -> text = textEnglish;
+                case "Русский" -> text = textRussian;
+            }
 
-        //Common frame features.
-        frame.setTitle(text.getTitle());
-        menu.setText(text.getHelp());
-        menuItemSettings.setText(text.getSettings());
-        menuItemAbout.setText(text.getAbout());
+            //Common frame features.
+            frame.setTitle(text.getTitle());
+            menu.setText(text.getHelp());
+            menuItemSettings.setText(text.getSettings());
+            menuItemAbout.setText(text.getAbout());
 
-        //Frame Main Menu.
-        buttonPlay.setText(text.getPlay());
-        buttonLoad.setText(text.getLoad());
-        buttonRules.setText(text.getRules());
-        buttonSettings.setText(text.getSettings());
+            //Frame Main Menu.
+            buttonPlay.setText(text.getPlay());
+            buttonLoad.setText(text.getLoad());
+            buttonRules.setText(text.getRules());
+            buttonSettings.setText(text.getSettings());
 
-        //Frame Game Mode.
-        buttonSinglePlayer.setText(text.getSinglePlayer());
-        buttonLocalMultiplayer.setText(text.getLocalMultiplayer());
-        buttonOnlineMultiplayer.setText(text.getOnlineMultiplayer());
-        buttonBackGameMode.setText(text.getBack());
+            //Frame Game Mode.
+            buttonSinglePlayer.setText(text.getSinglePlayer());
+            buttonLocalMultiplayer.setText(text.getLocalMultiplayer());
+            buttonOnlineMultiplayer.setText(text.getOnlineMultiplayer());
+            buttonBackGameMode.setText(text.getBack());
 
-        //Frame Settings.
-        labelLanguage.setText(text.getLanguage());
-        buttonBackSettings.setText(text.getBack());
-        buttonApply.setText(text.getApply());
+            //Frame Settings.
+            labelLanguage.setText(text.getLanguage());
+            buttonBackSettings.setText(text.getBack());
+            buttonApply.setText(text.getApply());
 
-        //Game.
-        game.refreshText(text);
+            //Game.
+            game.refreshText(text);
+        });
     }
     public Text getText()
     {
@@ -764,13 +851,9 @@ public class GUI
     {
         return selection;
     }
-    public PanelBoard getPanelBoard()
+    public void setStatusBarText(String message)
     {
-        return panelBoard;
-    }
-    public JLabel getStatusBar()
-    {
-        return statusBar;
+        SwingUtilities.invokeLater(() -> statusBar.setText(message));
     }
     public void setGame(Game game)
     {

@@ -6,9 +6,11 @@ import java.net.URL;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-//TODO: main theme громче. Сделать звук перемещения фигур.
+//TODO: main theme громче. Сделать sfx перемещения фигур.
 //TODO: main theme в конце есть пауза?
 //TODO: Separate thread
+//TODO: добавить в settings два мута и два регулятора громкости
+//TODO: getLine с регулятором громкости (set info)
 public class MusicPlayer
 {
     private static final int BUFFER_SIZE = 4096;

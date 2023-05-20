@@ -18,28 +18,44 @@ public abstract class Figure
     public HashSet<Location> getAllowedMoves(Game game)
     {
         HashSet<Location> allowedMoves = new HashSet<>();
-        HashSet<Location> possibleMoves = getPossibleMoves(game);
-        HashSet<Location> enemyPossibleMoves = new HashSet<>();
 
         HashMap<Location, Tile> grid = game.getGrid();
         Location origin = getLocation(this, grid);
 
+        HashMap<Location, Tile> gridCopy = new HashMap<>();
+        for(int y = 0; y <= 9; y++)
+        {
+            for(int x = 0; x <= 8; x++)
+            {
+                Location location = new Location(x, y);
+                Tile tile = new Tile(null, null);
+                gridCopy.put(location, tile);
+            }
+        }
+
+        HashSet<Location> possibleMoves = getPossibleMoves(game, grid, game.getTurn());
         for(Location possibleMove : possibleMoves)
         {
-            Figure figureThatWasAtOrigin = grid.get(origin).getFigure();            //Save figure to move back later.
-            Figure figureThatWasAtDestination = grid.get(possibleMove).getFigure(); //Save figure to move back later.
-            grid.get(origin).setFigure(null);       //Move figure from initial location...
-            grid.get(possibleMove).setFigure(this); //...to a new location.
+            //Reset grid copy.
+            Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
+            for(Map.Entry<Location, Tile> gridEntry : gridSet)
+            {
+                Location location = gridEntry.getKey();
+                Figure figure = gridEntry.getValue().getFigure();
+                BufferedImage selection = gridEntry.getValue().getSelection();
+                gridCopy.get(location).setFigure(figure);
+                gridCopy.get(location).setSelection(selection);
+            }
+
+            gridCopy.get(origin).setFigure(null);       //Move figure from initial location...
+            gridCopy.get(possibleMove).setFigure(this); //...to a new location.
 
             //Check if generals see each other.
-            Location generalRedLocation = getLocation(game.getGeneralRed(), grid);
-            Location generalBlackLocation = getLocation(game.getGeneralBlack(), grid);
+            Location generalRedLocation = getLocation(game.getGeneralRed(), gridCopy);
+            Location generalBlackLocation = getLocation(game.getGeneralBlack(), gridCopy);
 
             if((generalRedLocation==null) || (generalBlackLocation==null)) //General was killed. Illegal move.
             {
-                //Move figure back.
-                grid.get(origin).setFigure(figureThatWasAtOrigin);
-                grid.get(possibleMove).setFigure(figureThatWasAtDestination);
                 continue;
             }
 
@@ -50,7 +66,7 @@ public abstract class Figure
                 for(int y = generalBlackLocation.getY() + 1; y < generalRedLocation.getY(); y++)
                 {
                     Location destination = new Location(x, y);
-                    TileType tileType = game.getTileType(destination);
+                    TileType tileType = game.getTileType(destination, gridCopy, game.getTurn());
                     if(tileType!=TileType.EMPTY)
                     {
                         generalsSeeEachOther = false;
@@ -59,9 +75,6 @@ public abstract class Figure
                 }
                 if(generalsSeeEachOther) //Generals see each other. Illegal move.
                 {
-                    //Move figure back.
-                    grid.get(origin).setFigure(figureThatWasAtOrigin);
-                    grid.get(possibleMove).setFigure(figureThatWasAtDestination);
                     continue;
                 }
             }
@@ -69,6 +82,7 @@ public abstract class Figure
             //Check if friendly general is now under attack.
             boolean generalUnderAttack = false;
             Location friendlyGeneralLocation=null;
+            Player nextTurn = null;
             switch(game.getTurn())
             {
                 case RED ->
@@ -76,28 +90,27 @@ public abstract class Figure
                     friendlyGeneralLocation = generalRedLocation;
                     //Pretend that the game is in the next turn.
                     //This is necessary for correct calculation of enemy possible moves.
-                    game.setTurn(Player.BLACK);
+                    nextTurn = Player.BLACK;
                 }
                 case BLACK ->
                 {
                     friendlyGeneralLocation = generalBlackLocation;
                     //Pretend that the game is in the next turn.
                     //This is necessary for correct calculation of enemy possible moves.
-                    game.setTurn(Player.RED);
+                    nextTurn = Player.RED;
                 }
             }
 
-            enemyPossibleMoves.clear();
-            Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
-            for(Map.Entry<Location, Tile> gridEntry : gridSet)
+            Set<Map.Entry<Location, Tile>> gridCopySet = gridCopy.entrySet();
+            for(Map.Entry<Location, Tile> gridCopyEntry : gridCopySet)
             {
-                Figure figure = gridEntry.getValue().getFigure();
+                Figure figure = gridCopyEntry.getValue().getFigure();
                 if(figure!=null)
                 {
                     Player player = figure.getPlayer();
-                    if(player==game.getTurn()) //For every enemy figure.
+                    if(player==nextTurn) //For every enemy figure.
                     {
-                        enemyPossibleMoves = figure.getPossibleMoves(game);
+                        HashSet<Location> enemyPossibleMoves = figure.getPossibleMoves(game, gridCopy, nextTurn);
                         //Check if enemy figure can attack friendly general.
                         if(enemyPossibleMoves.contains(friendlyGeneralLocation))
                         {
@@ -111,21 +124,11 @@ public abstract class Figure
             {
                 allowedMoves.add(possibleMove);
             }
-
-            //Move figure back.
-            grid.get(origin).setFigure(figureThatWasAtOrigin);
-            grid.get(possibleMove).setFigure(figureThatWasAtDestination);
-            //Set turn back.
-            switch(game.getTurn())
-            {
-                case RED -> game.setTurn(Player.BLACK);
-                case BLACK -> game.setTurn(Player.RED);
-            }
         }
 
         return allowedMoves;
     }
-    public abstract HashSet<Location> getPossibleMoves(Game game);
+    public abstract HashSet<Location> getPossibleMoves(Game game, HashMap<Location, Tile> grid, Player turn);
     public Location getLocation(Figure figure, HashMap<Location, Tile> grid)
     {
         Location location = null;
@@ -151,5 +154,9 @@ public abstract class Figure
     public BufferedImage getIcon()
     {
         return icon;
+    }
+    public void setIcon(BufferedImage icon)
+    {
+        this.icon = icon;
     }
 }

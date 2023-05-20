@@ -11,11 +11,10 @@ public class AdvisorBlack extends Advisor
         super(player, icon);
     }
     @Override
-    public HashSet<Location> getPossibleMoves(Game game)
+    public HashSet<Location> getPossibleMoves(Game game, HashMap<Location, Tile> grid, Player turn)
     {
         HashSet<Location> possibleMoves = new HashSet<>();
 
-        HashMap<Location, Tile> grid = game.getGrid();
         Location origin = getLocation(this, grid);
         int x = origin.getX();
         int y = origin.getY();
@@ -23,25 +22,25 @@ public class AdvisorBlack extends Advisor
         //Check tile above-left.
         if((x>=4)&&(y>=1))
         {
-            checkTile(x-1, y-1, possibleMoves, game);
+            checkTile(x-1, y-1, game, grid, turn, possibleMoves);
         }
 
         //Check tile above-right.
         if((x<=4)&&(y>=1))
         {
-            checkTile(x+1, y-1, possibleMoves, game);
+            checkTile(x+1, y-1, game, grid, turn, possibleMoves);
         }
 
         //Check tile below-left.
         if((x>=4)&&(y<=1))
         {
-            checkTile(x-1, y+1, possibleMoves, game);
+            checkTile(x-1, y+1, game, grid, turn, possibleMoves);
         }
 
         //Check tile below-right.
         if((x<=4)&&(y<=1))
         {
-            checkTile(x+1, y+1, possibleMoves, game);
+            checkTile(x+1, y+1, game, grid, turn, possibleMoves);
         }
 
         return possibleMoves;

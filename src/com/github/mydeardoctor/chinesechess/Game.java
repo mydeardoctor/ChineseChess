@@ -5,19 +5,9 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.awt.image.BufferedImage;
-import javax.swing.*;
 
 public class Game
 {
-    //GUI attributes.
-    private Text text;
-    private PanelBoard panelBoard;
-    private JLabel statusBar;
-    private BufferedImage selection;
-
-    //Music player attributes.
-    private MusicPlayer musicPlayer;
-
     //Game attributes.
     private Figure generalRed;
     private Figure advisorRed1;
@@ -59,53 +49,53 @@ public class Game
     private Location prevSelectedLocation;
     private Figure prevSelectedFigure;
 
-    public Game(GUI gui, MusicPlayer musicPlayer)
+    //GUI attributes.
+    private GUI gui;
+    private Text text;
+    private BufferedImage selection;
+
+    public Game()
     {
-        text = gui.getText();
-        panelBoard = gui.getPanelBoard();
-        statusBar = gui.getStatusBar();
-        selection = gui.getSelection();
-        this.musicPlayer = musicPlayer;
-        initializeFigures(gui);
+        initializeFigures();
         initializeGrid();
         initializeGameState();
         allAllowedMoves = new HashMap<>();
     }
-    private void initializeFigures(GUI gui)
+    private void initializeFigures()
     {
-        generalRed = new GeneralRed(Player.RED, gui.getGeneralRedIcon());
-        advisorRed1 = new AdvisorRed(Player.RED, gui.getAdvisorRedIcon());
-        advisorRed2 = new AdvisorRed(Player.RED, gui.getAdvisorRedIcon());
-        elephantRed1 = new ElephantRed(Player.RED, gui.getElephantRedIcon());
-        elephantRed2 = new ElephantRed(Player.RED, gui.getElephantRedIcon());
-        horseRed1 = new Horse(Player.RED, gui.getHorseRedIcon());
-        horseRed2 = new Horse(Player.RED, gui.getHorseRedIcon());
-        chariotRed1 = new Chariot(Player.RED, gui.getChariotRedIcon());
-        chariotRed2 = new Chariot(Player.RED, gui.getChariotRedIcon());
-        cannonRed1 = new Cannon(Player.RED, gui.getCannonRedIcon());
-        cannonRed2 = new Cannon(Player.RED, gui.getCannonRedIcon());
-        soldierRed1 = new SoldierRed(Player.RED, gui.getSoldierRedIcon());
-        soldierRed2 = new SoldierRed(Player.RED, gui.getSoldierRedIcon());
-        soldierRed3 = new SoldierRed(Player.RED, gui.getSoldierRedIcon());
-        soldierRed4 = new SoldierRed(Player.RED, gui.getSoldierRedIcon());
-        soldierRed5 = new SoldierRed(Player.RED, gui.getSoldierRedIcon());
+        generalRed = new GeneralRed(Player.RED, null);
+        advisorRed1 = new AdvisorRed(Player.RED, null);
+        advisorRed2 = new AdvisorRed(Player.RED, null);
+        elephantRed1 = new ElephantRed(Player.RED, null);
+        elephantRed2 = new ElephantRed(Player.RED, null);
+        horseRed1 = new Horse(Player.RED, null);
+        horseRed2 = new Horse(Player.RED, null);
+        chariotRed1 = new Chariot(Player.RED, null);
+        chariotRed2 = new Chariot(Player.RED, null);
+        cannonRed1 = new Cannon(Player.RED, null);
+        cannonRed2 = new Cannon(Player.RED, null);
+        soldierRed1 = new SoldierRed(Player.RED, null);
+        soldierRed2 = new SoldierRed(Player.RED, null);
+        soldierRed3 = new SoldierRed(Player.RED, null);
+        soldierRed4 = new SoldierRed(Player.RED, null);
+        soldierRed5 = new SoldierRed(Player.RED, null);
 
-        generalBlack = new GeneralBlack(Player.BLACK, gui.getGeneralBlackIcon());
-        advisorBlack1 = new AdvisorBlack(Player.BLACK, gui.getAdvisorBlackIcon());
-        advisorBlack2 = new AdvisorBlack(Player.BLACK, gui.getAdvisorBlackIcon());
-        elephantBlack1 = new ElephantBlack(Player.BLACK, gui.getElephantBlackIcon());
-        elephantBlack2 = new ElephantBlack(Player.BLACK, gui.getElephantBlackIcon());
-        horseBlack1 = new Horse(Player.BLACK, gui.getHorseBlackIcon());
-        horseBlack2 = new Horse(Player.BLACK, gui.getHorseBlackIcon());
-        chariotBlack1 = new Chariot(Player.BLACK, gui.getChariotBlackIcon());
-        chariotBlack2 = new Chariot(Player.BLACK, gui.getChariotBlackIcon());
-        cannonBlack1 = new Cannon(Player.BLACK, gui.getCannonBlackIcon());
-        cannonBlack2 = new Cannon(Player.BLACK, gui.getCannonBlackIcon());
-        soldierBlack1 = new SoldierBlack(Player.BLACK, gui.getSoldierBlackIcon());
-        soldierBlack2 = new SoldierBlack(Player.BLACK, gui.getSoldierBlackIcon());
-        soldierBlack3 = new SoldierBlack(Player.BLACK, gui.getSoldierBlackIcon());
-        soldierBlack4 = new SoldierBlack(Player.BLACK, gui.getSoldierBlackIcon());
-        soldierBlack5 = new SoldierBlack(Player.BLACK, gui.getSoldierBlackIcon());
+        generalBlack = new GeneralBlack(Player.BLACK, null);
+        advisorBlack1 = new AdvisorBlack(Player.BLACK, null);
+        advisorBlack2 = new AdvisorBlack(Player.BLACK, null);
+        elephantBlack1 = new ElephantBlack(Player.BLACK, null);
+        elephantBlack2 = new ElephantBlack(Player.BLACK, null);
+        horseBlack1 = new Horse(Player.BLACK, null);
+        horseBlack2 = new Horse(Player.BLACK, null);
+        chariotBlack1 = new Chariot(Player.BLACK, null);
+        chariotBlack2 = new Chariot(Player.BLACK, null);
+        cannonBlack1 = new Cannon(Player.BLACK, null);
+        cannonBlack2 = new Cannon(Player.BLACK, null);
+        soldierBlack1 = new SoldierBlack(Player.BLACK, null);
+        soldierBlack2 = new SoldierBlack(Player.BLACK, null);
+        soldierBlack3 = new SoldierBlack(Player.BLACK, null);
+        soldierBlack4 = new SoldierBlack(Player.BLACK, null);
+        soldierBlack5 = new SoldierBlack(Player.BLACK, null);
     }
     private void initializeGrid()
     {
@@ -126,12 +116,49 @@ public class Game
         setTurn(Player.RED);
         setPhase(Phase.CHOOSE_FIGURE);
     }
+    private void setIconsToFigures(GUI gui)
+    {
+        generalRed.setIcon(gui.getGeneralRedIcon());
+        advisorRed1.setIcon(gui.getAdvisorRedIcon());
+        advisorRed2.setIcon(gui.getAdvisorRedIcon());
+        elephantRed1.setIcon(gui.getElephantRedIcon());
+        elephantRed2.setIcon(gui.getElephantRedIcon());
+        horseRed1.setIcon(gui.getHorseRedIcon());
+        horseRed2.setIcon(gui.getHorseRedIcon());
+        chariotRed1.setIcon(gui.getChariotRedIcon());
+        chariotRed2.setIcon(gui.getChariotRedIcon());
+        cannonRed1.setIcon(gui.getCannonRedIcon());
+        cannonRed2.setIcon(gui.getCannonRedIcon());
+        soldierRed1.setIcon(gui.getSoldierRedIcon());
+        soldierRed2.setIcon(gui.getSoldierRedIcon());
+        soldierRed3.setIcon(gui.getSoldierRedIcon());
+        soldierRed4.setIcon(gui.getSoldierRedIcon());
+        soldierRed5.setIcon(gui.getSoldierRedIcon());
+
+        generalBlack.setIcon(gui.getGeneralBlackIcon());
+        advisorBlack1.setIcon(gui.getAdvisorBlackIcon());
+        advisorBlack2.setIcon(gui.getAdvisorBlackIcon());
+        elephantBlack1.setIcon(gui.getElephantBlackIcon());
+        elephantBlack2.setIcon(gui.getElephantBlackIcon());
+        horseBlack1.setIcon(gui.getHorseBlackIcon());
+        horseBlack2.setIcon(gui.getHorseBlackIcon());
+        chariotBlack1.setIcon(gui.getChariotBlackIcon());
+        chariotBlack2.setIcon(gui.getChariotBlackIcon());
+        cannonBlack1.setIcon(gui.getCannonBlackIcon());
+        cannonBlack2.setIcon(gui.getCannonBlackIcon());
+        soldierBlack1.setIcon(gui.getSoldierBlackIcon());
+        soldierBlack2.setIcon(gui.getSoldierBlackIcon());
+        soldierBlack3.setIcon(gui.getSoldierBlackIcon());
+        soldierBlack4.setIcon(gui.getSoldierBlackIcon());
+        soldierBlack5.setIcon(gui.getSoldierBlackIcon());
+    }
     public void start()
     {
         resetGrid();
         resetGameState();
+        gui.repaint();
     }
-    private void resetGrid()
+    private void resetGrid() //TODO: EDT
     {
         //Clear all figures and selections.
         Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
@@ -176,15 +203,16 @@ public class Game
         grid.get(new Location(4,3)).setFigure(soldierBlack3);
         grid.get(new Location(6,3)).setFigure(soldierBlack4);
         grid.get(new Location(8,3)).setFigure(soldierBlack5);
-
-        panelBoard.repaint();
     }
     private void resetGameState()
     {
         setState(State.RUNNING);
+        setTurn(Player.RED);
+        setPhase(Phase.CHOOSE_FIGURE);
 
-        setTurn(Player.BLACK); //Black turn is set so that nextTurn() will set red turn.
-        nextTurn();
+        gui.setStatusBarText(text.getRedPlayer() + ", " + text.getChooseFigure());
+
+        getAllAllowedMoves();
     }
     private void getAllAllowedMoves()
     {
@@ -221,7 +249,7 @@ public class Game
             return;
         }
 
-        TileType tileType = getTileType(selectedLocation);
+        TileType tileType = getTileType(selectedLocation, grid, turn);
 
         switch(getPhase())
         {
@@ -261,7 +289,7 @@ public class Game
             }
         }
     }
-    public TileType getTileType(Location destination)
+    public TileType getTileType(Location destination, HashMap<Location, Tile> grid, Player turn)
     {
         Figure figureAtDestination = grid.get(destination).getFigure();
         if(figureAtDestination == null)
@@ -271,7 +299,7 @@ public class Game
         else
         {
             Player playerOfFigureAtDestination = figureAtDestination.getPlayer();
-            if(playerOfFigureAtDestination==getTurn())
+            if(playerOfFigureAtDestination==turn)
             {
                 return TileType.FRIENDLY;
             }
@@ -299,7 +327,7 @@ public class Game
             }
         }
 
-        panelBoard.repaint();
+        gui.repaint();
     }
     private void unhighlightEverything()
     {
@@ -316,15 +344,15 @@ public class Game
         grid.get(prevSelectedLocation).setFigure(null);           //Move figure from previous location...
         grid.get(locationSelected).setFigure(prevSelectedFigure); //...to a new location.
 
-        panelBoard.repaint();
+        gui.repaint();
     }
     private void nextPhase()
     {
         setPhase(Phase.CHOOSE_DESTINATION);
         switch(getTurn())
         {
-            case RED -> statusBar.setText(text.getRedPlayer() + ", " + text.getChooseAnotherFigureOrDestination());
-            case BLACK -> statusBar.setText(text.getBlackPlayer() + ", " + text.getChooseAnotherFigureOrDestination());
+            case RED -> gui.setStatusBarText(text.getRedPlayer() + ", " + text.getChooseAnotherFigureOrDestination());
+            case BLACK -> gui.setStatusBarText(text.getBlackPlayer() + ", " + text.getChooseAnotherFigureOrDestination());
         }
     }
     private void nextTurn()
@@ -335,13 +363,13 @@ public class Game
             {
                 setTurn(Player.BLACK);
                 setPhase(Phase.CHOOSE_FIGURE);
-                statusBar.setText(text.getBlackPlayer() + ", " + text.getChooseFigure());
+                gui.setStatusBarText(text.getBlackPlayer() + ", " + text.getChooseFigure());
             }
             case BLACK ->
             {
                 setTurn(Player.RED);
                 setPhase(Phase.CHOOSE_FIGURE);
-                statusBar.setText(text.getRedPlayer() + ", " + text.getChooseFigure());
+                gui.setStatusBarText(text.getRedPlayer() + ", " + text.getChooseFigure());
             }
         }
         getAllAllowedMoves();
@@ -351,8 +379,8 @@ public class Game
         setState(State.OVER);
         switch(getTurn())
         {
-            case RED -> statusBar.setText(text.getGameOver() + " " + text.getBlackPlayer() + " " + text.getWon());
-            case BLACK -> statusBar.setText(text.getGameOver() + " " + text.getRedPlayer() + " " + text.getWon());
+            case RED -> gui.setStatusBarText(text.getGameOver() + " " + text.getBlackPlayer() + " " + text.getWon());
+            case BLACK -> gui.setStatusBarText(text.getGameOver() + " " + text.getRedPlayer() + " " + text.getWon());
         }
     }
     public void refreshText(Text text)
@@ -374,14 +402,14 @@ public class Game
                     case CHOOSE_FIGURE -> message = message + ", " + text.getChooseFigure();
                     case CHOOSE_DESTINATION -> message = message + ", " + text.getChooseAnotherFigureOrDestination();
                 }
-                statusBar.setText(message);
+                gui.setStatusBarText(message);
             }
             case OVER ->
             {
                 switch(getTurn())
                 {
-                    case RED -> statusBar.setText(text.getGameOver() + " " + text.getBlackPlayer() + " " + text.getWon());
-                    case BLACK -> statusBar.setText(text.getGameOver() + " " + text.getRedPlayer() + " " + text.getWon());
+                    case RED -> gui.setStatusBarText(text.getGameOver() + " " + text.getBlackPlayer() + " " + text.getWon());
+                    case BLACK -> gui.setStatusBarText(text.getGameOver() + " " + text.getRedPlayer() + " " + text.getWon());
                 }
             }
         }
@@ -394,7 +422,7 @@ public class Game
     {
         return generalBlack;
     }
-    public HashMap<Location, Tile> getGrid()
+    synchronized public HashMap<Location, Tile> getGrid()
     {
         return grid;
     }
@@ -421,5 +449,13 @@ public class Game
     public void setPhase(Phase phase)
     {
         this.phase = phase;
+    }
+    public void setGui(GUI gui) //TODO: EDT
+    {
+        this.gui = gui;
+        text = gui.getText();
+        selection = gui.getSelection();
+
+        setIconsToFigures(gui);
     }
 }

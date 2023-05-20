@@ -89,16 +89,16 @@ public class PanelBoard extends PanelBackground implements MouseListener
             if(figure!=null)
             {
                 g2d.drawImage(figure.getIcon(),
-                        x0Board + tileLength + tileLength*gridEntry.getKey().getX() - figureRadius,
-                        y0Board + tileLength + tileLength*gridEntry.getKey().getY() - figureRadius,
+                        x0Board + tileLength + tileLength* gridEntry.getKey().getX() - figureRadius,
+                        y0Board + tileLength + tileLength* gridEntry.getKey().getY() - figureRadius,
                         figureDiameter, figureDiameter, this);
             }
             BufferedImage selection = gridEntry.getValue().getSelection();
             if(selection!=null)
             {
                 g2d.drawImage(selection,
-                        x0Board + tileLength + tileLength*gridEntry.getKey().getX() - selectionRadius,
-                        y0Board + tileLength + tileLength*gridEntry.getKey().getY() - selectionRadius,
+                        x0Board + tileLength + tileLength* gridEntry.getKey().getX() - selectionRadius,
+                        y0Board + tileLength + tileLength* gridEntry.getKey().getY() - selectionRadius,
                         selectionDiameter, selectionDiameter, this);
             }
         }
@@ -141,7 +141,7 @@ public class PanelBoard extends PanelBackground implements MouseListener
 
         if(selectedLocation!=null)
         {
-            game.handleSelectedLocation(selectedLocation);
+            game.handleSelectedLocation(selectedLocation); //TODO:
         }
     }
     @Override
