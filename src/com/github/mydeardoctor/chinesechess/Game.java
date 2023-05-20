@@ -158,7 +158,7 @@ public class Game
         resetGameState();
         gui.repaint();
     }
-    private void resetGrid() //TODO: EDT
+    private void resetGrid()
     {
         //Clear all figures and selections.
         Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
@@ -244,14 +244,14 @@ public class Game
     }
     public void handleSelectedLocation(Location selectedLocation)
     {
-        if(getState()==State.OVER)
+        if(state==State.OVER)
         {
             return;
         }
 
         TileType tileType = getTileType(selectedLocation, grid, turn);
 
-        switch(getPhase())
+        switch(phase)
         {
             case CHOOSE_FIGURE->
             {
@@ -280,6 +280,7 @@ public class Game
                             //If this is one of the allowed moves for selected figure.
                             if(allAllowedMoves.get(prevSelectedLocation).contains(selectedLocation))
                             {
+                                unhighlightEverything();
                                 moveFigure(selectedLocation);
                                 nextTurn();
                             }
@@ -339,8 +340,6 @@ public class Game
     }
     private void moveFigure(Location locationSelected)
     {
-        unhighlightEverything();
-
         grid.get(prevSelectedLocation).setFigure(null);           //Move figure from previous location...
         grid.get(locationSelected).setFigure(prevSelectedFigure); //...to a new location.
 
@@ -450,7 +449,7 @@ public class Game
     {
         this.phase = phase;
     }
-    public void setGui(GUI gui) //TODO: EDT
+    public void setGui(GUI gui)
     {
         this.gui = gui;
         text = gui.getText();

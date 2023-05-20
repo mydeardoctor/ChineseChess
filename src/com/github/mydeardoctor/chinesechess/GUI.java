@@ -7,7 +7,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicBorders;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 public class GUI
@@ -544,7 +543,7 @@ public class GUI
                 //Action listener.
                 buttonLocalMultiplayer.addActionListener(e->
                 {
-                    game.start(); //TODO: Уже на EDT. Но вдруг этот метод вызывается в другом месте. Тогда нужно защитить внутренности, если там есть доступ к GUI.
+                    game.start();
                     showFrameBoard();
                 });
                 buttonBackGameMode.addActionListener(e->showFrameMainMenu());
@@ -749,7 +748,7 @@ public class GUI
             frame.repaint();
         });
     }
-    private void refreshText() //TODO: Проверить из каких мест вызывается. Если только по кнопке, то тогда всегда вызывается на EDT. Перенести game.refreshText сюда. Game может каждый раз просто сеттить буфер.
+    private void refreshText()
     {
         SwingUtilities.invokeLater(()->
         {

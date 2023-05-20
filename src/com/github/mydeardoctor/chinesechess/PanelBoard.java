@@ -141,7 +141,7 @@ public class PanelBoard extends PanelBackground implements MouseListener
 
         if(selectedLocation!=null)
         {
-            game.handleSelectedLocation(selectedLocation); //TODO:
+            game.handleSelectedLocation(selectedLocation);
         }
     }
     @Override
