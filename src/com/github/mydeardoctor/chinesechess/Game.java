@@ -54,6 +54,9 @@ public class Game
     private Text text;
     private BufferedImage selection;
 
+    //Music player attributes.
+    private MusicPlayer musicPlayer;
+
     public Game()
     {
         initializeFigures();
@@ -157,6 +160,7 @@ public class Game
         resetGrid();
         resetGameState();
         gui.repaint();
+        musicPlayer.playMainTheme();
     }
     private void resetGrid()
     {
@@ -344,6 +348,7 @@ public class Game
         grid.get(locationSelected).setFigure(prevSelectedFigure); //...to a new location.
 
         gui.repaint();
+        musicPlayer.playSfx();
     }
     private void nextPhase()
     {
@@ -381,6 +386,7 @@ public class Game
             case RED -> gui.setStatusBarText(text.getGameOver() + " " + text.getBlackPlayer() + " " + text.getWon());
             case BLACK -> gui.setStatusBarText(text.getGameOver() + " " + text.getRedPlayer() + " " + text.getWon());
         }
+        musicPlayer.stopMainTheme();
     }
     public void refreshText(Text text)
     {
@@ -456,5 +462,9 @@ public class Game
         selection = gui.getSelection();
 
         setIconsToFigures(gui);
+    }
+    public void setMusicPlayer(MusicPlayer musicPlayer)
+    {
+        this.musicPlayer = musicPlayer;
     }
 }

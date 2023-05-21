@@ -2,10 +2,19 @@ package com.github.mydeardoctor.chinesechess;
 
 public abstract class Text
 {
+    //Game.
+
+    public abstract String getRedPlayer();
+    public abstract String getBlackPlayer();
+    public abstract String getChooseFigure();
+    public abstract String getChooseAnotherFigureOrDestination();
+    public abstract String getGameOver();
+    public abstract String getWon();
+
     //GUI.
 
     //Resources.
-    public abstract String getWarning();
+    public abstract String getGuiWarning();
     public abstract String getSomeResourcesAreMissing();
 
     //Common frame features.
@@ -30,11 +39,8 @@ public abstract class Text
     public abstract String getLanguage();
     public abstract String getApply();
 
-    //Game.
-    public abstract String getRedPlayer();
-    public abstract String getBlackPlayer();
-    public abstract String getChooseFigure();
-    public abstract String getChooseAnotherFigureOrDestination();
-    public abstract String getGameOver();
-    public abstract String getWon();
+    //Music player.
+
+    public abstract String getMusicPlayerWarning();
+    public abstract String getSomeFeaturesAreNotAvailable();
 }

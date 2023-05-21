@@ -87,6 +87,9 @@ public class GUI
     //Game.
     private Game game;
 
+    //Music player.
+    private MusicPlayer musicPlayer;
+
     public GUI()
     {
         initializeText();
@@ -731,7 +734,24 @@ public class GUI
                 if(resourcesMissing==true)
                 {
                     JOptionPane.showMessageDialog(frame,
-                            text.getSomeResourcesAreMissing(), text.getWarning(), JOptionPane.WARNING_MESSAGE);
+                            text.getSomeResourcesAreMissing(), text.getGuiWarning(), JOptionPane.WARNING_MESSAGE);
+                }
+
+                if(musicPlayer.getResourcesMissing()==true)
+                {
+                    JOptionPane.showMessageDialog(frame,
+                            text.getSomeResourcesAreMissing(), text.getMusicPlayerWarning(), JOptionPane.WARNING_MESSAGE);
+                }
+
+                if((musicPlayer.getLineMainThemeAvailable()==false) ||
+                   (musicPlayer.getMuteMainThemeAvailable()==false) ||
+                   (musicPlayer.getGainMainThemeAvailable()==false) ||
+                   (musicPlayer.getLineSfxAvailable()==false)       ||
+                   (musicPlayer.getMuteSfxAvailable()==false)       ||
+                   (musicPlayer.getGainSfxAvailable()==false))
+                {
+                    JOptionPane.showMessageDialog(frame,
+                            text.getSomeFeaturesAreNotAvailable(), text.getMusicPlayerWarning(), JOptionPane.WARNING_MESSAGE);
                 }
             });
         }
@@ -858,5 +878,9 @@ public class GUI
     {
         this.game = game;
         panelBoard.setGame(game);
+    }
+    public void setMusicPlayer(MusicPlayer musicPlayer)
+    {
+        this.musicPlayer = musicPlayer;
     }
 }

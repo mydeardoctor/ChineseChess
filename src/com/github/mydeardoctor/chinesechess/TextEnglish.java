@@ -2,13 +2,46 @@ package com.github.mydeardoctor.chinesechess;
 
 public class TextEnglish extends Text
 {
+    //Game.
+
+    @Override
+    public String getRedPlayer()
+    {
+        return "Red player";
+    }
+    @Override
+    public String getBlackPlayer()
+    {
+        return "Black player";
+    }
+    @Override
+    public String getChooseFigure()
+    {
+        return "choose figure.";
+    }
+    @Override
+    public String getChooseAnotherFigureOrDestination()
+    {
+        return "choose another figure or destination.";
+    }
+    @Override
+    public String getGameOver()
+    {
+        return "Game over.";
+    }
+    @Override
+    public String getWon()
+    {
+        return "won.";
+    }
+
     //GUI.
 
     //Resources.
     @Override
-    public String getWarning()
+    public String getGuiWarning()
     {
-        return "Warning";
+        return "GUI warning";
     }
     @Override
     public String getSomeResourcesAreMissing()
@@ -94,35 +127,16 @@ public class TextEnglish extends Text
         return "Apply";
     }
 
-    //Game.
+    //Music player.
+
     @Override
-    public String getRedPlayer()
+    public String getMusicPlayerWarning()
     {
-        return "Red player";
+        return "Music player warning";
     }
     @Override
-    public String getBlackPlayer()
+    public String getSomeFeaturesAreNotAvailable()
     {
-        return "Black player";
-    }
-    @Override
-    public String getChooseFigure()
-    {
-        return "choose figure.";
-    }
-    @Override
-    public String getChooseAnotherFigureOrDestination()
-    {
-        return "choose another figure or destination.";
-    }
-    @Override
-    public String getGameOver()
-    {
-        return "Game over.";
-    }
-    @Override
-    public String getWon()
-    {
-        return "won.";
+        return "Some features are not available!";
     }
 }

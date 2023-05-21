@@ -6,9 +6,13 @@ public class ChineseChess
     {
         Game game = new Game();
         GUI gui = new GUI();
+        MusicPlayer musicPlayer = new MusicPlayer();
 
         game.setGui(gui);
+        game.setMusicPlayer(musicPlayer);
+
         gui.setGame(game);
+        gui.setMusicPlayer(musicPlayer);
 
         gui.showFrame();
     }

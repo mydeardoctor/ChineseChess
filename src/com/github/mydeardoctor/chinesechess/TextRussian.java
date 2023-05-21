@@ -2,13 +2,45 @@ package com.github.mydeardoctor.chinesechess;
 
 class TextRussian extends Text
 {
+    //Game.
+    @Override
+    public String getRedPlayer()
+    {
+        return "Красный игрок";
+    }
+    @Override
+    public String getBlackPlayer()
+    {
+        return "Чёрный игрок";
+    }
+    @Override
+    public String getChooseFigure()
+    {
+        return "выберите фигуру.";
+    }
+    @Override
+    public String getChooseAnotherFigureOrDestination()
+    {
+        return "выберите другую фигуру или цель.";
+    }
+    @Override
+    public String getGameOver()
+    {
+        return "Игра окончена.";
+    }
+    @Override
+    public String getWon()
+    {
+        return "выиграл.";
+    }
+
     //GUI.
 
     //Resources.
     @Override
-    public String getWarning()
+    public String getGuiWarning()
     {
-        return "Предупреждение";
+        return "Предупреждение GUI";
     }
     @Override
     public String getSomeResourcesAreMissing()
@@ -94,35 +126,16 @@ class TextRussian extends Text
         return "Применить";
     }
 
-    //Game.
+    //Music player.
+
     @Override
-    public String getRedPlayer()
+    public String getMusicPlayerWarning()
     {
-        return "Красный игрок";
+        return "Предупреждение Music player";
     }
     @Override
-    public String getBlackPlayer()
+    public String getSomeFeaturesAreNotAvailable()
     {
-        return "Чёрный игрок";
-    }
-    @Override
-    public String getChooseFigure()
-    {
-        return "выберите фигуру.";
-    }
-    @Override
-    public String getChooseAnotherFigureOrDestination()
-    {
-        return "выберите другую фигуру или цель.";
-    }
-    @Override
-    public String getGameOver()
-    {
-        return "Игра окончена.";
-    }
-    @Override
-    public String getWon()
-    {
-        return "выиграл.";
+        return "Некоторые функции недоступны!";
     }
 }
