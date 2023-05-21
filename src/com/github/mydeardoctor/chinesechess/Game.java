@@ -160,7 +160,7 @@ public class Game
         resetGrid();
         resetGameState();
         gui.repaint();
-        musicPlayer.playMainTheme();
+        musicPlayer.playMusic();
     }
     private void resetGrid()
     {
@@ -386,7 +386,7 @@ public class Game
             case RED -> gui.setStatusBarText(text.getGameOver() + " " + text.getBlackPlayer() + " " + text.getWon());
             case BLACK -> gui.setStatusBarText(text.getGameOver() + " " + text.getRedPlayer() + " " + text.getWon());
         }
-        musicPlayer.stopMainTheme();
+        musicPlayer.stopMusic();
     }
     public void refreshText(Text text)
     {

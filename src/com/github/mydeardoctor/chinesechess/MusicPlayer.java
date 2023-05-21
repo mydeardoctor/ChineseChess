@@ -3,36 +3,34 @@ package com.github.mydeardoctor.chinesechess;
 import javax.sound.sampled.*;
 import java.net.URL;
 
-//TODO: Main theme громче.
-//TODO: Main theme убрать паузу в конце.
-//TODO: Сделать sfx перемещения фигур.
-//TODO: добавить в settings два мута и два регулятора громкости
-//isActive = playingSound. isRunning
-
-//TODO: Concurrency info.
-//Synchronised methods use objects lock. But with frequent polling, starvation may occur.
-//Atomic variables.
-//Guarded blocks. wait(), notifyAll().
-
 public class MusicPlayer
 {
+    //Resources.
     private boolean resourcesMissing;
 
-    private Clip lineMainTheme;
-    private BooleanControl muteMainTheme;
-    private FloatControl gainMainTheme;
-    private float gainMainThemeMinimum;
-    private float gainMainThemeMaximum;
+    //Music.
+    private Clip lineMusic;
+    private BooleanControl muteMusic;
+    private FloatControl gainMusic;
+    private float gainMusicDbMinimum;
+    private float gainMusicDbMaximum;
+    private int gainMusicPercentMinimum;
+    private int gainMusicPercentMaximum;
+    private int gainMusicPercentCurrent;
 
-    private boolean lineMainThemeAvailable;
-    private boolean muteMainThemeAvailable;
-    private boolean gainMainThemeAvailable;
+    private boolean lineMusicAvailable;
+    private boolean muteMusicAvailable;
+    private boolean gainMusicAvailable;
 
+    //Sfx.
     private Clip lineSfx;
     private BooleanControl muteSfx;
     private FloatControl gainSfx;
-    private float gainSfxMinimum;
-    private float gainSfxMaximum;
+    private float gainSfxDbMinimum;
+    private float gainSfxDbMaximum;
+    private int gainSfxPercentMinimum;
+    private int gainSfxPercentMaximum;
+    private int gainSfxPercentCurrent;
 
     private boolean lineSfxAvailable;
     private boolean muteSfxAvailable;
@@ -41,82 +39,78 @@ public class MusicPlayer
     public MusicPlayer()
     {
         resourcesMissing = false;
-        initializeMainTheme();
-        initializeSfx();
+        initializeLineMusic();
+        initializeLineSfx();
     }
-    public void initializeMainTheme()
+    private void initializeLineMusic()
     {
+        //Line.
         URL url = getClass().getResource("/mainTheme.wav");
         if(url == null)
         {
             resourcesMissing = true;
         }
-        try
-        (
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url)
-        )
+        try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url))
         {
             AudioFormat audioFormat = audioInputStream.getFormat();
             DataLine.Info info = new DataLine.Info(Clip.class, audioFormat);
-            lineMainTheme = (Clip)AudioSystem.getLine(info);
-            lineMainTheme.open(audioInputStream);
-            lineMainTheme.setLoopPoints(0, -1);
-
-            lineMainThemeAvailable = true;
+            lineMusic = (Clip)AudioSystem.getLine(info);
+            lineMusic.open(audioInputStream);
+            lineMusic.setLoopPoints(0, -1);
+            lineMusicAvailable = true;
         }
         catch(Exception e)
         {
-            lineMainThemeAvailable = false;
-            if(lineMainTheme !=null)
+            lineMusicAvailable = false;
+            if(lineMusic!=null)
             {
-                lineMainTheme.close();
+                lineMusic.close();
             }
         }
 
+        //Mute control.
         try
         {
-            muteMainTheme = (BooleanControl) lineMainTheme.getControl(BooleanControl.Type.MUTE);
-            muteMainTheme.setValue(false);
-
-            muteMainThemeAvailable = true;
+            muteMusic = (BooleanControl)lineMusic.getControl(BooleanControl.Type.MUTE);
+            muteMusic.setValue(false);
+            muteMusicAvailable = true;
         }
         catch(Exception e)
         {
-            muteMainThemeAvailable = false;
+            muteMusicAvailable = false;
         }
 
+        //Gain control.
         try
         {
-            gainMainTheme = (FloatControl) lineMainTheme.getControl(FloatControl.Type.MASTER_GAIN);
-            gainMainThemeMinimum = gainMainTheme.getMinimum();
-            gainMainThemeMaximum = gainMainTheme.getMaximum();
-            //gainMainTheme.setValue(0);
-            gainMainTheme.setValue(6);
-
-            gainMainThemeAvailable = true;
+            gainMusic = (FloatControl)lineMusic.getControl(FloatControl.Type.MASTER_GAIN);
+            gainMusicDbMinimum = gainMusic.getMinimum();
+            gainMusicDbMaximum = gainMusic.getMaximum();
+            float gainMusicDbCurrent = gainMusic.getValue();
+            gainMusicPercentMinimum = getPercent(gainMusicDbMinimum);
+            gainMusicPercentMaximum = getPercent(gainMusicDbMaximum);
+            gainMusicPercentCurrent = getPercent(gainMusicDbCurrent);
+            gainMusicAvailable = true;
         }
         catch(Exception e)
         {
-            gainMainThemeAvailable = false;
+            gainMusicAvailable = false;
         }
     }
-    public void initializeSfx()
+    private void initializeLineSfx()
     {
-        URL url = getClass().getResource("/coin2.wav");
+        //Line.
+        URL url = getClass().getResource("/sfx.wav");
         if(url == null)
         {
             resourcesMissing = true;
         }
-        try
-        (
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url)
-        )
+        try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url))
         {
             AudioFormat audioFormat = audioInputStream.getFormat();
             DataLine.Info info = new DataLine.Info(Clip.class, audioFormat);
             lineSfx = (Clip)AudioSystem.getLine(info);
             lineSfx.open(audioInputStream);
-
             lineSfxAvailable = true;
         }
         catch(Exception e)
@@ -128,11 +122,11 @@ public class MusicPlayer
             }
         }
 
+        //Mute control.
         try
         {
-            muteSfx = (BooleanControl) lineSfx.getControl(BooleanControl.Type.MUTE);
+            muteSfx = (BooleanControl)lineSfx.getControl(BooleanControl.Type.MUTE);
             muteSfx.setValue(false);
-
             muteSfxAvailable = true;
         }
         catch(Exception e)
@@ -140,14 +134,16 @@ public class MusicPlayer
             muteSfxAvailable = false;
         }
 
+        //Gain control.
         try
         {
             gainSfx = (FloatControl) lineSfx.getControl(FloatControl.Type.MASTER_GAIN);
-            gainSfxMinimum = gainSfx.getMinimum();
-            gainSfxMaximum = gainSfx.getMaximum();
-            //gainSfx.setValue(0);
-            gainSfx.setValue(-20.0f);
-
+            gainSfxDbMinimum = gainSfx.getMinimum();
+            gainSfxDbMaximum = gainSfx.getMaximum();
+            float gainSfxDbCurrent = gainSfx.getValue();
+            gainSfxPercentMinimum = getPercent(gainSfxDbMinimum);
+            gainSfxPercentMaximum = getPercent(gainSfxDbMaximum);
+            gainSfxPercentCurrent = getPercent(gainSfxDbCurrent);
             gainSfxAvailable = true;
         }
         catch(Exception e)
@@ -155,26 +151,53 @@ public class MusicPlayer
             gainSfxAvailable = false;
         }
     }
-    void playMainTheme()
+    private int getPercent(float db)
     {
-        if(lineMainThemeAvailable==true)
+        int percent = (int)(100*Math.pow(10.0, db/20.0));
+        if(percent <= 0)
         {
-            lineMainTheme.stop();
-            lineMainTheme.flush();
-            lineMainTheme.setFramePosition(0);
-            lineMainTheme.loop(Clip.LOOP_CONTINUOUSLY);
+            percent = 1;
+        }
+        return percent;
+    }
+    private float getDb(int percent, float dbMinimum, float dbMaximum)
+    {
+        if(percent <= 1)
+        {
+            return dbMinimum;
+        }
+
+        float db = (float)(20*Math.log10(percent/100.0));
+        if(db > dbMaximum)
+        {
+            db = dbMaximum;
+        }
+        else if(db < dbMinimum)
+        {
+            db = dbMinimum;
+        }
+        return db;
+    }
+    public void playMusic()
+    {
+        if(lineMusicAvailable==true)
+        {
+            lineMusic.stop();
+            lineMusic.flush();
+            lineMusic.setFramePosition(0);
+            lineMusic.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
-    void stopMainTheme()
+    public void stopMusic()
     {
-        if(lineMainThemeAvailable==true)
+        if(lineMusicAvailable==true)
         {
-            lineMainTheme.stop();
-            lineMainTheme.flush();
-            lineMainTheme.setFramePosition(0);
+            lineMusic.stop();
+            lineMusic.flush();
+            lineMusic.setFramePosition(0);
         }
     }
-    void playSfx()
+    public void playSfx()
     {
         if(lineSfxAvailable==true)
         {
@@ -184,31 +207,99 @@ public class MusicPlayer
             lineSfx.start();
         }
     }
-    boolean getResourcesMissing()
+    public void muteMusic()
+    {
+        if(muteMusicAvailable==true)
+        {
+            muteMusic.setValue(true);
+        }
+    }
+    public void unmuteMusic()
+    {
+        if(muteMusicAvailable==true)
+        {
+            muteMusic.setValue(false);
+        }
+    }
+    public void muteSfx()
+    {
+        if(muteSfxAvailable==true)
+        {
+            muteSfx.setValue(true);
+        }
+    }
+    public void unmuteSfx()
+    {
+        if(muteSfxAvailable==true)
+        {
+            muteSfx.setValue(false);
+        }
+    }
+    public void setGainMusicDb(int percent)
+    {
+        if(gainMusicAvailable==true)
+        {
+            float db = getDb(percent, gainMusicDbMinimum, gainMusicDbMaximum);
+            gainMusic.setValue(db);
+        }
+    }
+    public void setGainSfxDb(int percent)
+    {
+        if(gainSfxAvailable==true)
+        {
+            float db = getDb(percent, gainSfxDbMinimum, gainSfxDbMaximum);
+            gainSfx.setValue(db);
+        }
+    }
+    public boolean getResourcesMissing()
     {
         return resourcesMissing;
     }
-    boolean getLineMainThemeAvailable()
+    public int getGainMusicPercentMinimum()
     {
-        return lineMainThemeAvailable;
+        return gainMusicPercentMinimum;
     }
-    boolean getMuteMainThemeAvailable()
+    public int getGainMusicPercentMaximum()
     {
-        return muteMainThemeAvailable;
+        return gainMusicPercentMaximum;
     }
-    boolean getGainMainThemeAvailable()
+    public int getGainMusicPercentCurrent()
     {
-        return gainMainThemeAvailable;
+        return gainMusicPercentCurrent;
     }
-    boolean getLineSfxAvailable()
+    public boolean getLineMusicAvailable()
+    {
+        return lineMusicAvailable;
+    }
+    public boolean getMuteMusicAvailable()
+    {
+        return muteMusicAvailable;
+    }
+    public boolean getGainMusicAvailable()
+    {
+        return gainMusicAvailable;
+    }
+    public int getGainSfxPercentMinimum()
+    {
+        return gainSfxPercentMinimum;
+    }
+    public int getGainSfxPercentMaximum()
+    {
+        return gainSfxPercentMaximum;
+    }
+    public int getGainSfxPercentCurrent()
+    {
+        return gainSfxPercentCurrent;
+    }
+    public boolean getLineSfxAvailable()
     {
         return lineSfxAvailable;
     }
-    boolean getMuteSfxAvailable()
+    public boolean getMuteSfxAvailable()
     {
         return muteSfxAvailable;
     }
-    boolean getGainSfxAvailable()
+    public boolean getGainSfxAvailable()
     {
         return gainSfxAvailable;
     }

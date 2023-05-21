@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.plaf.basic.BasicBorders;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
 import java.net.URL;
@@ -36,6 +35,8 @@ public class GUI
     private BufferedImage cannonBlackIcon;
     private BufferedImage soldierBlackIcon;
     private BufferedImage selection;
+    private ImageIcon iconUnmuted;
+    private ImageIcon iconMuted;
 
     //Common frame features.
     private JFrame frame;
@@ -74,10 +75,22 @@ public class GUI
     //Frame Settings.
     private JLabel labelLanguage;
     private JComboBox<String> comboBoxLanguage;
+    private JLabel labelMusic;
+    private JToggleButton buttonMuteMusic;
+    private JSlider sliderGainMusic;
+    private JLabel labelSfx;
+    private JToggleButton buttonMuteSfx;
+    private JSlider sliderGainSfx;
     private JButton buttonBackSettings;
     private JButton buttonApply;
     private GridBagConstraints constraintsForLabelLanguage;
     private GridBagConstraints constraintsForComboBoxLanguage;
+    private GridBagConstraints constraintsForLabelMusic;
+    private GridBagConstraints constraintsForButtonMuteMusic;
+    private GridBagConstraints constraintsForSliderGainMusic;
+    private GridBagConstraints constraintsForLabelSfx;
+    private GridBagConstraints constraintsForButtonMuteSfx;
+    private GridBagConstraints constraintsForSliderGainSfx;
     private GridBagConstraints constraintsForButtonBackSettings;
     private GridBagConstraints constraintsForButtonApply;
 
@@ -352,6 +365,27 @@ public class GUI
             g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
             g2d.drawArc(5,5,90,90,0,360);
         }
+
+        //Icon unmuted.
+        BufferedImage imageUnmuted = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imageUnmuted.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawPolygon(new Polygon(new int[]{10,23,45,45,23,10,10}, new int[] {23,23,10,50,37,37,23}, 7));
+        g2d.drawLine(23, 23, 23, 37);
+        iconUnmuted = new ImageIcon(imageUnmuted);
+
+        //Icon muted.
+        BufferedImage imageMuted = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        g2d = imageMuted.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawPolygon(new Polygon(new int[]{10,23,45,45,23,10,10}, new int[] {23,23,10,50,37,37,23}, 7));
+        g2d.drawLine(23, 23, 23, 37);
+        g2d.setColor(Color.RED);
+        g2d.drawLine(5, 5, 55, 55);
+        g2d.drawLine(5, 55, 55, 5);
+        iconMuted = new ImageIcon(imageMuted);
     }
     private void initializeDefaultFigureImage(BufferedImage figure, Color color, String label)
     {
@@ -461,8 +495,7 @@ public class GUI
                 buttonSettings.setBackground(Color.WHITE);
 
                 //Border.
-                BasicBorders.ButtonBorder border = new BasicBorders.ButtonBorder(
-                        Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK);
+                LineBorder border = new LineBorder(Color.BLACK, 2);
                 buttonPlay.setBorder(border);
                 buttonLoad.setBorder(border);
                 buttonRules.setBorder(border);
@@ -529,8 +562,7 @@ public class GUI
                 buttonBackGameMode.setBackground(Color.WHITE);
 
                 //Border.
-                BasicBorders.ButtonBorder border = new BasicBorders.ButtonBorder(
-                        Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK);
+                LineBorder border = new LineBorder(Color.BLACK, 2);
                 buttonSinglePlayer.setBorder(border);
                 buttonLocalMultiplayer.setBorder(border);
                 buttonOnlineMultiplayer.setBorder(border);
@@ -588,21 +620,41 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
-                //Label.
+                //Language.
                 labelLanguage = new JLabel(text.getLanguage());
-
-                //ComboBox.
                 comboBoxLanguage = new JComboBox<>();
                 comboBoxLanguage.addItem("English");
                 comboBoxLanguage.addItem("Русский");
+
+                //Music.
+                labelMusic = new JLabel(text.getMusic());
+                buttonMuteMusic = new JToggleButton(iconUnmuted, false);
+                buttonMuteMusic.setSelectedIcon(iconMuted);
+                buttonMuteMusic.setOpaque(false);
+                sliderGainMusic = new JSlider();
+                sliderGainMusic.setOpaque(false);
+
+                //Sfx.
+                labelSfx = new JLabel(text.getSfx());
+                buttonMuteSfx = new JToggleButton(iconUnmuted, false);
+                buttonMuteSfx.setSelectedIcon(iconMuted);
+                buttonMuteSfx.setOpaque(false);
+                sliderGainSfx = new JSlider();
+                sliderGainSfx.setOpaque(false);
 
                 //Buttons.
                 buttonBackSettings = new JButton(text.getBack());
                 buttonApply = new JButton(text.getApply());
 
                 //Preferred Size.
-                labelLanguage.setPreferredSize(new Dimension(200,100));
-                comboBoxLanguage.setPreferredSize(new Dimension(300,100));
+                labelLanguage.setPreferredSize(new Dimension(300,100));
+                comboBoxLanguage.setPreferredSize(new Dimension(300,80));
+                labelMusic.setPreferredSize(new Dimension(300,100));
+                buttonMuteMusic.setPreferredSize(new Dimension(60,60));
+                sliderGainMusic.setPreferredSize(new Dimension(270,20));
+                labelSfx.setPreferredSize(new Dimension(300,100));
+                buttonMuteSfx.setPreferredSize(new Dimension(60,60));
+                sliderGainSfx.setPreferredSize(new Dimension(270,20));
                 buttonBackSettings.setPreferredSize(new Dimension(200,100));
                 buttonApply.setPreferredSize(new Dimension(230,100));
 
@@ -612,36 +664,111 @@ public class GUI
                                 GridBagConstraints.EAST, GridBagConstraints.NONE,
                                 new Insets(0,30,0,30), 0,0);
                 constraintsForComboBoxLanguage = new GridBagConstraints
-                        (1, 0,1,1,0,0,
+                        (1, 0,2,1,0,0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                new Insets(0,30,0,30), 0,0);
-                constraintsForButtonBackSettings = new GridBagConstraints
+                                new Insets(0,30,10,30), 0,0);
+                constraintsForLabelMusic = new GridBagConstraints
                         (0, 1,1,1,0,0,
+                                GridBagConstraints.EAST, GridBagConstraints.NONE,
+                                new Insets(0,30,0,30), 0,0);
+                constraintsForButtonMuteMusic = new GridBagConstraints
+                        (1, 1,1,1,0,0,
+                                GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                new Insets(0,30,20,30), 0,0);
+                constraintsForSliderGainMusic = new GridBagConstraints
+                        (2, 1,1,1,0,0,
+                                GridBagConstraints.EAST, GridBagConstraints.NONE,
+                                new Insets(0,0,0,30), 0,0);
+                constraintsForLabelSfx = new GridBagConstraints
+                        (0, 2,1,1,0,0,
+                                GridBagConstraints.EAST, GridBagConstraints.NONE,
+                                new Insets(0,30,0,30), 0,0);
+                constraintsForButtonMuteSfx = new GridBagConstraints
+                        (1, 2,1,1,0,0,
+                                GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                new Insets(0,30,20,30), 0,0);
+                constraintsForSliderGainSfx = new GridBagConstraints
+                        (2, 2,1,1,0,0,
+                                GridBagConstraints.EAST, GridBagConstraints.NONE,
+                                new Insets(0,0,0,30), 0,0);
+                constraintsForButtonBackSettings = new GridBagConstraints
+                        (0, 3,1,1,0,0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE,
                                 new Insets(80,30,0,30), 0,0);
                 constraintsForButtonApply = new GridBagConstraints
-                        (1, 1,1,1,0,0,
+                        (2, 3,1,1,0,0,
                                 GridBagConstraints.EAST, GridBagConstraints.NONE,
                                 new Insets(80,30,0,30), 0,0);
 
                 //Background Color.
+                buttonMuteMusic.setBackground(Color.WHITE);
+                buttonMuteSfx.setBackground(Color.WHITE);
                 buttonBackSettings.setBackground(Color.WHITE);
                 buttonApply.setBackground(Color.WHITE);
 
                 //Border.
-                BasicBorders.ButtonBorder border = new BasicBorders.ButtonBorder(
-                        Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK);
+                LineBorder border = new LineBorder(Color.BLACK, 2);
+                LineBorder borderSmall = new LineBorder(Color.BLACK, 1);
+                buttonMuteMusic.setBorder(borderSmall);
+                buttonMuteSfx.setBorder(borderSmall);
                 buttonBackSettings.setBorder(border);
                 buttonApply.setBorder(border);
 
                 //Font.
                 Font font = fontChinese.deriveFont(Font.BOLD, 46.f);
-                labelLanguage.setFont(font);
-                comboBoxLanguage.setFont(font);
+                Font fontSmall = fontChinese.deriveFont(Font.BOLD, 37.f);
+                labelLanguage.setFont(fontSmall);
+                comboBoxLanguage.setFont(fontSmall);
+                labelMusic.setFont(fontSmall);
+                labelSfx.setFont(fontSmall);
                 buttonBackSettings.setFont(font);
                 buttonApply.setFont(font);
 
                 //Action listeners.
+                buttonMuteMusic.addActionListener(e->
+                {
+                    JToggleButton buttonSource = (JToggleButton)e.getSource();
+                    boolean selected = buttonSource.isSelected();
+                    if(selected == true)
+                    {
+                        musicPlayer.muteMusic();
+                    }
+                    else //selected == false
+                    {
+                        musicPlayer.unmuteMusic();
+                    }
+                });
+                sliderGainMusic.addChangeListener(e->
+                {
+                    JSlider sliderSource = (JSlider)e.getSource();
+                    if(sliderSource.getValueIsAdjusting()==false)
+                    {
+                        int sliderValue = sliderSource.getValue();
+                        musicPlayer.setGainMusicDb(sliderValue);
+                    }
+                });
+                buttonMuteSfx.addActionListener(e->
+                {
+                    JToggleButton buttonSource = (JToggleButton)e.getSource();
+                    boolean selected = buttonSource.isSelected();
+                    if(selected == true)
+                    {
+                        musicPlayer.muteSfx();
+                    }
+                    else //selected == false
+                    {
+                        musicPlayer.unmuteSfx();
+                    }
+                });
+                sliderGainSfx.addChangeListener(e->
+                {
+                    JSlider sliderSource = (JSlider)e.getSource();
+                    if(sliderSource.getValueIsAdjusting()==false)
+                    {
+                        int sliderValue = sliderSource.getValue();
+                        musicPlayer.setGainSfxDb(sliderValue);
+                    }
+                });
                 buttonBackSettings.addActionListener(e->
                 {
                     switch(previousFrame)
@@ -717,6 +844,12 @@ public class GUI
             frame.getContentPane().setLayout(gridBagLayout);
             frame.getContentPane().add(labelLanguage, constraintsForLabelLanguage);
             frame.getContentPane().add(comboBoxLanguage, constraintsForComboBoxLanguage);
+            frame.getContentPane().add(labelMusic, constraintsForLabelMusic);
+            frame.getContentPane().add(buttonMuteMusic, constraintsForButtonMuteMusic);
+            frame.getContentPane().add(sliderGainMusic, constraintsForSliderGainMusic);
+            frame.getContentPane().add(labelSfx, constraintsForLabelSfx);
+            frame.getContentPane().add(buttonMuteSfx, constraintsForButtonMuteSfx);
+            frame.getContentPane().add(sliderGainSfx, constraintsForSliderGainSfx);
             frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
             frame.getContentPane().add(buttonApply, constraintsForButtonApply);
             frame.validate();
@@ -743,9 +876,9 @@ public class GUI
                             text.getSomeResourcesAreMissing(), text.getMusicPlayerWarning(), JOptionPane.WARNING_MESSAGE);
                 }
 
-                if((musicPlayer.getLineMainThemeAvailable()==false) ||
-                   (musicPlayer.getMuteMainThemeAvailable()==false) ||
-                   (musicPlayer.getGainMainThemeAvailable()==false) ||
+                if((musicPlayer.getLineMusicAvailable()==false) ||
+                   (musicPlayer.getMuteMusicAvailable()==false) ||
+                   (musicPlayer.getGainMusicAvailable()==false) ||
                    (musicPlayer.getLineSfxAvailable()==false)       ||
                    (musicPlayer.getMuteSfxAvailable()==false)       ||
                    (musicPlayer.getGainSfxAvailable()==false))
@@ -799,6 +932,8 @@ public class GUI
 
             //Frame Settings.
             labelLanguage.setText(text.getLanguage());
+            labelMusic.setText(text.getMusic());
+            labelSfx.setText(text.getSfx());
             buttonBackSettings.setText(text.getBack());
             buttonApply.setText(text.getApply());
 
@@ -882,5 +1017,35 @@ public class GUI
     public void setMusicPlayer(MusicPlayer musicPlayer)
     {
         this.musicPlayer = musicPlayer;
+
+        //Slider gain music.
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                sliderGainMusic.setMinimum(musicPlayer.getGainMusicPercentMinimum());
+                sliderGainMusic.setMaximum(musicPlayer.getGainMusicPercentMaximum());
+                sliderGainMusic.setValue(musicPlayer.getGainMusicPercentCurrent());
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        //Slider gain sfx.
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                sliderGainSfx.setMinimum(musicPlayer.getGainSfxPercentMinimum());
+                sliderGainSfx.setMaximum(musicPlayer.getGainSfxPercentMaximum());
+                sliderGainSfx.setValue(musicPlayer.getGainSfxPercentCurrent());
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

@@ -121,6 +121,17 @@ class TextRussian extends Text
         return "Язык";
     }
     @Override
+    public String getMusic()
+    {
+        return "Музыка";
+    }
+    @Override
+    public String getSfx()
+    {
+        return "Звуковые эффекты";
+    }
+
+    @Override
     public String getApply()
     {
         return "Применить";

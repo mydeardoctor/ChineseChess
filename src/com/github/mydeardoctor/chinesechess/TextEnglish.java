@@ -122,6 +122,17 @@ public class TextEnglish extends Text
         return "Language";
     }
     @Override
+    public String getMusic()
+    {
+        return "Music";
+    }
+    @Override
+    public String getSfx()
+    {
+        return "Sound effects";
+    }
+
+    @Override
     public String getApply()
     {
         return "Apply";

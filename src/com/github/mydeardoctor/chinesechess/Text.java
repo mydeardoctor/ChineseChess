@@ -37,6 +37,8 @@ public abstract class Text
 
     //Frame Settings.
     public abstract String getLanguage();
+    public abstract String getMusic();
+    public abstract String getSfx();
     public abstract String getApply();
 
     //Music player.
