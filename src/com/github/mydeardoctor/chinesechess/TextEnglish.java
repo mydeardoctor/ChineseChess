@@ -115,6 +115,115 @@ public class TextEnglish extends Text
         return "Back";
     }
 
+    //Frame Rules.
+    @Override
+    public String getGoal()
+    {
+        return "Goal";
+    }
+    @Override
+    public String getGoalRule()
+    {
+        return "The goal of the game is to checkmate the enemy general.";
+    }
+    @Override
+    public String getPalace()
+    {
+        return "Palace";
+    }
+    @Override
+    public String getPalaceRule()
+    {
+        return "A general cannot leave the Palace. An advisor cannot leave the Palace.";
+    }
+    @Override
+    public String getRiver()
+    {
+        return "River";
+    }
+    @Override
+    public String getRiverRule()
+    {
+        return "After crossing the River a soldier can also move horizontally one point." +
+                " An elephant cannot cross the River.";
+    }
+    @Override
+    public String getGeneral()
+    {
+        return "General";
+    }
+    @Override
+    public String getGeneralRule()
+    {
+        return "A general moves horizontally or vertically one point. A general cannot leave the Palace." +
+                " Generals cannot face each other.";
+    }
+    @Override
+    public String getAdvisor()
+    {
+        return "Advisor";
+    }
+    @Override
+    public String getAdvisorRule()
+    {
+        return "An advisor moves diagonally one point. An advisor cannot leave the Palace.";
+    }
+    @Override
+    public String getElephant()
+    {
+        return "Elephant";
+    }
+    @Override
+    public String getElephantRule()
+    {
+        return "An elephant moves diagonally two points. An elephant cannot jump over other pieces." +
+                " An elephant cannot cross the River.";
+    }
+    @Override
+    public String getHorse()
+    {
+        return "Horse";
+    }
+    @Override
+    public String getHorseRule()
+    {
+        return "A horse moves horizontally or vertically one point and then diagonally one point." +
+                " A horse cannot jump over other pieces.";
+    }
+    @Override
+    public String getChariot()
+    {
+        return "Chariot";
+    }
+    @Override
+    public String getChariotRule()
+    {
+        return "A chariot moves horizontally or vertically any number of points." +
+                " A chariot cannot jump over other pieces.";
+    }
+    @Override
+    public String getCannon()
+    {
+        return "Cannon";
+    }
+    @Override
+    public String getCannonRule()
+    {
+        return "A cannon moves horizontally or vertically any number of points." +
+                " But to capture an enemy piece a cannon must jump over one other piece.";
+    }
+    @Override
+    public String getSoldier()
+    {
+        return "Soldier";
+    }
+    @Override
+    public String getSoldierRule()
+    {
+        return "A soldier moves forward vertically one point." +
+                " After crossing the River a soldier can also move horizontally one point.";
+    }
+
     //Frame Settings.
     @Override
     public String getLanguage()

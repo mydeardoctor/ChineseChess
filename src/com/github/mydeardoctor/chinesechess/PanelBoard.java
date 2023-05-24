@@ -1,23 +1,22 @@
 package com.github.mydeardoctor.chinesechess;
 
+import javax.swing.*;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
 
-public class PanelBoard extends PanelBackground implements MouseListener
+public class PanelBoard extends JPanel
 {
     private int x0Board;
     private int y0Board;
     private int tileLength;
     private int figureRadius;
-    private Game game;
-    public PanelBoard(BufferedImage background)
+    private HashMap<Location, Tile> grid;
+    public PanelBoard()
     {
-        super(background);
+        super();
     }
     @Override
     public void paintComponent(Graphics g)
@@ -81,7 +80,6 @@ public class PanelBoard extends PanelBackground implements MouseListener
                      x0Board + tileLength*6, y0Board + tileLength*10);
 
         //Painting figures and selections.
-        HashMap<Location, Tile> grid = game.getGrid();
         Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
         for(Map.Entry<Location, Tile> gridEntry : gridSet)
         {
@@ -103,57 +101,24 @@ public class PanelBoard extends PanelBackground implements MouseListener
             }
         }
     }
-    @Override
-    public void mouseClicked(MouseEvent e)
+    public int getX0Board()
     {
+        return x0Board;
     }
-    @Override
-    public void mousePressed(MouseEvent e)
+    public int getY0Board()
     {
+        return y0Board;
     }
-    @Override
-    public void mouseReleased(MouseEvent e)
+    public int getTileLength()
     {
-        if(e.getButton()!=MouseEvent.BUTTON1)
-        {
-            return;
-        }
-
-        Location selectedLocation = null;
-        int xMouse = e.getX();
-        int yMouse = e.getY();
-        HashMap<Location, Tile> grid = game.getGrid();
-        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
-        for(Map.Entry<Location, Tile> gridEntry : gridSet)
-        {
-            int x = gridEntry.getKey().getX();
-            int y = gridEntry.getKey().getY();
-            int x0Tile = x0Board + tileLength + tileLength*x;
-            int y0Tile = y0Board + tileLength + tileLength*y;
-
-            //Closed disk formula.
-            if((Math.pow(xMouse - x0Tile, 2) + Math.pow(yMouse - y0Tile, 2)) <= Math.pow(figureRadius, 2))
-            {
-                selectedLocation = gridEntry.getKey();
-                break;
-            }
-        }
-
-        if(selectedLocation!=null)
-        {
-            game.handleSelectedLocation(selectedLocation);
-        }
+        return tileLength;
     }
-    @Override
-    public void mouseEntered(MouseEvent e)
+    public int getFigureRadius()
     {
+        return figureRadius;
     }
-    @Override
-    public void mouseExited(MouseEvent e)
+    public void setGrid(HashMap<Location, Tile> grid)
     {
-    }
-    public void setGame(Game game)
-    {
-        this.game = game;
+        this.grid = grid;
     }
 }

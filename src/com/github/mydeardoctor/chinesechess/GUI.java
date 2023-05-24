@@ -7,6 +7,7 @@ import javax.swing.border.LineBorder;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class GUI
 {
@@ -41,11 +42,12 @@ public class GUI
     //Common frame features.
     private JFrame frame;
     private JMenu menu;
+    private JMenuItem menuItemRules;
     private JMenuItem menuItemSettings;
     private JMenuItem menuItemAbout;
     private PanelBackground panelBackground;
     private GridBagLayout gridBagLayout;
-    private BorderLayout borderLayout;
+    private ArrayList<FrameType> previousFrames;
 
     //Frame Main menu.
     private JButton buttonPlay;
@@ -68,9 +70,20 @@ public class GUI
     private GridBagConstraints constraintsForButtonBackGameMode;
 
     //Frame Board.
-    private JPanel panelEmpty;
-    private PanelBoard panelBoard;
+    private PanelBoardInteractive panelBoardInteractive;
     private JLabel statusBar;
+    private GridBagConstraints constraintsForPanelBoardInteractive;
+    private GridBagConstraints constraintsForStatusBar;
+
+    //Frame Rules.
+    private PanelBoard panelBoardRules;
+    private JComboBox<String> comboBoxRules;
+    private JButton buttonBackRules;
+    private JTextArea textAreaRules;
+    private GridBagConstraints constraintsForPanelBoardRules;
+    private GridBagConstraints constraintsForComboBoxRules;
+    private GridBagConstraints constraintsForButtonBackRules;
+    private GridBagConstraints constraintsForTextAreaRules;
 
     //Frame Settings.
     private JLabel labelLanguage;
@@ -81,8 +94,8 @@ public class GUI
     private JLabel labelSfx;
     private JToggleButton buttonMuteSfx;
     private JSlider sliderGainSfx;
-    private JButton buttonBackSettings;
     private JButton buttonApply;
+    private JButton buttonBackSettings;
     private GridBagConstraints constraintsForLabelLanguage;
     private GridBagConstraints constraintsForComboBoxLanguage;
     private GridBagConstraints constraintsForLabelMusic;
@@ -91,14 +104,14 @@ public class GUI
     private GridBagConstraints constraintsForLabelSfx;
     private GridBagConstraints constraintsForButtonMuteSfx;
     private GridBagConstraints constraintsForSliderGainSfx;
-    private GridBagConstraints constraintsForButtonBackSettings;
     private GridBagConstraints constraintsForButtonApply;
-
-    //Previous frame.
-    private FrameType previousFrame;
+    private GridBagConstraints constraintsForButtonBackSettings;
 
     //Game.
     private Game game;
+
+    //Rules.
+    private Rules rules;
 
     //Music player.
     private MusicPlayer musicPlayer;
@@ -111,6 +124,7 @@ public class GUI
         initializeFrameMainMenu();
         initializeFrameGameMode();
         initializeFrameBoard();
+        initializeFrameRules();
         initializeFrameSettings();
         showFrameMainMenu();
     }
@@ -418,7 +432,7 @@ public class GUI
                         (int)frame.getGraphicsConfiguration().getBounds().getCenterY() -
                                 (int)frame.getBounds().getCenterY(),
                         800,800);
-                frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+                //frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
 
                 //Icon.
                 frame.setIconImage(icon);
@@ -426,12 +440,15 @@ public class GUI
                 //Menu Bar.
                 JMenuBar menuBar = new JMenuBar();
                 menu = new JMenu(text.getHelp());
+                menuItemRules = new JMenuItem(text.getRules());
                 menuItemSettings = new JMenuItem(text.getSettings());
                 menuItemAbout = new JMenuItem(text.getAbout());
+                menuItemRules.addActionListener(e->showFrameRules());
                 menuItemSettings.addActionListener(e->showFrameSettings());
                 menuItemAbout.addActionListener(e->
                     JOptionPane.showMessageDialog(frame, text.getAboutVerbose(), text.getAbout(),
                             JOptionPane.INFORMATION_MESSAGE));
+                menu.add(menuItemRules);
                 menu.add(menuItemSettings);
                 menu.add(menuItemAbout);
                 menuBar.add(menu);
@@ -439,10 +456,14 @@ public class GUI
 
                 //Content Pane with background image.
                 panelBackground = new PanelBackground(background);
+                frame.setContentPane(panelBackground);
 
-                //Layout managers.
+                //Layout manager.
                 gridBagLayout = new GridBagLayout();
-                borderLayout = new BorderLayout();
+                frame.getContentPane().setLayout(gridBagLayout);
+
+                //Previous frames.
+                previousFrames = new ArrayList<>();
             });
         }
         catch (Exception e)
@@ -510,6 +531,7 @@ public class GUI
 
                 //Action listeners.
                 buttonPlay.addActionListener(e->showFrameGameMode());
+                buttonRules.addActionListener(e->showFrameRules());
                 buttonSettings.addActionListener(e->showFrameSettings());
             });
         }
@@ -595,18 +617,122 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
-                //Empty content pane.
-                panelEmpty = new JPanel();
+                //Panel Board Interactive.
+                panelBoardInteractive = new PanelBoardInteractive();
+                panelBoardInteractive.setOpaque(false);
+                panelBoardInteractive.addMouseListener(panelBoardInteractive);
 
-                //Board Panel.
-                panelBoard = new PanelBoard(background);
-                panelBoard.addMouseListener(panelBoard);
-
-                //Status Bar.
+                //Status Bar. //TODO поменять на textField или textArea выравнивание заменить на JTextPane или JEditorPane margin
                 statusBar = new JLabel(" ");
                 statusBar.setOpaque(true);
                 statusBar.setBorder(new LineBorder(Color.BLACK, 1));
                 statusBar.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
+
+                //Layout manager constraints.
+                constraintsForPanelBoardInteractive = new GridBagConstraints
+                        (0, 0,1,1,1,1,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0,0,0,0), 0,0);
+                constraintsForStatusBar = new GridBagConstraints
+                        (0, 1,1,1,0,0,
+                                GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                                new Insets(0,0,0,0), 0,0);
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    private void initializeFrameRules() //TODO implement
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                //Panel board.
+                panelBoardRules = new PanelBoard();
+                panelBoardRules.setOpaque(false);
+
+                //Combo box.
+                comboBoxRules = new JComboBox<>();
+                comboBoxRules.addItem(text.getGoal());
+                comboBoxRules.addItem(text.getPalace());
+                comboBoxRules.addItem(text.getRiver());
+                comboBoxRules.addItem(text.getGeneral());
+                comboBoxRules.addItem(text.getAdvisor());
+                comboBoxRules.addItem(text.getElephant());
+                comboBoxRules.addItem(text.getHorse());
+                comboBoxRules.addItem(text.getChariot());
+                comboBoxRules.addItem(text.getCannon());
+                comboBoxRules.addItem(text.getSoldier());
+
+                //Button back.
+                buttonBackRules = new JButton(text.getBack());
+
+                //Text area. //TODO выравнивание заменить на JTextPane или JEditorPane
+                textAreaRules = new JTextArea(2,0);
+                textAreaRules.setDisabledTextColor(Color.BLACK);
+                textAreaRules.setEnabled(false);
+                textAreaRules.setLineWrap(true);
+                textAreaRules.setWrapStyleWord(true);
+                textAreaRules.setMargin(new Insets(2,5,2,5));
+                textAreaRules.setText(text.getGoalRule());
+
+                //Preferred Size.
+                comboBoxRules.setPreferredSize(new Dimension(150,40));
+                buttonBackRules.setPreferredSize(new Dimension(80, 40));
+
+                //Layout manager constraints.
+                constraintsForPanelBoardRules = new GridBagConstraints
+                        (0, 0,2,1,1,1,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0,0,0,0), 0,0);
+                constraintsForComboBoxRules = new GridBagConstraints
+                        (0, 1,1,1,0,0,
+                                GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                new Insets(30,30,30,30), 0,0);
+                constraintsForButtonBackRules = new GridBagConstraints
+                        (1, 1,1,1,0,0,
+                                GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                new Insets(30,0,30,30), 0,0);
+                constraintsForTextAreaRules = new GridBagConstraints
+                        (0, 2,2,1,0,0,
+                                GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                                new Insets(0,0,0,0), 0,0);
+
+                //Background Color.
+                buttonBackRules.setBackground(Color.WHITE);
+
+                //Border.
+                LineBorder border = new LineBorder(Color.BLACK, 2);
+                buttonBackRules.setBorder(border);
+
+                //Font.
+                Font font1 = new Font(Font.DIALOG, Font.PLAIN, 20);
+                textAreaRules.setFont(font1);
+                Font font2 = fontChinese.deriveFont(Font.BOLD, 30.f);
+                buttonBackRules.setFont(font2);
+
+                //Action listeners.
+                comboBoxRules.addActionListener(e->
+                {
+                    int index = comboBoxRules.getSelectedIndex();
+                    switch(index)
+                    {
+                        case 0 -> textAreaRules.setText(text.getGoalRule());
+                        case 1 -> textAreaRules.setText(text.getPalaceRule());
+                        case 2 -> textAreaRules.setText(text.getRiverRule());
+                        case 3 -> textAreaRules.setText(text.getGeneralRule());
+                        case 4 -> textAreaRules.setText(text.getAdvisorRule());
+                        case 5 -> textAreaRules.setText(text.getElephantRule());
+                        case 6 -> textAreaRules.setText(text.getHorseRule());
+                        case 7 -> textAreaRules.setText(text.getChariotRule());
+                        case 8 -> textAreaRules.setText(text.getCannonRule());
+                        case 9 -> textAreaRules.setText(text.getSoldierRule());
+                    }
+                });
+                buttonBackRules.addActionListener(e->showPreviousFrame());
             });
         }
         catch (Exception e)
@@ -643,8 +769,8 @@ public class GUI
                 sliderGainSfx.setOpaque(false);
 
                 //Buttons.
-                buttonBackSettings = new JButton(text.getBack());
                 buttonApply = new JButton(text.getApply());
+                buttonBackSettings = new JButton(text.getBack());
 
                 //Preferred Size.
                 labelLanguage.setPreferredSize(new Dimension(300,100));
@@ -655,8 +781,8 @@ public class GUI
                 labelSfx.setPreferredSize(new Dimension(300,100));
                 buttonMuteSfx.setPreferredSize(new Dimension(60,60));
                 sliderGainSfx.setPreferredSize(new Dimension(270,20));
-                buttonBackSettings.setPreferredSize(new Dimension(200,100));
                 buttonApply.setPreferredSize(new Dimension(230,100));
+                buttonBackSettings.setPreferredSize(new Dimension(200,100));
 
                 //Layout manager constraints.
                 constraintsForLabelLanguage = new GridBagConstraints
@@ -691,11 +817,11 @@ public class GUI
                         (2, 2,1,1,0,0,
                                 GridBagConstraints.EAST, GridBagConstraints.NONE,
                                 new Insets(0,0,0,30), 0,0);
-                constraintsForButtonBackSettings = new GridBagConstraints
+                constraintsForButtonApply = new GridBagConstraints
                         (0, 3,1,1,0,0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE,
                                 new Insets(80,30,0,30), 0,0);
-                constraintsForButtonApply = new GridBagConstraints
+                constraintsForButtonBackSettings = new GridBagConstraints
                         (2, 3,1,1,0,0,
                                 GridBagConstraints.EAST, GridBagConstraints.NONE,
                                 new Insets(80,30,0,30), 0,0);
@@ -703,16 +829,16 @@ public class GUI
                 //Background Color.
                 buttonMuteMusic.setBackground(Color.WHITE);
                 buttonMuteSfx.setBackground(Color.WHITE);
-                buttonBackSettings.setBackground(Color.WHITE);
                 buttonApply.setBackground(Color.WHITE);
+                buttonBackSettings.setBackground(Color.WHITE);
 
                 //Border.
                 LineBorder border = new LineBorder(Color.BLACK, 2);
                 LineBorder borderSmall = new LineBorder(Color.BLACK, 1);
                 buttonMuteMusic.setBorder(borderSmall);
                 buttonMuteSfx.setBorder(borderSmall);
-                buttonBackSettings.setBorder(border);
                 buttonApply.setBorder(border);
+                buttonBackSettings.setBorder(border);
 
                 //Font.
                 Font font = fontChinese.deriveFont(Font.BOLD, 46.f);
@@ -721,8 +847,8 @@ public class GUI
                 comboBoxLanguage.setFont(fontSmall);
                 labelMusic.setFont(fontSmall);
                 labelSfx.setFont(fontSmall);
-                buttonBackSettings.setFont(font);
                 buttonApply.setFont(font);
+                buttonBackSettings.setFont(font);
 
                 //Action listeners.
                 buttonMuteMusic.addActionListener(e->
@@ -769,16 +895,8 @@ public class GUI
                         musicPlayer.setGainSfxDb(sliderValue);
                     }
                 });
-                buttonBackSettings.addActionListener(e->
-                {
-                    switch(previousFrame)
-                    {
-                        case MAIN_MENU -> showFrameMainMenu();
-                        case GAME_MODE -> showFrameGameMode();
-                        case BOARD -> showFrameBoard();
-                    }
-                });
-                buttonApply.addActionListener(e->refreshText());
+                buttonApply.addActionListener(e->refreshText()); //TODO: Сделать мгновенное переключение текста. Кнопка может быть нужна для сервера.
+                buttonBackSettings.addActionListener(e->showPreviousFrame());
             });
         }
         catch (Exception e)
@@ -788,60 +906,69 @@ public class GUI
     }
     private void showFrameMainMenu()
     {
-        previousFrame = FrameType.MAIN_MENU;
+        addToPreviousFrames(FrameType.MAIN_MENU);
 
         SwingUtilities.invokeLater(()->
         {
             frame.getContentPane().removeAll();
-            frame.setContentPane(panelBackground);
-            frame.getContentPane().setLayout(gridBagLayout);
             frame.getContentPane().add(buttonPlay, constraintsForButtonPlay);
             frame.getContentPane().add(buttonLoad, constraintsForButtonLoad);
             frame.getContentPane().add(buttonRules, constraintsForButtonRules);
             frame.getContentPane().add(buttonSettings, constraintsForButtonSettings);
-            frame.validate();
+            frame.revalidate();
             frame.repaint();
         });
     }
     private void showFrameGameMode()
     {
-        previousFrame = FrameType.GAME_MODE;
+        addToPreviousFrames(FrameType.GAME_MODE);
 
         SwingUtilities.invokeLater(()->
         {
             frame.getContentPane().removeAll();
-            frame.setContentPane(panelBackground);
-            frame.getContentPane().setLayout(gridBagLayout);
             frame.getContentPane().add(buttonSinglePlayer, constraintsForButtonSinglePlayer);
             frame.getContentPane().add(buttonLocalMultiplayer, constraintsForButtonLocalMultiplayer);
             frame.getContentPane().add(buttonOnlineMultiplayer, constraintsForButtonOnlineMultiplayer);
             frame.getContentPane().add(buttonBackGameMode, constraintsForButtonBackGameMode);
-            frame.validate();
+            frame.revalidate();
             frame.repaint();
         });
     }
     private void showFrameBoard()
     {
-        previousFrame = FrameType.BOARD;
+        addToPreviousFrames(FrameType.BOARD);
 
         SwingUtilities.invokeLater(()->
         {
             frame.getContentPane().removeAll();
-            frame.setContentPane(panelEmpty);
-            frame.getContentPane().setLayout(borderLayout);
-            frame.getContentPane().add(panelBoard, BorderLayout.CENTER);
-            frame.getContentPane().add(statusBar, BorderLayout.SOUTH);
-            frame.validate();
+            frame.getContentPane().add(panelBoardInteractive, constraintsForPanelBoardInteractive);
+            frame.getContentPane().add(statusBar, constraintsForStatusBar);
+            frame.revalidate();
+            frame.repaint();
+        });
+    }
+    private void showFrameRules()
+    {
+        addToPreviousFrames(FrameType.RULES);
+
+        SwingUtilities.invokeLater(()->
+        {
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(panelBoardRules, constraintsForPanelBoardRules);
+            frame.getContentPane().add(comboBoxRules, constraintsForComboBoxRules);
+            frame.getContentPane().add(buttonBackRules, constraintsForButtonBackRules);
+            frame.getContentPane().add(textAreaRules, constraintsForTextAreaRules);
+            frame.revalidate();
             frame.repaint();
         });
     }
     private void showFrameSettings()
     {
+        addToPreviousFrames(FrameType.SETTINGS);
+
         SwingUtilities.invokeLater(()->
         {
             frame.getContentPane().removeAll();
-            frame.setContentPane(panelBackground);
-            frame.getContentPane().setLayout(gridBagLayout);
             frame.getContentPane().add(labelLanguage, constraintsForLabelLanguage);
             frame.getContentPane().add(comboBoxLanguage, constraintsForComboBoxLanguage);
             frame.getContentPane().add(labelMusic, constraintsForLabelMusic);
@@ -852,7 +979,7 @@ public class GUI
             frame.getContentPane().add(sliderGainSfx, constraintsForSliderGainSfx);
             frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
             frame.getContentPane().add(buttonApply, constraintsForButtonApply);
-            frame.validate();
+            frame.revalidate();
             frame.repaint();
         });
     }
@@ -879,8 +1006,8 @@ public class GUI
                 if((musicPlayer.getLineMusicAvailable()==false) ||
                    (musicPlayer.getMuteMusicAvailable()==false) ||
                    (musicPlayer.getGainMusicAvailable()==false) ||
-                   (musicPlayer.getLineSfxAvailable()==false)       ||
-                   (musicPlayer.getMuteSfxAvailable()==false)       ||
+                   (musicPlayer.getLineSfxAvailable()==false)   ||
+                   (musicPlayer.getMuteSfxAvailable()==false)   ||
                    (musicPlayer.getGainSfxAvailable()==false))
                 {
                     JOptionPane.showMessageDialog(frame,
@@ -893,11 +1020,51 @@ public class GUI
             e.printStackTrace();
         }
     }
+    private void addToPreviousFrames(FrameType currentFrame)
+    {
+        int size = previousFrames.size();
+        if(size==0)
+        {
+            previousFrames.add(currentFrame);
+        }
+        else if(size>0)
+        {
+            FrameType previousFrame = previousFrames.get(size-1);
+            if(currentFrame != previousFrame)
+            {
+                previousFrames.add(currentFrame);
+            }
+        }
+    }
+    private void showPreviousFrame()
+    {
+        int size;
+
+        size = previousFrames.size();
+        if(size>0)
+        {
+            previousFrames.remove(size-1); //Skip current frame.
+            size = previousFrames.size();
+            if(size>0)
+            {
+                FrameType previousFrame = previousFrames.get(size-1);
+                previousFrames.remove(size-1);
+                switch(previousFrame)
+                {
+                    case MAIN_MENU -> showFrameMainMenu();
+                    case GAME_MODE -> showFrameGameMode();
+                    case BOARD -> showFrameBoard();
+                    case RULES -> showFrameRules();
+                    case SETTINGS -> showFrameSettings();
+                }
+            }
+        }
+    }
     public void repaint()
     {
         SwingUtilities.invokeLater(()->
         {
-            frame.validate();
+            frame.revalidate();
             frame.repaint();
         });
     }
@@ -905,16 +1072,17 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            String language = (String)(comboBoxLanguage.getSelectedItem());
-            switch (language)
+            int index = comboBoxLanguage.getSelectedIndex();
+            switch (index)
             {
-                case "English" -> text = textEnglish;
-                case "Русский" -> text = textRussian;
+                case 0 -> text = textEnglish;
+                case 1 -> text = textRussian;
             }
 
             //Common frame features.
             frame.setTitle(text.getTitle());
             menu.setText(text.getHelp());
+            menuItemRules.setText(text.getRules());
             menuItemSettings.setText(text.getSettings());
             menuItemAbout.setText(text.getAbout());
 
@@ -929,6 +1097,19 @@ public class GUI
             buttonLocalMultiplayer.setText(text.getLocalMultiplayer());
             buttonOnlineMultiplayer.setText(text.getOnlineMultiplayer());
             buttonBackGameMode.setText(text.getBack());
+
+            //Frame Rules.
+            comboBoxRules.removeAllItems();
+            comboBoxRules.addItem(text.getGoal());
+            comboBoxRules.addItem(text.getPalace());
+            comboBoxRules.addItem(text.getRiver());
+            comboBoxRules.addItem(text.getGeneral());
+            comboBoxRules.addItem(text.getAdvisor());
+            comboBoxRules.addItem(text.getElephant());
+            comboBoxRules.addItem(text.getHorse());
+            comboBoxRules.addItem(text.getChariot());
+            comboBoxRules.addItem(text.getCannon());
+            comboBoxRules.addItem(text.getSoldier());
 
             //Frame Settings.
             labelLanguage.setText(text.getLanguage());
@@ -1012,7 +1193,13 @@ public class GUI
     public void setGame(Game game)
     {
         this.game = game;
-        panelBoard.setGame(game);
+        panelBoardInteractive.setGrid(game.getGrid());
+        panelBoardInteractive.setGame(game);
+    }
+    public void setRules(Rules rules)
+    {
+        this.rules = rules;
+        panelBoardRules.setGrid(rules.getGrid());
     }
     public void setMusicPlayer(MusicPlayer musicPlayer)
     {

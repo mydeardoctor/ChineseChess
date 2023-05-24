@@ -114,6 +114,115 @@ class TextRussian extends Text
         return "Назад";
     }
 
+    //Frame Rules.
+    @Override
+    public String getGoal()
+    {
+        return "Цель";
+    }
+    @Override
+    public String getGoalRule()
+    {
+        return "Цель игры – поставить шах и мат генералу противника.";
+    }
+    @Override
+    public String getPalace()
+    {
+        return "Дворец";
+    }
+    @Override
+    public String getPalaceRule()
+    {
+        return "Генерал не может покинуть Дворец. Советник не может покинуть Дворец.";
+    }
+    @Override
+    public String getRiver()
+    {
+        return "Река";
+    }
+    @Override
+    public String getRiverRule()
+    {
+        return "После пересечения Реки солдат получает возможность ходить горизонтально на один пункт." +
+                " Слон не может пересечь Реку.";
+    }
+    @Override
+    public String getGeneral()
+    {
+        return "Генерал";
+    }
+    @Override
+    public String getGeneralRule()
+    {
+        return "Генерал ходит горизонтально или вертикально на один пункт. Генерал не может покинуть Дворец." +
+                " Генералы не могут смотреть друг на друга.";
+    }
+    @Override
+    public String getAdvisor()
+    {
+        return "Советник";
+    }
+    @Override
+    public String getAdvisorRule()
+    {
+        return "Советник ходит по диагонали на один пункт. Советник не может покинуть Дворец.";
+    }
+    @Override
+    public String getElephant()
+    {
+        return "Слон";
+    }
+    @Override
+    public String getElephantRule()
+    {
+        return "Слон ходит по диагонали на два пункта. Слон не может перепрыгивать другие фигуры." +
+                " Слон не может пересечь Реку.";
+    }
+    @Override
+    public String getHorse()
+    {
+        return "Конь";
+    }
+    @Override
+    public String getHorseRule()
+    {
+        return "Конь ходит горизонтально или вертикально на один пункт, а затем по диагонали на один пункт." +
+                " Конь не может перепрыгивать другие фигуры.";
+    }
+    @Override
+    public String getChariot()
+    {
+        return "Колесница";
+    }
+    @Override
+    public String getChariotRule()
+    {
+        return "Колесница ходит горизонтально или вертикально на любое количество пунктов." +
+                " Колесница не может перепрыгивать другие фигуры.";
+    }
+    @Override
+    public String getCannon()
+    {
+        return "Пушка";
+    }
+    @Override
+    public String getCannonRule()
+    {
+        return "Пушка ходит горизонтально или вертикально на любое количество пунктов." +
+                 " Но чтобы захватить фигуру противника, пушка должна перепрыгнуть через одну другую фигуру.";
+    }
+    @Override
+    public String getSoldier()
+    {
+        return "Солдат";
+    }
+    @Override
+    public String getSoldierRule()
+    {
+        return "Солдат ходит вертикально прямо на один пункт." +
+                " После пересечения реки солдат ещё может ходить горизонтально на один пункт.";
+    }
+
     //Frame Settings.
     @Override
     public String getLanguage()
