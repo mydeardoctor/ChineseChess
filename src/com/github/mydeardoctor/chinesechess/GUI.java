@@ -3,6 +3,8 @@ package com.github.mydeardoctor.chinesechess;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
@@ -36,6 +38,7 @@ public class GUI
     private BufferedImage cannonBlackIcon;
     private BufferedImage soldierBlackIcon;
     private BufferedImage selection;
+    private BufferedImage selectionSquare;
     private ImageIcon iconUnmuted;
     private ImageIcon iconMuted;
 
@@ -71,19 +74,20 @@ public class GUI
 
     //Frame Board.
     private PanelBoardInteractive panelBoardInteractive;
-    private JLabel statusBar;
+    private JTextField statusBar;
     private GridBagConstraints constraintsForPanelBoardInteractive;
     private GridBagConstraints constraintsForStatusBar;
 
     //Frame Rules.
-    private PanelBoard panelBoardRules;
+    private PanelBoardRules panelBoardRules;
     private JComboBox<String> comboBoxRules;
     private JButton buttonBackRules;
     private JTextArea textAreaRules;
+    private JScrollPane scrollPaneRules;
     private GridBagConstraints constraintsForPanelBoardRules;
     private GridBagConstraints constraintsForComboBoxRules;
     private GridBagConstraints constraintsForButtonBackRules;
-    private GridBagConstraints constraintsForTextAreaRules;
+    private GridBagConstraints constraintsForScrollPaneRules;
 
     //Frame Settings.
     private JLabel labelLanguage;
@@ -380,6 +384,22 @@ public class GUI
             g2d.drawArc(5,5,90,90,0,360);
         }
 
+        //Selection square.
+        url = getClass().getResource("/selectionSquare.png"); //TODO: сделать два разных выделения по размеру
+        try
+        {
+            selectionSquare = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            selectionSquare = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = selectionSquare.createGraphics();
+            g2d.setColor(new Color(117, 240, 131));
+            g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+            g2d.drawRect(5,5,90,90);
+        }
+
         //Icon unmuted.
         BufferedImage imageUnmuted = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
         Graphics2D g2d = imageUnmuted.createGraphics();
@@ -622,10 +642,12 @@ public class GUI
                 panelBoardInteractive.setOpaque(false);
                 panelBoardInteractive.addMouseListener(panelBoardInteractive);
 
-                //Status Bar. //TODO поменять на textField или textArea выравнивание заменить на JTextPane или JEditorPane margin
-                statusBar = new JLabel(" ");
-                statusBar.setOpaque(true);
-                statusBar.setBorder(new LineBorder(Color.BLACK, 1));
+                //Status Bar.
+                statusBar = new JTextField(1);
+                statusBar.setDisabledTextColor(Color.BLACK);
+                statusBar.setEnabled(false);
+                statusBar.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
+                                                       new EmptyBorder(5,5,5,5)));
                 statusBar.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
 
                 //Layout manager constraints.
@@ -644,14 +666,14 @@ public class GUI
             e.printStackTrace();
         }
     }
-    private void initializeFrameRules() //TODO implement
+    private void initializeFrameRules() //TODO Refactoring
     {
         try
         {
             SwingUtilities.invokeAndWait(()->
             {
                 //Panel board.
-                panelBoardRules = new PanelBoard();
+                panelBoardRules = new PanelBoardRules(selectionSquare);
                 panelBoardRules.setOpaque(false);
 
                 //Combo box.
@@ -670,18 +692,23 @@ public class GUI
                 //Button back.
                 buttonBackRules = new JButton(text.getBack());
 
-                //Text area. //TODO выравнивание заменить на JTextPane или JEditorPane
-                textAreaRules = new JTextArea(2,0);
+                //Text area and Scroll pane.
+                textAreaRules = new JTextArea(2, 1);
+                textAreaRules.setMargin(new Insets(5,5,5,5));
                 textAreaRules.setDisabledTextColor(Color.BLACK);
                 textAreaRules.setEnabled(false);
                 textAreaRules.setLineWrap(true);
                 textAreaRules.setWrapStyleWord(true);
-                textAreaRules.setMargin(new Insets(2,5,2,5));
                 textAreaRules.setText(text.getGoalRule());
+                textAreaRules.setCaretPosition(0);
+                scrollPaneRules = new JScrollPane(textAreaRules,
+                        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
                 //Preferred Size.
-                comboBoxRules.setPreferredSize(new Dimension(150,40));
+                comboBoxRules.setPreferredSize(new Dimension(120,40));
                 buttonBackRules.setPreferredSize(new Dimension(80, 40));
+                scrollPaneRules.setPreferredSize(new Dimension(1, 65));
 
                 //Layout manager constraints.
                 constraintsForPanelBoardRules = new GridBagConstraints
@@ -691,12 +718,12 @@ public class GUI
                 constraintsForComboBoxRules = new GridBagConstraints
                         (0, 1,1,1,0,0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                new Insets(30,30,30,30), 0,0);
+                                new Insets(10,10,10,10), 0,0);
                 constraintsForButtonBackRules = new GridBagConstraints
                         (1, 1,1,1,0,0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                new Insets(30,0,30,30), 0,0);
-                constraintsForTextAreaRules = new GridBagConstraints
+                                new Insets(10,0,10,0), 0,0);
+                constraintsForScrollPaneRules = new GridBagConstraints
                         (0, 2,2,1,0,0,
                                 GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                                 new Insets(0,0,0,0), 0,0);
@@ -705,14 +732,15 @@ public class GUI
                 buttonBackRules.setBackground(Color.WHITE);
 
                 //Border.
-                LineBorder border = new LineBorder(Color.BLACK, 2);
+                LineBorder border = new LineBorder(Color.BLACK, 1);
+                scrollPaneRules.setBorder(border);
                 buttonBackRules.setBorder(border);
 
                 //Font.
-                Font font1 = new Font(Font.DIALOG, Font.PLAIN, 20);
-                textAreaRules.setFont(font1);
-                Font font2 = fontChinese.deriveFont(Font.BOLD, 30.f);
-                buttonBackRules.setFont(font2);
+                Font font = new Font(Font.DIALOG, Font.PLAIN, 20);
+                comboBoxRules.setFont(font);
+                buttonBackRules.setFont(font);
+                textAreaRules.setFont(font);
 
                 //Action listeners.
                 comboBoxRules.addActionListener(e->
@@ -720,17 +748,59 @@ public class GUI
                     int index = comboBoxRules.getSelectedIndex();
                     switch(index)
                     {
-                        case 0 -> textAreaRules.setText(text.getGoalRule());
-                        case 1 -> textAreaRules.setText(text.getPalaceRule());
-                        case 2 -> textAreaRules.setText(text.getRiverRule());
-                        case 3 -> textAreaRules.setText(text.getGeneralRule());
-                        case 4 -> textAreaRules.setText(text.getAdvisorRule());
-                        case 5 -> textAreaRules.setText(text.getElephantRule());
-                        case 6 -> textAreaRules.setText(text.getHorseRule());
-                        case 7 -> textAreaRules.setText(text.getChariotRule());
-                        case 8 -> textAreaRules.setText(text.getCannonRule());
-                        case 9 -> textAreaRules.setText(text.getSoldierRule());
+                        case 0 ->
+                        {
+                            rules.setGridForGoalRule();
+                            textAreaRules.setText(text.getGoalRule());
+                        }
+                        case 1 ->
+                        {
+                            rules.setGridForPalaceRule();
+                            textAreaRules.setText(text.getPalaceRule());
+                        }
+                        case 2 ->
+                        {
+                            rules.setGridForRiverRule();
+                            textAreaRules.setText(text.getRiverRule());
+                        }
+                        case 3 ->
+                        {
+                            rules.setGridForGeneralRule();
+                            textAreaRules.setText(text.getGeneralRule());
+                        }
+                        case 4 ->
+                        {
+                            rules.setGridForAdvisorRule();
+                            textAreaRules.setText(text.getAdvisorRule());
+                        }
+                        case 5 ->
+                        {
+                            rules.setGridForElephantRule();
+                            textAreaRules.setText(text.getElephantRule());
+                        }
+                        case 6 ->
+                        {
+                            rules.setGridForHorseRule();
+                            textAreaRules.setText(text.getHorseRule());
+                        }
+                        case 7 ->
+                        {
+                            rules.setGridForChariotRule();
+                            textAreaRules.setText(text.getChariotRule());
+                        }
+                        case 8 ->
+                        {
+                            rules.setGridForCannonRule();
+                            textAreaRules.setText(text.getCannonRule());
+                        }
+                        case 9 ->
+                        {
+                            rules.setGridForSoldierRule();
+                            textAreaRules.setText(text.getSoldierRule());
+                        }
                     }
+                    textAreaRules.setCaretPosition(0);
+                    repaint();
                 });
                 buttonBackRules.addActionListener(e->showPreviousFrame());
             });
@@ -851,6 +921,7 @@ public class GUI
                 buttonBackSettings.setFont(font);
 
                 //Action listeners.
+                comboBoxLanguage.addActionListener(e->refreshText());
                 buttonMuteMusic.addActionListener(e->
                 {
                     JToggleButton buttonSource = (JToggleButton)e.getSource();
@@ -895,7 +966,7 @@ public class GUI
                         musicPlayer.setGainSfxDb(sliderValue);
                     }
                 });
-                buttonApply.addActionListener(e->refreshText()); //TODO: Сделать мгновенное переключение текста. Кнопка может быть нужна для сервера.
+                //buttonApply.addActionListener(e->); //TODO: Implement. Возможно, кнопка понадобится для сервера.
                 buttonBackSettings.addActionListener(e->showPreviousFrame());
             });
         }
@@ -957,7 +1028,7 @@ public class GUI
             frame.getContentPane().add(panelBoardRules, constraintsForPanelBoardRules);
             frame.getContentPane().add(comboBoxRules, constraintsForComboBoxRules);
             frame.getContentPane().add(buttonBackRules, constraintsForButtonBackRules);
-            frame.getContentPane().add(textAreaRules, constraintsForTextAreaRules);
+            frame.getContentPane().add(scrollPaneRules, constraintsForScrollPaneRules);
             frame.revalidate();
             frame.repaint();
         });
@@ -1099,6 +1170,7 @@ public class GUI
             buttonBackGameMode.setText(text.getBack());
 
             //Frame Rules.
+            index = comboBoxRules.getSelectedIndex();
             comboBoxRules.removeAllItems();
             comboBoxRules.addItem(text.getGoal());
             comboBoxRules.addItem(text.getPalace());
@@ -1110,6 +1182,7 @@ public class GUI
             comboBoxRules.addItem(text.getChariot());
             comboBoxRules.addItem(text.getCannon());
             comboBoxRules.addItem(text.getSoldier());
+            comboBoxRules.setSelectedIndex(index);
 
             //Frame Settings.
             labelLanguage.setText(text.getLanguage());
@@ -1186,6 +1259,10 @@ public class GUI
     {
         return selection;
     }
+    public BufferedImage getSelectionSquare()
+    {
+        return selectionSquare;
+    }
     public void setStatusBarText(String message)
     {
         SwingUtilities.invokeLater(() -> statusBar.setText(message));
@@ -1199,7 +1276,9 @@ public class GUI
     public void setRules(Rules rules)
     {
         this.rules = rules;
+        panelBoardRules.setRules(rules);
         panelBoardRules.setGrid(rules.getGrid());
+        comboBoxRules.setSelectedIndex(0);
     }
     public void setMusicPlayer(MusicPlayer musicPlayer)
     {
