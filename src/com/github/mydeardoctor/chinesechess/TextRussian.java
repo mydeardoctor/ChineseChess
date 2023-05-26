@@ -55,6 +55,37 @@ class TextRussian extends Text
         return "Китайские шахматы";
     }
     @Override
+    public String getNavigation()
+    {
+        return "Навигация";
+    }
+    @Override
+    public String getMainMenu()
+    {
+        return "Главное меню";
+    }
+    @Override
+    public String getExitToMainMenu()
+    {
+        return "Выход в главное меню";
+    }
+    @Override
+    public String getAreYouSure()
+    {
+        return "Весь прогресс будет потерян.\nВы уверены?";
+    }
+    @Override
+    public String getYes()
+    {
+        return "Да";
+    }
+    @Override
+    public String getNo()
+    {
+        return "Нет";
+    }
+
+    @Override
     public String getHelp()
     {
         return "Помощь";

@@ -56,6 +56,37 @@ public class TextEnglish extends Text
         return "Chinese Chess";
     }
     @Override
+    public String getNavigation()
+    {
+        return "Navigation";
+    }
+    @Override
+    public String getMainMenu()
+    {
+        return "Main menu";
+    }
+    @Override
+    public String getExitToMainMenu()
+    {
+        return "Exit to main menu";
+    }
+    @Override
+    public String getAreYouSure()
+    {
+        return "All progress will be lost!\nAre you sure?";
+    }
+    @Override
+    public String getYes()
+    {
+        return "Yes";
+    }
+    @Override
+    public String getNo()
+    {
+        return "No";
+    }
+
+    @Override
     public String getHelp()
     {
         return "Help";

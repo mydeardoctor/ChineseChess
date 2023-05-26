@@ -19,6 +19,12 @@ public abstract class Text
 
     //Common frame features.
     public abstract String getTitle();
+    public abstract String getNavigation();
+    public abstract String getMainMenu();
+    public abstract String getExitToMainMenu();
+    public abstract String getAreYouSure();
+    public abstract String getYes();
+    public abstract String getNo();
     public abstract String getHelp();
     public abstract String getAbout();
     public abstract String getAboutVerbose();

@@ -43,7 +43,8 @@ public class GUI
 
     //Common frame features.
     private JFrame frame;
-    private JMenu menu;
+    private JMenuBar menuBar;
+    private JMenu menuHelp;
     private JMenuItem menuItemRules;
     private JMenuItem menuItemSettings;
     private JMenuItem menuItemAbout;
@@ -72,6 +73,8 @@ public class GUI
     private GridBagConstraints constraintsForButtonBackGameMode;
 
     //Frame Board.
+    private JMenu menuNavigation;
+    private JMenuItem menuItemMainMenu;
     private PanelBoardInteractive panelBoardInteractive;
     private JTextField statusBar;
     private GridBagConstraints constraintsForPanelBoardInteractive;
@@ -472,8 +475,33 @@ public class GUI
                 frame.setIconImage(icon);
 
                 //Menu Bar.
-                JMenuBar menuBar = new JMenuBar();
-                menu = new JMenu(text.getHelp());
+                menuBar = new JMenuBar();
+
+                menuNavigation = new JMenu(text.getNavigation());
+                menuItemMainMenu = new JMenuItem(text.getMainMenu());
+                menuItemMainMenu.addActionListener(e->
+                {
+                    if(game.getState()==State.OVER)
+                    {
+                        showFrameMainMenu();
+                    }
+                    else //game.getState()==State.RUNNING
+                    {
+                        int selectedOption = JOptionPane.showOptionDialog(frame,
+                                text.getAreYouSure(), text.getExitToMainMenu(),
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                                new String[] {text.getYes(), text.getNo()}, text.getNo());
+                        if(selectedOption==JOptionPane.YES_OPTION)
+                        {
+                            musicPlayer.stopMusic();
+                            showFrameMainMenu();
+                        }
+                    }
+                });
+                menuNavigation.add(menuItemMainMenu);
+                menuBar.add(menuNavigation);
+
+                menuHelp = new JMenu(text.getHelp());
                 menuItemRules = new JMenuItem(text.getRules());
                 menuItemSettings = new JMenuItem(text.getSettings());
                 menuItemAbout = new JMenuItem(text.getAbout());
@@ -482,10 +510,11 @@ public class GUI
                 menuItemAbout.addActionListener(e->
                     JOptionPane.showMessageDialog(frame, text.getAboutVerbose(), text.getAbout(),
                             JOptionPane.INFORMATION_MESSAGE));
-                menu.add(menuItemRules);
-                menu.add(menuItemSettings);
-                menu.add(menuItemAbout);
-                menuBar.add(menu);
+                menuHelp.add(menuItemRules);
+                menuHelp.add(menuItemSettings);
+                menuHelp.add(menuItemAbout);
+                menuBar.add(menuHelp);
+
                 frame.setJMenuBar(menuBar);
 
                 //Content Pane with background image.
@@ -1216,7 +1245,9 @@ public class GUI
 
             //Common frame features.
             frame.setTitle(text.getTitle());
-            menu.setText(text.getHelp());
+            menuNavigation.setText(text.getNavigation());
+            menuItemMainMenu.setText(text.getMainMenu());
+            menuHelp.setText(text.getHelp());
             menuItemRules.setText(text.getRules());
             menuItemSettings.setText(text.getSettings());
             menuItemAbout.setText(text.getAbout());
