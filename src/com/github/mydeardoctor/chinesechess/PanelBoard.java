@@ -1,11 +1,11 @@
 package com.github.mydeardoctor.chinesechess;
 
-import javax.swing.*;
+import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.swing.*;
 
 public class PanelBoard extends JPanel
 {
@@ -17,6 +17,10 @@ public class PanelBoard extends JPanel
     public PanelBoard()
     {
         super();
+    }
+    public void setGrid(HashMap<Location, Tile> grid)
+    {
+        this.grid = grid;
     }
     @Override
     public void paintComponent(Graphics g)
@@ -116,9 +120,5 @@ public class PanelBoard extends JPanel
     public int getFigureRadius()
     {
         return figureRadius;
-    }
-    public void setGrid(HashMap<Location, Tile> grid)
-    {
-        this.grid = grid;
     }
 }

@@ -1,11 +1,11 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+import java.awt.image.BufferedImage;
 
-public class Rules //TODO Refactoring
+public class Rules
 {
     //Rules attributes.
     private Figure generalRed;
@@ -45,7 +45,6 @@ public class Rules //TODO Refactoring
     private boolean riverSelected;
 
     //GUI attributes.
-    private GUI gui;
     private BufferedImage selection;
 
     public Rules()
@@ -144,55 +143,46 @@ public class Rules //TODO Refactoring
         setPalaceSelected(false);
         setRiverSelected(false);
     }
-    private void resetGrid()
+    public void setGui(GUI gui)
     {
-        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
-        for(Map.Entry<Location, Tile> gridEntry : gridSet)
-        {
-            gridEntry.getValue().setFigure(null);
-            gridEntry.getValue().setSelection(null);
-        }
-
-        //Put red figures.
-        grid.get(new Location(0,6)).setFigure(soldierRed1);
-        grid.get(new Location(2,6)).setFigure(soldierRed2);
-        grid.get(new Location(4,6)).setFigure(soldierRed3);
-        grid.get(new Location(6,6)).setFigure(soldierRed4);
-        grid.get(new Location(8,6)).setFigure(soldierRed5);
-        grid.get(new Location(1,7)).setFigure(cannonRed1);
-        grid.get(new Location(7,7)).setFigure(cannonRed2);
-        grid.get(new Location(0,9)).setFigure(chariotRed1);
-        grid.get(new Location(1,9)).setFigure(horseRed1);
-        grid.get(new Location(2,9)).setFigure(elephantRed1);
-        grid.get(new Location(3,9)).setFigure(advisorRed1);
-        grid.get(new Location(4,9)).setFigure(generalRed);
-        grid.get(new Location(5,9)).setFigure(advisorRed2);
-        grid.get(new Location(6,9)).setFigure(elephantRed2);
-        grid.get(new Location(7,9)).setFigure(horseRed2);
-        grid.get(new Location(8,9)).setFigure(chariotRed2);
-
-        //Put black figures.
-        grid.get(new Location(0,0)).setFigure(chariotBlack1);
-        grid.get(new Location(1,0)).setFigure(horseBlack1);
-        grid.get(new Location(2,0)).setFigure(elephantBlack1);
-        grid.get(new Location(3,0)).setFigure(advisorBlack1);
-        grid.get(new Location(4,0)).setFigure(generalBlack);
-        grid.get(new Location(5,0)).setFigure(advisorBlack2);
-        grid.get(new Location(6,0)).setFigure(elephantBlack2);
-        grid.get(new Location(7,0)).setFigure(horseBlack2);
-        grid.get(new Location(8,0)).setFigure(chariotBlack2);
-        grid.get(new Location(1,2)).setFigure(cannonBlack1);
-        grid.get(new Location(7,2)).setFigure(cannonBlack2);
-        grid.get(new Location(0,3)).setFigure(soldierBlack1);
-        grid.get(new Location(2,3)).setFigure(soldierBlack2);
-        grid.get(new Location(4,3)).setFigure(soldierBlack3);
-        grid.get(new Location(6,3)).setFigure(soldierBlack4);
-        grid.get(new Location(8,3)).setFigure(soldierBlack5);
+        selection = gui.getSelection();
+        setIconsToFigures(gui);
     }
-    private void resetSelections()
+    private void setIconsToFigures(GUI gui)
     {
-        setPalaceSelected(false);
-        setRiverSelected(false);
+        generalRed.setIcon(gui.getGeneralRedIcon());
+        advisorRed1.setIcon(gui.getAdvisorRedIcon());
+        advisorRed2.setIcon(gui.getAdvisorRedIcon());
+        elephantRed1.setIcon(gui.getElephantRedIcon());
+        elephantRed2.setIcon(gui.getElephantRedIcon());
+        horseRed1.setIcon(gui.getHorseRedIcon());
+        horseRed2.setIcon(gui.getHorseRedIcon());
+        chariotRed1.setIcon(gui.getChariotRedIcon());
+        chariotRed2.setIcon(gui.getChariotRedIcon());
+        cannonRed1.setIcon(gui.getCannonRedIcon());
+        cannonRed2.setIcon(gui.getCannonRedIcon());
+        soldierRed1.setIcon(gui.getSoldierRedIcon());
+        soldierRed2.setIcon(gui.getSoldierRedIcon());
+        soldierRed3.setIcon(gui.getSoldierRedIcon());
+        soldierRed4.setIcon(gui.getSoldierRedIcon());
+        soldierRed5.setIcon(gui.getSoldierRedIcon());
+
+        generalBlack.setIcon(gui.getGeneralBlackIcon());
+        advisorBlack1.setIcon(gui.getAdvisorBlackIcon());
+        advisorBlack2.setIcon(gui.getAdvisorBlackIcon());
+        elephantBlack1.setIcon(gui.getElephantBlackIcon());
+        elephantBlack2.setIcon(gui.getElephantBlackIcon());
+        horseBlack1.setIcon(gui.getHorseBlackIcon());
+        horseBlack2.setIcon(gui.getHorseBlackIcon());
+        chariotBlack1.setIcon(gui.getChariotBlackIcon());
+        chariotBlack2.setIcon(gui.getChariotBlackIcon());
+        cannonBlack1.setIcon(gui.getCannonBlackIcon());
+        cannonBlack2.setIcon(gui.getCannonBlackIcon());
+        soldierBlack1.setIcon(gui.getSoldierBlackIcon());
+        soldierBlack2.setIcon(gui.getSoldierBlackIcon());
+        soldierBlack3.setIcon(gui.getSoldierBlackIcon());
+        soldierBlack4.setIcon(gui.getSoldierBlackIcon());
+        soldierBlack5.setIcon(gui.getSoldierBlackIcon());
     }
     public void setGridForGoalRule()
     {
@@ -301,7 +291,6 @@ public class Rules //TODO Refactoring
         //Move black figures.
         grid.get(new Location(1,2)).setFigure(null);
         grid.get(new Location(3,2)).setFigure(cannonBlack1);
-
         grid.get(new Location(7,2)).setFigure(null);
         grid.get(new Location(5,2)).setFigure(cannonBlack2);
 
@@ -373,48 +362,55 @@ public class Rules //TODO Refactoring
         grid.get(new Location(4,4)).setSelection(selection);
         grid.get(new Location(5,4)).setSelection(selection);
     }
-    private void setIconsToFigures(GUI gui)
+    private void resetGrid()
     {
-        generalRed.setIcon(gui.getGeneralRedIcon());
-        advisorRed1.setIcon(gui.getAdvisorRedIcon());
-        advisorRed2.setIcon(gui.getAdvisorRedIcon());
-        elephantRed1.setIcon(gui.getElephantRedIcon());
-        elephantRed2.setIcon(gui.getElephantRedIcon());
-        horseRed1.setIcon(gui.getHorseRedIcon());
-        horseRed2.setIcon(gui.getHorseRedIcon());
-        chariotRed1.setIcon(gui.getChariotRedIcon());
-        chariotRed2.setIcon(gui.getChariotRedIcon());
-        cannonRed1.setIcon(gui.getCannonRedIcon());
-        cannonRed2.setIcon(gui.getCannonRedIcon());
-        soldierRed1.setIcon(gui.getSoldierRedIcon());
-        soldierRed2.setIcon(gui.getSoldierRedIcon());
-        soldierRed3.setIcon(gui.getSoldierRedIcon());
-        soldierRed4.setIcon(gui.getSoldierRedIcon());
-        soldierRed5.setIcon(gui.getSoldierRedIcon());
+        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
+        for(Map.Entry<Location, Tile> gridEntry : gridSet)
+        {
+            gridEntry.getValue().setFigure(null);
+            gridEntry.getValue().setSelection(null);
+        }
 
-        generalBlack.setIcon(gui.getGeneralBlackIcon());
-        advisorBlack1.setIcon(gui.getAdvisorBlackIcon());
-        advisorBlack2.setIcon(gui.getAdvisorBlackIcon());
-        elephantBlack1.setIcon(gui.getElephantBlackIcon());
-        elephantBlack2.setIcon(gui.getElephantBlackIcon());
-        horseBlack1.setIcon(gui.getHorseBlackIcon());
-        horseBlack2.setIcon(gui.getHorseBlackIcon());
-        chariotBlack1.setIcon(gui.getChariotBlackIcon());
-        chariotBlack2.setIcon(gui.getChariotBlackIcon());
-        cannonBlack1.setIcon(gui.getCannonBlackIcon());
-        cannonBlack2.setIcon(gui.getCannonBlackIcon());
-        soldierBlack1.setIcon(gui.getSoldierBlackIcon());
-        soldierBlack2.setIcon(gui.getSoldierBlackIcon());
-        soldierBlack3.setIcon(gui.getSoldierBlackIcon());
-        soldierBlack4.setIcon(gui.getSoldierBlackIcon());
-        soldierBlack5.setIcon(gui.getSoldierBlackIcon());
+        //Put red figures.
+        grid.get(new Location(0,6)).setFigure(soldierRed1);
+        grid.get(new Location(2,6)).setFigure(soldierRed2);
+        grid.get(new Location(4,6)).setFigure(soldierRed3);
+        grid.get(new Location(6,6)).setFigure(soldierRed4);
+        grid.get(new Location(8,6)).setFigure(soldierRed5);
+        grid.get(new Location(1,7)).setFigure(cannonRed1);
+        grid.get(new Location(7,7)).setFigure(cannonRed2);
+        grid.get(new Location(0,9)).setFigure(chariotRed1);
+        grid.get(new Location(1,9)).setFigure(horseRed1);
+        grid.get(new Location(2,9)).setFigure(elephantRed1);
+        grid.get(new Location(3,9)).setFigure(advisorRed1);
+        grid.get(new Location(4,9)).setFigure(generalRed);
+        grid.get(new Location(5,9)).setFigure(advisorRed2);
+        grid.get(new Location(6,9)).setFigure(elephantRed2);
+        grid.get(new Location(7,9)).setFigure(horseRed2);
+        grid.get(new Location(8,9)).setFigure(chariotRed2);
+
+        //Put black figures.
+        grid.get(new Location(0,0)).setFigure(chariotBlack1);
+        grid.get(new Location(1,0)).setFigure(horseBlack1);
+        grid.get(new Location(2,0)).setFigure(elephantBlack1);
+        grid.get(new Location(3,0)).setFigure(advisorBlack1);
+        grid.get(new Location(4,0)).setFigure(generalBlack);
+        grid.get(new Location(5,0)).setFigure(advisorBlack2);
+        grid.get(new Location(6,0)).setFigure(elephantBlack2);
+        grid.get(new Location(7,0)).setFigure(horseBlack2);
+        grid.get(new Location(8,0)).setFigure(chariotBlack2);
+        grid.get(new Location(1,2)).setFigure(cannonBlack1);
+        grid.get(new Location(7,2)).setFigure(cannonBlack2);
+        grid.get(new Location(0,3)).setFigure(soldierBlack1);
+        grid.get(new Location(2,3)).setFigure(soldierBlack2);
+        grid.get(new Location(4,3)).setFigure(soldierBlack3);
+        grid.get(new Location(6,3)).setFigure(soldierBlack4);
+        grid.get(new Location(8,3)).setFigure(soldierBlack5);
     }
-    public void setGui(GUI gui)
+    private void resetSelections()
     {
-        this.gui = gui;
-        selection = gui.getSelection();
-
-        setIconsToFigures(gui);
+        setPalaceSelected(false);
+        setRiverSelected(false);
     }
     public HashMap<Location, Tile> getGrid()
     {
@@ -432,7 +428,6 @@ public class Rules //TODO Refactoring
     {
         return riverSelected;
     }
-
     public void setRiverSelected(boolean riverSelected)
     {
         this.riverSelected = riverSelected;

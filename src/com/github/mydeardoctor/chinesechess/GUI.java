@@ -1,15 +1,13 @@
 package com.github.mydeardoctor.chinesechess;
 
+import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
+import javax.swing.border.*;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 
 public class GUI
 {
@@ -38,7 +36,8 @@ public class GUI
     private BufferedImage cannonBlackIcon;
     private BufferedImage soldierBlackIcon;
     private BufferedImage selection;
-    private BufferedImage selectionSquare;
+    private BufferedImage selectionPalace;
+    private BufferedImage selectionRiver;
     private ImageIcon iconUnmuted;
     private ImageIcon iconMuted;
 
@@ -130,7 +129,6 @@ public class GUI
         initializeFrameBoard();
         initializeFrameRules();
         initializeFrameSettings();
-        showFrameMainMenu();
     }
     private void initializeText()
     {
@@ -384,20 +382,36 @@ public class GUI
             g2d.drawArc(5,5,90,90,0,360);
         }
 
-        //Selection square.
-        url = getClass().getResource("/selectionSquare.png"); //TODO: сделать два разных выделения по размеру
+        //Selection Palace.
+        url = getClass().getResource("/selectionPalace.png");
         try
         {
-            selectionSquare = ImageIO.read(url);
+            selectionPalace = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            selectionSquare = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            Graphics2D g2d = selectionSquare.createGraphics();
+            selectionPalace = new BufferedImage(200,200,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = selectionPalace.createGraphics();
             g2d.setColor(new Color(117, 240, 131));
             g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
-            g2d.drawRect(5,5,90,90);
+            g2d.drawRect(5,5,190,190);
+        }
+
+        //Selection River.
+        url = getClass().getResource("/selectionRiver.png");
+        try
+        {
+            selectionRiver = ImageIO.read(url);
+        }
+        catch (Exception e)
+        {
+            resourcesMissing = true;
+            selectionRiver = new BufferedImage(800,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = selectionRiver.createGraphics();
+            g2d.setColor(new Color(117, 240, 131));
+            g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+            g2d.drawRect(5,5,790,90);
         }
 
         //Icon unmuted.
@@ -452,7 +466,7 @@ public class GUI
                         (int)frame.getGraphicsConfiguration().getBounds().getCenterY() -
                                 (int)frame.getBounds().getCenterY(),
                         800,800);
-                //frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+                frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
 
                 //Icon.
                 frame.setIconImage(icon);
@@ -666,14 +680,14 @@ public class GUI
             e.printStackTrace();
         }
     }
-    private void initializeFrameRules() //TODO Refactoring
+    private void initializeFrameRules()
     {
         try
         {
             SwingUtilities.invokeAndWait(()->
             {
-                //Panel board.
-                panelBoardRules = new PanelBoardRules(selectionSquare);
+                //Panel Board Rules.
+                panelBoardRules = new PanelBoardRules(selectionPalace, selectionRiver);
                 panelBoardRules.setOpaque(false);
 
                 //Combo box.
@@ -733,8 +747,8 @@ public class GUI
 
                 //Border.
                 LineBorder border = new LineBorder(Color.BLACK, 1);
-                scrollPaneRules.setBorder(border);
                 buttonBackRules.setBorder(border);
+                scrollPaneRules.setBorder(border);
 
                 //Font.
                 Font font = new Font(Font.DIALOG, Font.PLAIN, 20);
@@ -975,6 +989,98 @@ public class GUI
             e.printStackTrace();
         }
     }
+    public void setGame(Game game)
+    {
+        this.game = game;
+        panelBoardInteractive.setGame(game);
+    }
+    public void setRules(Rules rules)
+    {
+        this.rules = rules;
+        panelBoardRules.setRules(rules);
+
+        try
+        {
+            SwingUtilities.invokeAndWait(()->comboBoxRules.setSelectedIndex(0));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    public void setMusicPlayer(MusicPlayer musicPlayer)
+    {
+        this.musicPlayer = musicPlayer;
+
+        //Slider gain music.
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                sliderGainMusic.setMinimum(musicPlayer.getGainMusicPercentMinimum());
+                sliderGainMusic.setMaximum(musicPlayer.getGainMusicPercentMaximum());
+                sliderGainMusic.setValue(musicPlayer.getGainMusicPercentCurrent());
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        //Slider gain sfx.
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                sliderGainSfx.setMinimum(musicPlayer.getGainSfxPercentMinimum());
+                sliderGainSfx.setMaximum(musicPlayer.getGainSfxPercentMaximum());
+                sliderGainSfx.setValue(musicPlayer.getGainSfxPercentCurrent());
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    public void showFrameAndWarnings()
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                showFrameMainMenu();
+
+                frame.setVisible(true);
+
+                if(resourcesMissing==true)
+                {
+                    JOptionPane.showMessageDialog(frame,
+                            text.getSomeResourcesAreMissing(), text.getGuiWarning(), JOptionPane.WARNING_MESSAGE);
+                }
+
+                if(musicPlayer.getResourcesMissing()==true)
+                {
+                    JOptionPane.showMessageDialog(frame,
+                            text.getSomeResourcesAreMissing(), text.getMusicPlayerWarning(), JOptionPane.WARNING_MESSAGE);
+                }
+
+                if((musicPlayer.getLineMusicAvailable()==false) ||
+                        (musicPlayer.getMuteMusicAvailable()==false) ||
+                        (musicPlayer.getGainMusicAvailable()==false) ||
+                        (musicPlayer.getLineSfxAvailable()==false)   ||
+                        (musicPlayer.getMuteSfxAvailable()==false)   ||
+                        (musicPlayer.getGainSfxAvailable()==false))
+                {
+                    JOptionPane.showMessageDialog(frame,
+                            text.getSomeFeaturesAreNotAvailable(), text.getMusicPlayerWarning(), JOptionPane.WARNING_MESSAGE);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
     private void showFrameMainMenu()
     {
         addToPreviousFrames(FrameType.MAIN_MENU);
@@ -986,8 +1092,7 @@ public class GUI
             frame.getContentPane().add(buttonLoad, constraintsForButtonLoad);
             frame.getContentPane().add(buttonRules, constraintsForButtonRules);
             frame.getContentPane().add(buttonSettings, constraintsForButtonSettings);
-            frame.revalidate();
-            frame.repaint();
+            repaint();
         });
     }
     private void showFrameGameMode()
@@ -1001,8 +1106,7 @@ public class GUI
             frame.getContentPane().add(buttonLocalMultiplayer, constraintsForButtonLocalMultiplayer);
             frame.getContentPane().add(buttonOnlineMultiplayer, constraintsForButtonOnlineMultiplayer);
             frame.getContentPane().add(buttonBackGameMode, constraintsForButtonBackGameMode);
-            frame.revalidate();
-            frame.repaint();
+            repaint();
         });
     }
     private void showFrameBoard()
@@ -1014,8 +1118,7 @@ public class GUI
             frame.getContentPane().removeAll();
             frame.getContentPane().add(panelBoardInteractive, constraintsForPanelBoardInteractive);
             frame.getContentPane().add(statusBar, constraintsForStatusBar);
-            frame.revalidate();
-            frame.repaint();
+            repaint();
         });
     }
     private void showFrameRules()
@@ -1029,8 +1132,7 @@ public class GUI
             frame.getContentPane().add(comboBoxRules, constraintsForComboBoxRules);
             frame.getContentPane().add(buttonBackRules, constraintsForButtonBackRules);
             frame.getContentPane().add(scrollPaneRules, constraintsForScrollPaneRules);
-            frame.revalidate();
-            frame.repaint();
+            repaint();
         });
     }
     private void showFrameSettings()
@@ -1050,46 +1152,16 @@ public class GUI
             frame.getContentPane().add(sliderGainSfx, constraintsForSliderGainSfx);
             frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
             frame.getContentPane().add(buttonApply, constraintsForButtonApply);
+            repaint();
+        });
+    }
+    public void repaint()
+    {
+        SwingUtilities.invokeLater(()->
+        {
             frame.revalidate();
             frame.repaint();
         });
-    }
-    public void showFrame()
-    {
-        try
-        {
-            SwingUtilities.invokeAndWait(()->
-            {
-                frame.setVisible(true);
-
-                if(resourcesMissing==true)
-                {
-                    JOptionPane.showMessageDialog(frame,
-                            text.getSomeResourcesAreMissing(), text.getGuiWarning(), JOptionPane.WARNING_MESSAGE);
-                }
-
-                if(musicPlayer.getResourcesMissing()==true)
-                {
-                    JOptionPane.showMessageDialog(frame,
-                            text.getSomeResourcesAreMissing(), text.getMusicPlayerWarning(), JOptionPane.WARNING_MESSAGE);
-                }
-
-                if((musicPlayer.getLineMusicAvailable()==false) ||
-                   (musicPlayer.getMuteMusicAvailable()==false) ||
-                   (musicPlayer.getGainMusicAvailable()==false) ||
-                   (musicPlayer.getLineSfxAvailable()==false)   ||
-                   (musicPlayer.getMuteSfxAvailable()==false)   ||
-                   (musicPlayer.getGainSfxAvailable()==false))
-                {
-                    JOptionPane.showMessageDialog(frame,
-                            text.getSomeFeaturesAreNotAvailable(), text.getMusicPlayerWarning(), JOptionPane.WARNING_MESSAGE);
-                }
-            });
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
     private void addToPreviousFrames(FrameType currentFrame)
     {
@@ -1130,14 +1202,6 @@ public class GUI
                 }
             }
         }
-    }
-    public void repaint()
-    {
-        SwingUtilities.invokeLater(()->
-        {
-            frame.revalidate();
-            frame.repaint();
-        });
     }
     private void refreshText()
     {
@@ -1259,59 +1323,8 @@ public class GUI
     {
         return selection;
     }
-    public BufferedImage getSelectionSquare()
-    {
-        return selectionSquare;
-    }
     public void setStatusBarText(String message)
     {
         SwingUtilities.invokeLater(() -> statusBar.setText(message));
-    }
-    public void setGame(Game game)
-    {
-        this.game = game;
-        panelBoardInteractive.setGrid(game.getGrid());
-        panelBoardInteractive.setGame(game);
-    }
-    public void setRules(Rules rules)
-    {
-        this.rules = rules;
-        panelBoardRules.setRules(rules);
-        panelBoardRules.setGrid(rules.getGrid());
-        comboBoxRules.setSelectedIndex(0);
-    }
-    public void setMusicPlayer(MusicPlayer musicPlayer)
-    {
-        this.musicPlayer = musicPlayer;
-
-        //Slider gain music.
-        try
-        {
-            SwingUtilities.invokeAndWait(()->
-            {
-                sliderGainMusic.setMinimum(musicPlayer.getGainMusicPercentMinimum());
-                sliderGainMusic.setMaximum(musicPlayer.getGainMusicPercentMaximum());
-                sliderGainMusic.setValue(musicPlayer.getGainMusicPercentCurrent());
-            });
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        //Slider gain sfx.
-        try
-        {
-            SwingUtilities.invokeAndWait(()->
-            {
-                sliderGainSfx.setMinimum(musicPlayer.getGainSfxPercentMinimum());
-                sliderGainSfx.setMaximum(musicPlayer.getGainSfxPercentMaximum());
-                sliderGainSfx.setValue(musicPlayer.getGainSfxPercentCurrent());
-            });
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 }

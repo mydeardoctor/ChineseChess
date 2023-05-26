@@ -1,6 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
-public class ChineseChess //TODO рефакторинг последовательности вызова сеттеров и геттеров
+public class ChineseChess
 {
     public static void main(String[] args)
     {
@@ -16,6 +16,6 @@ public class ChineseChess //TODO рефакторинг последовател
         gui.setRules(rules);
         gui.setMusicPlayer(musicPlayer);
 
-        gui.showFrame();
+        gui.showFrameAndWarnings();
     }
 }

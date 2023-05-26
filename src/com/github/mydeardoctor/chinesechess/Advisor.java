@@ -1,7 +1,7 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.awt.image.BufferedImage;
 
 public abstract class Advisor extends Figure

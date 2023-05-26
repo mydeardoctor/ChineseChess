@@ -1,9 +1,9 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 import java.awt.image.BufferedImage;
 
 public class Game
@@ -119,6 +119,14 @@ public class Game
         setTurn(Player.RED);
         setPhase(Phase.CHOOSE_FIGURE);
     }
+    public void setGui(GUI gui)
+    {
+        this.gui = gui;
+        text = gui.getText();
+        selection = gui.getSelection();
+
+        setIconsToFigures(gui);
+    }
     private void setIconsToFigures(GUI gui)
     {
         generalRed.setIcon(gui.getGeneralRedIcon());
@@ -154,6 +162,10 @@ public class Game
         soldierBlack3.setIcon(gui.getSoldierBlackIcon());
         soldierBlack4.setIcon(gui.getSoldierBlackIcon());
         soldierBlack5.setIcon(gui.getSoldierBlackIcon());
+    }
+    public void setMusicPlayer(MusicPlayer musicPlayer)
+    {
+        this.musicPlayer = musicPlayer;
     }
     public void start()
     {
@@ -454,17 +466,5 @@ public class Game
     public void setPhase(Phase phase)
     {
         this.phase = phase;
-    }
-    public void setGui(GUI gui)
-    {
-        this.gui = gui;
-        text = gui.getText();
-        selection = gui.getSelection();
-
-        setIconsToFigures(gui);
-    }
-    public void setMusicPlayer(MusicPlayer musicPlayer)
-    {
-        this.musicPlayer = musicPlayer;
     }
 }

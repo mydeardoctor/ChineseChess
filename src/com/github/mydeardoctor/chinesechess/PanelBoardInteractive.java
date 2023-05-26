@@ -1,10 +1,10 @@
 package com.github.mydeardoctor.chinesechess;
 
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class PanelBoardInteractive extends PanelBoard implements MouseListener
 {
@@ -12,6 +12,11 @@ public class PanelBoardInteractive extends PanelBoard implements MouseListener
     public PanelBoardInteractive()
     {
         super();
+    }
+    public void setGame(Game game)
+    {
+        super.setGrid(game.getGrid());
+        this.game = game;
     }
     @Override
     public void mouseClicked(MouseEvent e)
@@ -61,9 +66,5 @@ public class PanelBoardInteractive extends PanelBoard implements MouseListener
     @Override
     public void mouseExited(MouseEvent e)
     {
-    }
-    public void setGame(Game game)
-    {
-        this.game = game;
     }
 }
