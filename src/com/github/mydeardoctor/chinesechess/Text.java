@@ -25,6 +25,12 @@ public abstract class Text
     public abstract String getAreYouSure();
     public abstract String getYes();
     public abstract String getNo();
+    public abstract String getReplay();
+    public abstract String getSaveReplay();
+    public abstract String getReplayWarning();
+    public abstract String getNothingToSave();
+    public abstract String getReplayError();
+    public abstract String getCouldNotSaveReplay();
     public abstract String getHelp();
     public abstract String getAbout();
     public abstract String getAboutVerbose();
@@ -34,6 +40,8 @@ public abstract class Text
     public abstract String getLoad();
     public abstract String getRules();
     public abstract String getSettings();
+    public abstract String getLoadReplay();
+    public abstract String getCouldNotLoadReplay();
 
     //Frame Game Mode.
     public abstract String getSinglePlayer();

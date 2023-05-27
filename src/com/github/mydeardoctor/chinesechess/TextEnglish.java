@@ -85,6 +85,36 @@ public class TextEnglish extends Text
     {
         return "No";
     }
+    @Override
+    public String getReplay()
+    {
+        return "Replay";
+    }
+    @Override
+    public String getSaveReplay()
+    {
+        return "Save replay";
+    }
+    @Override
+    public String getReplayWarning()
+    {
+        return "Replay warning";
+    }
+    @Override
+    public String getNothingToSave()
+    {
+        return "Nothing to save!";
+    }
+    @Override
+    public String getReplayError()
+    {
+        return "Replay error";
+    }
+    @Override
+    public String getCouldNotSaveReplay()
+    {
+        return "Could not save replay!";
+    }
 
     @Override
     public String getHelp()
@@ -122,6 +152,16 @@ public class TextEnglish extends Text
     public String getSettings()
     {
         return "Settings";
+    }
+    @Override
+    public String getLoadReplay()
+    {
+        return "Load replay";
+    }
+    @Override
+    public String getCouldNotLoadReplay()
+    {
+        return "Could not load replay!";
     }
 
     //Frame Game Mode.

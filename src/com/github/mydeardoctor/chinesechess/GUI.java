@@ -1,11 +1,14 @@
 package com.github.mydeardoctor.chinesechess;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.imageio.ImageIO;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -43,7 +46,12 @@ public class GUI
 
     //Common frame features.
     private JFrame frame;
+    private JFileChooser fileChooser;
     private JMenuBar menuBar;
+    private JMenu menuNavigation;
+    private JMenuItem menuItemMainMenu;
+    private JMenu menuReplay;
+    private JMenuItem menuItemSaveReplay;
     private JMenu menuHelp;
     private JMenuItem menuItemRules;
     private JMenuItem menuItemSettings;
@@ -73,8 +81,6 @@ public class GUI
     private GridBagConstraints constraintsForButtonBackGameMode;
 
     //Frame Board.
-    private JMenu menuNavigation;
-    private JMenuItem menuItemMainMenu;
     private PanelBoardInteractive panelBoardInteractive;
     private JTextField statusBar;
     private GridBagConstraints constraintsForPanelBoardInteractive;
@@ -115,6 +121,9 @@ public class GUI
 
     //Game.
     private Game game;
+
+    //Replay.
+    private Replay replay;
 
     //Rules.
     private Rules rules;
@@ -474,6 +483,26 @@ public class GUI
                 //Icon.
                 frame.setIconImage(icon);
 
+                //File Chooser.
+                fileChooser = new JFileChooser();
+                try
+                {
+                    String currentDirectoryPath = getClass().getProtectionDomain()
+                                                            .getCodeSource()
+                                                            .getLocation()
+                                                            .toURI()
+                                                            .getPath();
+                    File currentDirectoryFile = new File(currentDirectoryPath);
+                    fileChooser.setCurrentDirectory(currentDirectoryFile);
+                }
+                catch(Exception e)
+                {
+                    fileChooser.setCurrentDirectory(null);
+                }
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                fileChooser.setFileFilter(
+                        new FileNameExtensionFilter("Chinese Chess Replay .ccrpl", "ccrpl"));
+
                 //Menu Bar.
                 menuBar = new JMenuBar();
 
@@ -493,13 +522,41 @@ public class GUI
                                 new String[] {text.getYes(), text.getNo()}, text.getNo());
                         if(selectedOption==JOptionPane.YES_OPTION)
                         {
-                            musicPlayer.stopMusic();
+                            game.stop();
                             showFrameMainMenu();
                         }
                     }
                 });
                 menuNavigation.add(menuItemMainMenu);
                 menuBar.add(menuNavigation);
+
+                menuReplay = new JMenu(text.getReplay());
+                menuItemSaveReplay = new JMenuItem(text.getSaveReplay());
+                menuItemSaveReplay.addActionListener(e->
+                {
+                    if(replay.getIsReplayOutputEmpty()==true)
+                    {
+                        JOptionPane.showMessageDialog(frame,
+                                text.getNothingToSave(), text.getReplayWarning(), JOptionPane.WARNING_MESSAGE);
+                    }
+                    else //replay.getIsReplayOutputEmpty()==false
+                    {
+                        fileChooser.setDialogTitle(text.getSaveReplay());
+                        int choice = fileChooser.showSaveDialog(frame);
+                        if(choice == JFileChooser.APPROVE_OPTION)
+                        {
+                            File selectedFile = fileChooser.getSelectedFile();
+                            int result = replay.save(selectedFile);
+                            if(result == Replay.FAILURE)
+                            {
+                                JOptionPane.showMessageDialog(frame,
+                                        text.getCouldNotSaveReplay(), text.getReplayError(), JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    }
+                });
+                menuReplay.add(menuItemSaveReplay);
+                menuBar.add(menuReplay);
 
                 menuHelp = new JMenu(text.getHelp());
                 menuItemRules = new JMenuItem(text.getRules());
@@ -594,6 +651,25 @@ public class GUI
 
                 //Action listeners.
                 buttonPlay.addActionListener(e->showFrameGameMode());
+                buttonLoad.addActionListener(e->
+                {
+                    fileChooser.setDialogTitle(text.getLoadReplay());
+                    int choice = fileChooser.showOpenDialog(frame);
+                    if(choice == JFileChooser.APPROVE_OPTION)
+                    {
+                        File selectedFile = fileChooser.getSelectedFile();
+                        int result = replay.open(selectedFile);
+                        if(result == Replay.FAILURE)
+                        {
+                            JOptionPane.showMessageDialog(frame,
+                                    text.getCouldNotLoadReplay(), text.getReplayError(), JOptionPane.ERROR_MESSAGE);
+                        }
+                        else
+                        {
+                            //TODO show frame replay
+                        }
+                    }
+                });
                 buttonRules.addActionListener(e->showFrameRules());
                 buttonSettings.addActionListener(e->showFrameSettings());
             });
@@ -663,6 +739,7 @@ public class GUI
                 //Action listener.
                 buttonLocalMultiplayer.addActionListener(e->
                 {
+                    replay.clearReplayOutput();
                     game.start();
                     showFrameBoard();
                 });
@@ -1023,6 +1100,10 @@ public class GUI
         this.game = game;
         panelBoardInteractive.setGame(game);
     }
+    public void setReplay(Replay replay)
+    {
+        this.replay = replay;
+    }
     public void setRules(Rules rules)
     {
         this.rules = rules;
@@ -1247,6 +1328,8 @@ public class GUI
             frame.setTitle(text.getTitle());
             menuNavigation.setText(text.getNavigation());
             menuItemMainMenu.setText(text.getMainMenu());
+            menuReplay.setText(text.getReplay());
+            menuItemSaveReplay.setText(text.getSaveReplay());
             menuHelp.setText(text.getHelp());
             menuItemRules.setText(text.getRules());
             menuItemSettings.setText(text.getSettings());

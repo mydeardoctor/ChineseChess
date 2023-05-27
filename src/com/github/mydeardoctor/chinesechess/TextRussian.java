@@ -84,6 +84,36 @@ class TextRussian extends Text
     {
         return "Нет";
     }
+    @Override
+    public String getReplay()
+    {
+        return "Запись игры";
+    }
+    @Override
+    public String getSaveReplay()
+    {
+        return "Сохранить запись игры";
+    }
+    @Override
+    public String getReplayWarning()
+    {
+        return "Предупреждение Replay";
+    }
+    @Override
+    public String getNothingToSave()
+    {
+        return "Сохранять нечего!";
+    }
+    @Override
+    public String getReplayError()
+    {
+        return "Ошибка Replay";
+    }
+    @Override
+    public String getCouldNotSaveReplay()
+    {
+        return "Не удалось сохранить запись игры!";
+    }
 
     @Override
     public String getHelp()
@@ -121,6 +151,16 @@ class TextRussian extends Text
     public String getSettings()
     {
         return "Настройки";
+    }
+    @Override
+    public String getLoadReplay()
+    {
+        return "Загрузить запись игры";
+    }
+    @Override
+    public String getCouldNotLoadReplay()
+    {
+        return "Не удалось загрузить запись игры!";
     }
 
     //Frame Game Mode.

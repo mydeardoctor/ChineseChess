@@ -49,6 +49,9 @@ public class Game
     private Location prevSelectedLocation;
     private Figure prevSelectedFigure;
 
+    //Replay attributes.
+    private Replay replay;
+
     //GUI attributes.
     private GUI gui;
     private Text text;
@@ -118,6 +121,10 @@ public class Game
         setState(State.OVER);
         setTurn(Player.RED);
         setPhase(Phase.CHOOSE_FIGURE);
+    }
+    public void setReplay(Replay replay)
+    {
+        this.replay = replay;
     }
     public void setGui(GUI gui)
     {
@@ -298,6 +305,7 @@ public class Game
                             {
                                 unhighlightEverything();
                                 moveFigure(selectedLocation);
+                                replay.addToReplayOutput(prevSelectedLocation, selectedLocation);
                                 nextTurn();
                             }
                         }
@@ -399,6 +407,23 @@ public class Game
             case BLACK -> gui.setStatusBarText(text.getGameOver() + " " + text.getRedPlayer() + " " + text.getWon());
         }
         musicPlayer.stopMusic();
+    }
+    public void stop()
+    {
+        clearGrid();
+        setState(State.OVER);
+        replay.clearReplayOutput();
+        musicPlayer.stopMusic();
+    }
+    private void clearGrid()
+    {
+        //Clear all figures and selections.
+        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
+        for(Map.Entry<Location, Tile> gridEntry : gridSet)
+        {
+            gridEntry.getValue().setFigure(null);
+            gridEntry.getValue().setSelection(null);
+        }
     }
     public void refreshText(Text text)
     {
