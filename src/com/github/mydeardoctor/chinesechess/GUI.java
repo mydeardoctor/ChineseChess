@@ -1,7 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -41,6 +40,7 @@ public class GUI
     private BufferedImage selection;
     private BufferedImage selectionPalace;
     private BufferedImage selectionRiver;
+    private ImageIcon iconNextMove;
     private ImageIcon iconUnmuted;
     private ImageIcon iconMuted;
 
@@ -85,6 +85,12 @@ public class GUI
     private JTextField statusBar;
     private GridBagConstraints constraintsForPanelBoardInteractive;
     private GridBagConstraints constraintsForStatusBar;
+
+    //Frame Replay.
+    private PanelBoard panelBoardReplay;
+    private JButton buttonNextMove;
+    private GridBagConstraints constraintsForPanelBoardReplay;
+    private GridBagConstraints constraintsForButtonNextMove;
 
     //Frame Rules.
     private PanelBoardRules panelBoardRules;
@@ -139,6 +145,7 @@ public class GUI
         initializeFrameMainMenu();
         initializeFrameGameMode();
         initializeFrameBoard();
+        initializeFrameReplay();
         initializeFrameRules();
         initializeFrameSettings();
     }
@@ -426,9 +433,17 @@ public class GUI
             g2d.drawRect(5,5,790,90);
         }
 
+        //Icon Next Move.
+        BufferedImage imageNextMove = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imageNextMove.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawPolygon(new Polygon(new int[]{10,50,10,10}, new int[] {10,30,50,10}, 4));
+        iconNextMove = new ImageIcon(imageNextMove);
+
         //Icon unmuted.
         BufferedImage imageUnmuted = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-        Graphics2D g2d = imageUnmuted.createGraphics();
+        g2d = imageUnmuted.createGraphics();
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
         g2d.drawPolygon(new Polygon(new int[]{10,23,45,45,23,10,10}, new int[] {23,23,10,50,37,37,23}, 7));
@@ -510,11 +525,7 @@ public class GUI
                 menuItemMainMenu = new JMenuItem(text.getMainMenu());
                 menuItemMainMenu.addActionListener(e->
                 {
-                    if(game.getState()==State.OVER)
-                    {
-                        showFrameMainMenu();
-                    }
-                    else //game.getState()==State.RUNNING
+                    if((game.getState()==State.RUNNING)  ||  (replay.getState()==State.RUNNING))
                     {
                         int selectedOption = JOptionPane.showOptionDialog(frame,
                                 text.getAreYouSure(), text.getExitToMainMenu(),
@@ -523,8 +534,13 @@ public class GUI
                         if(selectedOption==JOptionPane.YES_OPTION)
                         {
                             game.stop();
+                            replay.stop();
                             showFrameMainMenu();
                         }
+                    }
+                    else
+                    {
+                        showFrameMainMenu();
                     }
                 });
                 menuNavigation.add(menuItemMainMenu);
@@ -534,12 +550,12 @@ public class GUI
                 menuItemSaveReplay = new JMenuItem(text.getSaveReplay());
                 menuItemSaveReplay.addActionListener(e->
                 {
-                    if(replay.getIsReplayOutputEmpty()==true)
+                    if(replay.getIsReplayOutputEmpty() == true)
                     {
                         JOptionPane.showMessageDialog(frame,
                                 text.getNothingToSave(), text.getReplayWarning(), JOptionPane.WARNING_MESSAGE);
                     }
-                    else //replay.getIsReplayOutputEmpty()==false
+                    else //replay.getIsReplayOutputEmpty() == false
                     {
                         fileChooser.setDialogTitle(text.getSaveReplay());
                         int choice = fileChooser.showSaveDialog(frame);
@@ -658,7 +674,7 @@ public class GUI
                     if(choice == JFileChooser.APPROVE_OPTION)
                     {
                         File selectedFile = fileChooser.getSelectedFile();
-                        int result = replay.open(selectedFile);
+                        int result = replay.load(selectedFile);
                         if(result == Replay.FAILURE)
                         {
                             JOptionPane.showMessageDialog(frame,
@@ -666,7 +682,8 @@ public class GUI
                         }
                         else
                         {
-                            //TODO show frame replay
+                            replay.start();
+                            showFrameReplay();
                         }
                     }
                 });
@@ -786,6 +803,48 @@ public class GUI
             e.printStackTrace();
         }
     }
+    private void initializeFrameReplay()
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                //Panel Board Replay.
+                panelBoardReplay = new PanelBoard();
+                panelBoardReplay.setOpaque(false);
+
+                //Buttons.
+                buttonNextMove = new JButton(iconNextMove);
+
+                //Preferred Size.
+                buttonNextMove.setPreferredSize(new Dimension(60,60));
+
+                //Layout manager constraints.
+                constraintsForPanelBoardReplay = new GridBagConstraints
+                        (0, 0,1,1,1,1,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0,0,0,0), 0,0);
+                constraintsForButtonNextMove = new GridBagConstraints
+                        (0, 1,1,1,0,0,
+                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                new Insets(10,0,10,0), 0,0);
+
+                //Background Color.
+                buttonNextMove.setBackground(Color.WHITE);
+
+                //Border.
+                LineBorder border = new LineBorder(Color.BLACK, 2);
+                buttonNextMove.setBorder(border);
+
+                //Action listeners.
+                buttonNextMove.addActionListener(e->replay.nextMove());
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
     private void initializeFrameRules()
     {
         try
@@ -832,19 +891,19 @@ public class GUI
 
                 //Layout manager constraints.
                 constraintsForPanelBoardRules = new GridBagConstraints
-                        (0, 0,2,1,1,1,
+                        (0, 0,1,1,1,1,
                                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                                 new Insets(0,0,0,0), 0,0);
                 constraintsForComboBoxRules = new GridBagConstraints
                         (0, 1,1,1,0,0,
-                                GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                new Insets(10,10,10,10), 0,0);
+                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                new Insets(10,0,10,160), 0,0);
                 constraintsForButtonBackRules = new GridBagConstraints
-                        (1, 1,1,1,0,0,
-                                GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                new Insets(10,0,10,0), 0,0);
+                        (0, 1,1,1,0,0,
+                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                new Insets(10,120,10,0), 0,0);
                 constraintsForScrollPaneRules = new GridBagConstraints
-                        (0, 2,2,1,0,0,
+                        (0, 2,1,1,0,0,
                                 GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                                 new Insets(0,0,0,0), 0,0);
 
@@ -1103,6 +1162,7 @@ public class GUI
     public void setReplay(Replay replay)
     {
         this.replay = replay;
+        panelBoardReplay.setGrid(replay.getGrid());
     }
     public void setRules(Rules rules)
     {
@@ -1231,6 +1291,18 @@ public class GUI
             repaint();
         });
     }
+    private void showFrameReplay()
+    {
+        addToPreviousFrames(FrameType.REPLAY);
+
+        SwingUtilities.invokeLater(()->
+        {
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(panelBoardReplay, constraintsForPanelBoardReplay);
+            frame.getContentPane().add(buttonNextMove, constraintsForButtonNextMove);
+            repaint();
+        });
+    }
     private void showFrameRules()
     {
         addToPreviousFrames(FrameType.RULES);
@@ -1307,6 +1379,7 @@ public class GUI
                     case MAIN_MENU -> showFrameMainMenu();
                     case GAME_MODE -> showFrameGameMode();
                     case BOARD -> showFrameBoard();
+                    case REPLAY -> showFrameReplay();
                     case RULES -> showFrameRules();
                     case SETTINGS -> showFrameSettings();
                 }
@@ -1348,6 +1421,7 @@ public class GUI
             buttonBackGameMode.setText(text.getBack());
 
             //Frame Rules.
+            buttonBackRules.setText(text.getBack());
             index = comboBoxRules.getSelectedIndex();
             comboBoxRules.removeAllItems();
             comboBoxRules.addItem(text.getGoal());
@@ -1440,5 +1514,13 @@ public class GUI
     public void setStatusBarText(String message)
     {
         SwingUtilities.invokeLater(() -> statusBar.setText(message));
+    }
+    public void enableButtonNextMove()
+    {
+        SwingUtilities.invokeLater(() -> buttonNextMove.setEnabled(true));
+    }
+    public void disableButtonNextMove()
+    {
+        SwingUtilities.invokeLater(() -> buttonNextMove.setEnabled(false));
     }
 }
