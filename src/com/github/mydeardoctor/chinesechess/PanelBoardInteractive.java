@@ -1,5 +1,6 @@
 package com.github.mydeardoctor.chinesechess;
 
+import java.awt.image.BufferedImage;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -9,9 +10,10 @@ import java.awt.event.MouseListener;
 public class PanelBoardInteractive extends PanelBoard implements MouseListener
 {
     private Game game;
-    public PanelBoardInteractive()
+    public PanelBoardInteractive(HashMap<Class<? extends Figure>,
+            BufferedImage> imagesOfFigures, BufferedImage selectionFigure)
     {
-        super();
+        super(imagesOfFigures, selectionFigure);
     }
     public void setGame(Game game)
     {

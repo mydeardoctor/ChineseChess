@@ -2,13 +2,12 @@ package com.github.mydeardoctor.chinesechess;
 
 import java.util.HashSet;
 import java.util.HashMap;
-import java.awt.image.BufferedImage;
 
 public class AdvisorRed extends Advisor
 {
-    public AdvisorRed(Player player, BufferedImage icon)
+    public AdvisorRed()
     {
-        super(player, icon);
+        super(Player.RED);
     }
     @Override
     public HashSet<Location> getPossibleMoves(Game game, HashMap<Location, Tile> grid, Player turn)

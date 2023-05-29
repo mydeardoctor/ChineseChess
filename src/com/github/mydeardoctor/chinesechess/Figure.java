@@ -1,19 +1,18 @@
 package com.github.mydeardoctor.chinesechess;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
-import java.awt.image.BufferedImage;
 
-public abstract class Figure
+public abstract class Figure implements Serializable
 {
     private Player player;
-    private BufferedImage icon;
-    public Figure(Player player, BufferedImage icon)
+
+    public Figure(Player player)
     {
         this.player = player;
-        this.icon = icon;
     }
     public HashSet<Location> getAllowedMoves(Game game)
     {
@@ -28,7 +27,7 @@ public abstract class Figure
             for(int x = 0; x <= 8; x++)
             {
                 Location location = new Location(x, y);
-                Tile tile = new Tile(null, null);
+                Tile tile = new Tile(null, false);
                 gridCopy.put(location, tile);
             }
         }
@@ -42,9 +41,9 @@ public abstract class Figure
             {
                 Location location = gridEntry.getKey();
                 Figure figure = gridEntry.getValue().getFigure();
-                BufferedImage selection = gridEntry.getValue().getSelection();
+                boolean selected = gridEntry.getValue().getSelected();
                 gridCopy.get(location).setFigure(figure);
-                gridCopy.get(location).setSelection(selection);
+                gridCopy.get(location).setSelected(selected);
             }
 
             gridCopy.get(origin).setFigure(null);       //Move figure from initial location...
@@ -150,13 +149,5 @@ public abstract class Figure
     public Player getPlayer()
     {
         return player;
-    }
-    public BufferedImage getIcon()
-    {
-        return icon;
-    }
-    public void setIcon(BufferedImage icon)
-    {
-        this.icon = icon;
     }
 }

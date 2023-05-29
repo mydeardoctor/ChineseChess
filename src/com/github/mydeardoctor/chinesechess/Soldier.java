@@ -2,13 +2,12 @@ package com.github.mydeardoctor.chinesechess;
 
 import java.util.HashSet;
 import java.util.HashMap;
-import java.awt.image.BufferedImage;
 
 public abstract class Soldier extends Figure
 {
-    public Soldier(Player player, BufferedImage icon)
+    public Soldier(Player player)
     {
-        super(player, icon);
+        super(player);
     }
     public void checkTile(int xDestination, int yDestination,
                           Game game, HashMap<Location, Tile> grid, Player turn, HashSet<Location> possibleMoves)

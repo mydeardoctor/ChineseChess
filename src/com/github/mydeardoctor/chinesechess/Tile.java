@@ -1,15 +1,15 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public class Tile
+public class Tile implements Serializable
 {
     private Figure figure;
-    private BufferedImage selection;
-    public Tile(Figure figure, BufferedImage selection)
+    private boolean selected;
+    public Tile(Figure figure, boolean selected)
     {
         this.figure = figure;
-        this.selection = selection;
+        this.selected = selected;
     }
     public Figure getFigure()
     {
@@ -19,12 +19,12 @@ public class Tile
     {
         this.figure = figure;
     }
-    public BufferedImage getSelection()
+    public boolean getSelected()
     {
-        return selection;
+        return selected;
     }
-    public void setSelection(BufferedImage selection)
+    public void setSelected(boolean selected)
     {
-        this.selection = selection;
+        this.selected = selected;
     }
 }

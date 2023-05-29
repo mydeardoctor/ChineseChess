@@ -9,14 +9,20 @@ import javax.swing.*;
 
 public class PanelBoard extends JPanel
 {
+
     private int x0Board;
     private int y0Board;
     private int tileLength;
     private int figureRadius;
     private HashMap<Location, Tile> grid;
-    public PanelBoard()
+    private HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures;
+    private BufferedImage selectionFigure;
+
+    public PanelBoard(HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures, BufferedImage selectionFigure)
     {
         super();
+        this.imagesOfFigures = imagesOfFigures;
+        this.selectionFigure = selectionFigure;
     }
     public void setGrid(HashMap<Location, Tile> grid)
     {
@@ -90,15 +96,15 @@ public class PanelBoard extends JPanel
             Figure figure = gridEntry.getValue().getFigure();
             if(figure!=null)
             {
-                g2d.drawImage(figure.getIcon(),
+                g2d.drawImage(imagesOfFigures.get(figure.getClass()),
                         x0Board + tileLength + tileLength* gridEntry.getKey().getX() - figureRadius,
                         y0Board + tileLength + tileLength* gridEntry.getKey().getY() - figureRadius,
                         figureDiameter, figureDiameter, this);
             }
-            BufferedImage selection = gridEntry.getValue().getSelection();
-            if(selection!=null)
+            boolean selected = gridEntry.getValue().getSelected();
+            if(selected == true)
             {
-                g2d.drawImage(selection,
+                g2d.drawImage(selectionFigure,
                         x0Board + tileLength + tileLength* gridEntry.getKey().getX() - selectionRadius,
                         y0Board + tileLength + tileLength* gridEntry.getKey().getY() - selectionRadius,
                         selectionDiameter, selectionDiameter, this);

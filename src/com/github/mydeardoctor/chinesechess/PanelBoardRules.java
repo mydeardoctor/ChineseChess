@@ -2,15 +2,19 @@ package com.github.mydeardoctor.chinesechess;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 public class PanelBoardRules extends PanelBoard
 {
     private BufferedImage selectionPalace;
     private BufferedImage selectionRiver;
     private Rules rules;
-    public PanelBoardRules(BufferedImage selectionPalace, BufferedImage selectionRiver)
+    public PanelBoardRules(HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures,
+                           BufferedImage selectionFigure,
+                           BufferedImage selectionPalace,
+                           BufferedImage selectionRiver)
     {
-        super();
+        super(imagesOfFigures, selectionFigure);
         this.selectionPalace = selectionPalace;
         this.selectionRiver = selectionRiver;
     }

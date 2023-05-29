@@ -14,7 +14,7 @@ public class ChineseChess
         game.setGui(gui);
         game.setMusicPlayer(musicPlayer);
         replay.setGui(gui);
-        rules.setGui(gui);
+        rules.setGame(game);
         gui.setGame(game);
         gui.setReplay(replay);
         gui.setRules(rules);

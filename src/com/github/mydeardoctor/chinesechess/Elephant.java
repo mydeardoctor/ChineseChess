@@ -2,13 +2,12 @@ package com.github.mydeardoctor.chinesechess;
 
 import java.util.HashSet;
 import java.util.HashMap;
-import java.awt.image.BufferedImage;
 
 public abstract class Elephant extends Figure
 {
-    public Elephant(Player player, BufferedImage icon)
+    public Elephant(Player player)
     {
-        super(player, icon);
+        super(player);
     }
     public void checkTile(int xDestination, int yDestination, int xIntermediate, int yIntermediate,
                           Game game, HashMap<Location, Tile> grid, Player turn, HashSet<Location> possibleMoves)

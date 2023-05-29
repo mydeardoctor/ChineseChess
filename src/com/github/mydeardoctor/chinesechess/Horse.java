@@ -2,13 +2,12 @@ package com.github.mydeardoctor.chinesechess;
 
 import java.util.HashSet;
 import java.util.HashMap;
-import java.awt.image.BufferedImage;
 
-public class Horse extends Figure
+public abstract class Horse extends Figure
 {
-    public Horse(Player player, BufferedImage icon)
+    public Horse(Player player)
     {
-        super(player, icon);
+        super(player);
     }
     @Override
     public HashSet<Location> getPossibleMoves(Game game, HashMap<Location, Tile> grid, Player turn)
