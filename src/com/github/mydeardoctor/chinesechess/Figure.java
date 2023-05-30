@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 public abstract class Figure implements Serializable
 {
-    private Player player;
+    private final Player player;
 
     public Figure(Player player)
     {
@@ -119,7 +119,7 @@ public abstract class Figure implements Serializable
                     }
                 }
             }
-            if(generalUnderAttack==false)
+            if(!generalUnderAttack)
             {
                 allowedMoves.add(possibleMove);
             }

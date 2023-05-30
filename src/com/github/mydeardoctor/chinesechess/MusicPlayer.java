@@ -180,7 +180,7 @@ public class MusicPlayer
     }
     public void playMusic()
     {
-        if(lineMusicAvailable==true)
+        if(lineMusicAvailable)
         {
             lineMusic.stop();
             lineMusic.flush();
@@ -190,7 +190,7 @@ public class MusicPlayer
     }
     public void stopMusic()
     {
-        if(lineMusicAvailable==true)
+        if(lineMusicAvailable)
         {
             lineMusic.stop();
             lineMusic.flush();
@@ -199,7 +199,7 @@ public class MusicPlayer
     }
     public void playSfx()
     {
-        if(lineSfxAvailable==true)
+        if(lineSfxAvailable)
         {
             lineSfx.stop();
             lineSfx.flush();
@@ -209,35 +209,35 @@ public class MusicPlayer
     }
     public void muteMusic()
     {
-        if(muteMusicAvailable==true)
+        if(muteMusicAvailable)
         {
             muteMusic.setValue(true);
         }
     }
     public void unmuteMusic()
     {
-        if(muteMusicAvailable==true)
+        if(muteMusicAvailable)
         {
             muteMusic.setValue(false);
         }
     }
     public void muteSfx()
     {
-        if(muteSfxAvailable==true)
+        if(muteSfxAvailable)
         {
             muteSfx.setValue(true);
         }
     }
     public void unmuteSfx()
     {
-        if(muteSfxAvailable==true)
+        if(muteSfxAvailable)
         {
             muteSfx.setValue(false);
         }
     }
     public void setGainMusicDb(int percent)
     {
-        if(gainMusicAvailable==true)
+        if(gainMusicAvailable)
         {
             float db = getDb(percent, gainMusicDbMinimum, gainMusicDbMaximum);
             gainMusic.setValue(db);
@@ -245,7 +245,7 @@ public class MusicPlayer
     }
     public void setGainSfxDb(int percent)
     {
-        if(gainSfxAvailable==true)
+        if(gainSfxAvailable)
         {
             float db = getDb(percent, gainSfxDbMinimum, gainSfxDbMaximum);
             gainSfx.setValue(db);

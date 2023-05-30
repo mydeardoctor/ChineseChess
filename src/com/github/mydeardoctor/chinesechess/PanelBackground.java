@@ -6,7 +6,7 @@ import javax.swing.*;
 
 public class PanelBackground extends JPanel
 {
-    private BufferedImage background;
+    private final BufferedImage background;
     public PanelBackground(BufferedImage background)
     {
         this.background = background;

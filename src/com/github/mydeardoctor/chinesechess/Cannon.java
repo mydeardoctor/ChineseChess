@@ -27,7 +27,7 @@ public abstract class Cannon extends Figure
         {
             destination = new Location(x, yAbove);
             destinationType = game.getTileType(destination, grid, turn);
-            if(platformInPath==false)
+            if(!platformInPath)
             {
                 if(destinationType==TileType.EMPTY)
                 {
@@ -58,7 +58,7 @@ public abstract class Cannon extends Figure
         {
             destination = new Location(x, yBelow);
             destinationType = game.getTileType(destination, grid, turn);
-            if(platformInPath==false)
+            if(!platformInPath)
             {
                 if(destinationType==TileType.EMPTY)
                 {
@@ -89,7 +89,7 @@ public abstract class Cannon extends Figure
         {
             destination = new Location(xLeft, y);
             destinationType = game.getTileType(destination, grid, turn);
-            if(platformInPath==false)
+            if(!platformInPath)
             {
                 if(destinationType==TileType.EMPTY)
                 {
@@ -119,7 +119,7 @@ public abstract class Cannon extends Figure
         {
             destination = new Location(xRight, y);
             destinationType = game.getTileType(destination, grid, turn);
-            if(platformInPath==false)
+            if(!platformInPath)
             {
                 if(destinationType==TileType.EMPTY)
                 {

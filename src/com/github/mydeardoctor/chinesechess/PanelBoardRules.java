@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 public class PanelBoardRules extends PanelBoard
 {
-    private BufferedImage selectionPalace;
-    private BufferedImage selectionRiver;
+    private final BufferedImage selectionPalace;
+    private final BufferedImage selectionRiver;
     private Rules rules;
     public PanelBoardRules(HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures,
                            BufferedImage selectionFigure,
@@ -29,7 +29,7 @@ public class PanelBoardRules extends PanelBoard
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D)g;
-        if(rules.getPalaceSelected()==true)
+        if(rules.getPalaceSelected())
         {
             int palaceLength = (int)(1.2*getTileLength()*2);
             int palaceOffset = (int)((palaceLength - getTileLength()*2)/2.0);
@@ -37,7 +37,7 @@ public class PanelBoardRules extends PanelBoard
             int palaceY = getY0Board() + getTileLength() + getTileLength()*7 - palaceOffset;
             g2d.drawImage(selectionPalace, palaceX, palaceY, palaceLength, palaceLength, this);
         }
-        if(rules.getRiverSelected()==true)
+        if(rules.getRiverSelected())
         {
             int riverWidth = (int)(1.04*getTileLength()*8);
             int riverHeight = (int)(1.4*getTileLength());

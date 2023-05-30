@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Game
-{//TODO переставить местами. Сверху состояния. Внихзу конкретика
+{
     //Game attributes.
     private final Figure generalRed;
     private final Figure advisorRed1;
@@ -44,7 +44,7 @@ public class Game
     private State state;
     private Player turn;
     private Phase phase;
-    private HashMap<Location, HashSet<Location>> allAllowedMoves;
+    private final HashMap<Location, HashSet<Location>> allAllowedMoves;
     private Location prevSelectedLocation;
     private Figure prevSelectedFigure;
 
@@ -124,7 +124,7 @@ public class Game
     }
     public void setGui(GUI gui)
     {
-        this.gui = gui; //TODO убрать ссылку на текст
+        this.gui = gui;
     }
     public void setMusicPlayer(MusicPlayer musicPlayer)
     {
@@ -373,20 +373,9 @@ public class Game
     }
     public void stop()
     {
-        clearGrid(); //TODO?
         setState(State.OVER);
         replay.resetReplayOutput();
         musicPlayer.stopMusic();
-    }
-    private void clearGrid()
-    {
-        //Clear all figures and selections.
-        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
-        for(Map.Entry<Location, Tile> gridEntry : gridSet)
-        {
-            gridEntry.getValue().setFigure(null);
-            gridEntry.getValue().setSelected(false);
-        }
     }
     public void refreshText()
     {

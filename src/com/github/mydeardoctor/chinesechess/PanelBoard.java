@@ -15,8 +15,8 @@ public class PanelBoard extends JPanel
     private int tileLength;
     private int figureRadius;
     private HashMap<Location, Tile> grid;
-    private HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures;
-    private BufferedImage selectionFigure;
+    private final HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures;
+    private final BufferedImage selectionFigure;
 
     public PanelBoard(HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures, BufferedImage selectionFigure)
     {
@@ -102,7 +102,7 @@ public class PanelBoard extends JPanel
                         figureDiameter, figureDiameter, this);
             }
             boolean selected = gridEntry.getValue().getSelected();
-            if(selected == true)
+            if(selected)
             {
                 g2d.drawImage(selectionFigure,
                         x0Board + tileLength + tileLength* gridEntry.getKey().getX() - selectionRadius,

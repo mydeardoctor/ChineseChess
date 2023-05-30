@@ -1,67 +1,61 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.io.File;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.imageio.ImageIO;
+import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 
-//TODO
-//selectedFigure на selected
-//static and final
-//Убрать фигурам в конструкторе плеера
-//Заменить icon на image
-//Развязать имаджез и селекшн от гейм в панелбоард. селекшн с помощью булеан
-//реплей с помощью массива гридов
-//game abstract и сабклассы для игроков и компа
-//инцициализацию грида сделать статик для рулз и реплей
-//умный выбор ходов
-//реплей рил тайм
-//не дублировать объекты фигур
 public class GUI
 {
     //Text.
     private Text text;
-    private TextEnglish textEnglish;
-    private TextRussian textRussian;
+    private final TextEnglish textEnglish;
+    private final TextRussian textRussian;
 
     //Resources.
     boolean resourcesMissing;
-    private Font fontChinese;
-    private BufferedImage icon;
-    private BufferedImage background;
-    private BufferedImage generalRedImage;
-    private BufferedImage advisorRedImage;
-    private BufferedImage elephantRedImage;
-    private BufferedImage horseRedImage;
-    private BufferedImage chariotRedImage;
-    private BufferedImage cannonRedImage;
-    private BufferedImage soldierRedImage;
-    private BufferedImage generalBlackImage;
-    private BufferedImage advisorBlackImage;
-    private BufferedImage elephantBlackImage;
-    private BufferedImage horseBlackImage;
-    private BufferedImage chariotBlackImage;
-    private BufferedImage cannonBlackImage;
-    private BufferedImage soldierBlackImage;
-    private BufferedImage selectionFigure;
-    private BufferedImage selectionPalace;
-    private BufferedImage selectionRiver;
-    private ImageIcon iconNextMove;
-    private ImageIcon iconUnmuted;
-    private ImageIcon iconMuted;
+    private final Font fontChinese;
+    private final BufferedImage iconFrame;
+    private final BufferedImage background;
+    private final BufferedImage generalRedImage;
+    private final BufferedImage advisorRedImage;
+    private final BufferedImage elephantRedImage;
+    private final BufferedImage horseRedImage;
+    private final BufferedImage chariotRedImage;
+    private final BufferedImage cannonRedImage;
+    private final BufferedImage soldierRedImage;
+    private final BufferedImage generalBlackImage;
+    private final BufferedImage advisorBlackImage;
+    private final BufferedImage elephantBlackImage;
+    private final BufferedImage horseBlackImage;
+    private final BufferedImage chariotBlackImage;
+    private final BufferedImage cannonBlackImage;
+    private final BufferedImage soldierBlackImage;
+    private final BufferedImage selection;
+    private final BufferedImage selectionPalace;
+    private final BufferedImage selectionRiver;
+    private final ImageIcon iconNextMove;
+    private final ImageIcon iconUnmuted;
+    private final ImageIcon iconMuted;
 
     //Images of figures.
-    HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures;
+    private final HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures;
+    //Previous frames.
+    private final ArrayList<FrameType> previousFrames;
 
     //Common frame features.
     private JFrame frame;
+    private PanelBackground panelBackground;
+    private GridBagLayout gridBagLayout;
     private JFileChooser fileChooser;
     private JMenuBar menuBar;
     private JMenu menuNavigation;
@@ -72,9 +66,6 @@ public class GUI
     private JMenuItem menuItemRules;
     private JMenuItem menuItemSettings;
     private JMenuItem menuItemAbout;
-    private PanelBackground panelBackground;
-    private GridBagLayout gridBagLayout;
-    private ArrayList<FrameType> previousFrames;
 
     //Frame Main menu.
     private JButton buttonPlay;
@@ -112,8 +103,8 @@ public class GUI
     private PanelBoardRules panelBoardRules;
     private JComboBox<String> comboBoxRules;
     private JButton buttonBackRules;
-    private JTextArea textAreaRules;
     private JScrollPane scrollPaneRules;
+    private JTextArea textAreaRules;
     private GridBagConstraints constraintsForPanelBoardRules;
     private GridBagConstraints constraintsForComboBoxRules;
     private GridBagConstraints constraintsForButtonBackRules;
@@ -155,9 +146,40 @@ public class GUI
 
     public GUI()
     {
-        initializeText();
-        initializeResources();
-        initializeImagesOfFigures();
+        //Text
+        textEnglish = new TextEnglish();
+        textRussian = new TextRussian();
+        text = textEnglish;
+
+        //Resources
+        resourcesMissing = false;
+        fontChinese = initializeFontChinese();
+        iconFrame = initializeIconFrame();
+        background = initializeBackground();
+        generalRedImage = initializeGeneralRedImage();
+        advisorRedImage = initializeAdvisorRedImage();
+        elephantRedImage = initializeElephantRedImage();
+        horseRedImage = initializeHorseRedImage();
+        chariotRedImage = initializeChariotRedImage();
+        cannonRedImage = initializeCannonRedImage();
+        soldierRedImage = initializeSoldierRedImage();
+        generalBlackImage = initializeGeneralBlackImage();
+        advisorBlackImage = initializeAdvisorBlackImage();
+        elephantBlackImage = initializeElephantBlackImage();
+        horseBlackImage = initializeHorseBlackImage();
+        chariotBlackImage = initializeChariotBlackImage();
+        cannonBlackImage = initializeCannonBlackImage();
+        soldierBlackImage = initializeSoldierBlackImage();
+        selection = initializeSelection();
+        selectionPalace = initializeSelectionPalace();
+        selectionRiver = initializeSelectionRiver();
+        iconNextMove = initializeIconNextMove();
+        iconUnmuted = initializeIconUnmuted();
+        iconMuted = initializeIconMuted();
+
+        imagesOfFigures = initializeImagesOfFigures();
+        previousFrames = new ArrayList<>();
+
         initializeCommonFrameFeatures();
         initializeFrameMainMenu();
         initializeFrameGameMode();
@@ -166,19 +188,11 @@ public class GUI
         initializeFrameRules();
         initializeFrameSettings();
     }
-    private void initializeText()
+    private Font initializeFontChinese()
     {
-        textEnglish = new TextEnglish();
-        textRussian = new TextRussian();
-        text = textEnglish;
-    }
-    private void initializeResources()
-    {
-        resourcesMissing = false;
-
-        //Font.
-        URL urlFont = getClass().getResource("/kashimarusbycop.otf");
-        try (InputStream inputStream = urlFont.openStream())
+        Font fontChinese;
+        URL url = getClass().getResource("/kashimarusbycop.otf");
+        try (InputStream inputStream = url.openStream()) //TODO try with resources
         {
             fontChinese = Font.createFont(Font.TRUETYPE_FONT, inputStream);
         }
@@ -187,28 +201,36 @@ public class GUI
             resourcesMissing = true;
             fontChinese = new Font(Font.DIALOG, Font.PLAIN, 1);
         }
-
-        //Icon.
+        return fontChinese;
+    }
+    private BufferedImage initializeIconFrame()
+    {
+        BufferedImage iconFrame;
         URL url = getClass().getResource("/icon.jpg");
         try
         {
-            icon = ImageIO.read(url);
+            //noinspection DataFlowIssue
+            iconFrame = ImageIO.read(url);
         } catch (Exception e)
         {
             resourcesMissing = true;
-            icon = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            Graphics2D g2d = icon.createGraphics();
+            iconFrame = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = iconFrame.createGraphics();
             g2d.setColor(new Color(196, 185, 165));
             g2d.fillRect(0,0,100,100);
             g2d.setColor(Color.BLACK);
             g2d.setFont(new Font(Font.DIALOG, Font.BOLD, 42));
             g2d.drawString("象棋", 5, 65);
         }
-
-        //Background.
-        url = getClass().getResource("/background.jpg");
+        return iconFrame;
+    }
+    private BufferedImage initializeBackground()
+    {
+        BufferedImage background;
+        URL url = getClass().getResource("/background.jpg");
         try
         {
+            //noinspection DataFlowIssue
             background = ImageIO.read(url);
         }
         catch (Exception e)
@@ -219,11 +241,15 @@ public class GUI
             g2d.setColor(new Color(196, 185, 165));
             g2d.fillRect(0,0,100,100);
         }
-
-        //General Red.
-        url = getClass().getResource("/generalRed.png");
+        return background;
+    }
+    private BufferedImage initializeGeneralRedImage()
+    {
+        BufferedImage generalRedImage;
+        URL url = getClass().getResource("/generalRed.png");
         try
         {
+            //noinspection DataFlowIssue
             generalRedImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -232,11 +258,15 @@ public class GUI
             generalRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(generalRedImage, Color.RED, "帥");
         }
-
-        //Advisor Red.
-        url = getClass().getResource("/advisorRed.png");
+        return generalRedImage;
+    }
+    private BufferedImage initializeAdvisorRedImage()
+    {
+        BufferedImage advisorRedImage;
+        URL url = getClass().getResource("/advisorRed.png");
         try
         {
+            //noinspection DataFlowIssue
             advisorRedImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -245,11 +275,15 @@ public class GUI
             advisorRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(advisorRedImage, Color.RED, "仕");
         }
-
-        //Elephant Red.
-        url = getClass().getResource("/elephantRed.png");
+        return advisorRedImage;
+    }
+    private BufferedImage initializeElephantRedImage()
+    {
+        BufferedImage elephantRedImage;
+        URL url = getClass().getResource("/elephantRed.png");
         try
         {
+            //noinspection DataFlowIssue
             elephantRedImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -258,11 +292,15 @@ public class GUI
             elephantRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(elephantRedImage, Color.RED, "相");
         }
-
-        //Horse Red.
-        url = getClass().getResource("/horseRed.png");
+        return elephantRedImage;
+    }
+    private BufferedImage initializeHorseRedImage()
+    {
+        BufferedImage horseRedImage;
+        URL url = getClass().getResource("/horseRed.png");
         try
         {
+            //noinspection DataFlowIssue
             horseRedImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -271,11 +309,15 @@ public class GUI
             horseRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(horseRedImage, Color.RED, "傌");
         }
-
-        //Chariot Red.
-        url = getClass().getResource("/chariotRed.png");
+        return horseRedImage;
+    }
+    private BufferedImage initializeChariotRedImage()
+    {
+        BufferedImage chariotRedImage;
+        URL url = getClass().getResource("/chariotRed.png");
         try
         {
+            //noinspection DataFlowIssue
             chariotRedImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -284,11 +326,15 @@ public class GUI
             chariotRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(chariotRedImage, Color.RED, "俥");
         }
-
-        //Cannon Red.
-        url = getClass().getResource("/cannonRed.png");
+        return chariotRedImage;
+    }
+    private BufferedImage initializeCannonRedImage()
+    {
+        BufferedImage cannonRedImage;
+        URL url = getClass().getResource("/cannonRed.png");
         try
         {
+            //noinspection DataFlowIssue
             cannonRedImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -297,11 +343,15 @@ public class GUI
             cannonRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(cannonRedImage, Color.RED, "炮");
         }
-
-        //Soldier Red.
-        url = getClass().getResource("/soldierRed.png");
+        return cannonRedImage;
+    }
+    private BufferedImage initializeSoldierRedImage()
+    {
+        BufferedImage soldierRedImage;
+        URL url = getClass().getResource("/soldierRed.png");
         try
         {
+            //noinspection DataFlowIssue
             soldierRedImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -310,11 +360,15 @@ public class GUI
             soldierRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(soldierRedImage, Color.RED, "兵");
         }
-
-        //General Black.
-        url = getClass().getResource("/generalBlack.png");
+        return soldierRedImage;
+    }
+    private BufferedImage initializeGeneralBlackImage()
+    {
+        BufferedImage generalBlackImage;
+        URL url = getClass().getResource("/generalBlack.png");
         try
         {
+            //noinspection DataFlowIssue
             generalBlackImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -323,11 +377,15 @@ public class GUI
             generalBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(generalBlackImage, Color.BLACK, "將");
         }
-
-        //Advisor Black.
-        url = getClass().getResource("/advisorBlack.png");
+        return generalBlackImage;
+    }
+    private BufferedImage initializeAdvisorBlackImage()
+    {
+        BufferedImage advisorBlackImage;
+        URL url = getClass().getResource("/advisorBlack.png");
         try
         {
+            //noinspection DataFlowIssue
             advisorBlackImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -336,11 +394,15 @@ public class GUI
             advisorBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(advisorBlackImage, Color.BLACK, "士");
         }
-
-        //Elephant Black.
-        url = getClass().getResource("/elephantBlack.png");
+        return advisorBlackImage;
+    }
+    private BufferedImage initializeElephantBlackImage()
+    {
+        BufferedImage elephantBlackImage;
+        URL url = getClass().getResource("/elephantBlack.png");
         try
         {
+            //noinspection DataFlowIssue
             elephantBlackImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -349,11 +411,15 @@ public class GUI
             elephantBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(elephantBlackImage, Color.BLACK, "象");
         }
-
-        //Horse Black.
-        url = getClass().getResource("/horseBlack.png");
+        return elephantBlackImage;
+    }
+    private BufferedImage initializeHorseBlackImage()
+    {
+        BufferedImage horseBlackImage;
+        URL url = getClass().getResource("/horseBlack.png");
         try
         {
+            //noinspection DataFlowIssue
             horseBlackImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -362,11 +428,15 @@ public class GUI
             horseBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(horseBlackImage, Color.BLACK, "馬");
         }
-
-        //Chariot Black.
-        url = getClass().getResource("/chariotBlack.png");
+        return horseBlackImage;
+    }
+    private BufferedImage initializeChariotBlackImage()
+    {
+        BufferedImage chariotBlackImage;
+        URL url = getClass().getResource("/chariotBlack.png");
         try
         {
+            //noinspection DataFlowIssue
             chariotBlackImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -375,11 +445,15 @@ public class GUI
             chariotBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(chariotBlackImage, Color.BLACK, "車");
         }
-
-        //Cannon Black.
-        url = getClass().getResource("/cannonBlack.png");
+        return chariotBlackImage;
+    }
+    private BufferedImage initializeCannonBlackImage()
+    {
+        BufferedImage cannonBlackImage;
+        URL url = getClass().getResource("/cannonBlack.png");
         try
         {
+            //noinspection DataFlowIssue
             cannonBlackImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -388,11 +462,15 @@ public class GUI
             cannonBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(cannonBlackImage, Color.BLACK, "砲");
         }
-
-        //Soldier Black.
-        url = getClass().getResource("/soldierBlack.png");
+        return cannonBlackImage;
+    }
+    private BufferedImage initializeSoldierBlackImage()
+    {
+        BufferedImage soldierBlackImage;
+        URL url = getClass().getResource("/soldierBlack.png");
         try
         {
+            //noinspection DataFlowIssue
             soldierBlackImage = ImageIO.read(url);
         }
         catch (Exception e)
@@ -401,27 +479,50 @@ public class GUI
             soldierBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(soldierBlackImage, Color.BLACK, "卒");
         }
-
-        //Selection.
-        url = getClass().getResource("/selection.png");
+        return soldierBlackImage;
+    }
+    private void initializeDefaultFigureImage(BufferedImage figureImage, Color color, String label)
+    {
+        Graphics2D g2d = figureImage.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.fillOval(0,0,100,100);
+        g2d.setColor(new Color(255,221,170));
+        g2d.fillOval(3,3,94,94);
+        g2d.setColor(color);
+        g2d.fillOval(6,6,88,88);
+        g2d.setColor(new Color(255,221,170));
+        g2d.fillOval(9,9,82,82);
+        g2d.setColor(color);
+        g2d.setFont(new Font(Font.DIALOG, Font.BOLD, 60));
+        g2d.drawString(label,20,70);
+    }
+    private BufferedImage initializeSelection()
+    {
+        BufferedImage selection;
+        URL url = getClass().getResource("/selection.png");
         try
         {
-            selectionFigure = ImageIO.read(url);
+            //noinspection DataFlowIssue
+            selection = ImageIO.read(url);
         }
         catch (Exception e)
         {
             resourcesMissing = true;
-            selectionFigure = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            Graphics2D g2d = selectionFigure.createGraphics();
+            selection = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = selection.createGraphics();
             g2d.setColor(new Color(117, 240, 131));
             g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
             g2d.drawArc(5,5,90,90,0,360);
         }
-
-        //Selection Palace.
-        url = getClass().getResource("/selectionPalace.png");
+        return selection;
+    }
+    private BufferedImage initializeSelectionPalace()
+    {
+        BufferedImage selectionPalace;
+        URL url = getClass().getResource("/selectionPalace.png");
         try
         {
+            //noinspection DataFlowIssue
             selectionPalace = ImageIO.read(url);
         }
         catch (Exception e)
@@ -433,11 +534,15 @@ public class GUI
             g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
             g2d.drawRect(5,5,190,190);
         }
-
-        //Selection River.
-        url = getClass().getResource("/selectionRiver.png");
+        return selectionPalace;
+    }
+    private BufferedImage initializeSelectionRiver()
+    {
+        BufferedImage selectionRiver;
+        URL url = getClass().getResource("/selectionRiver.png");
         try
         {
+            //noinspection DataFlowIssue
             selectionRiver = ImageIO.read(url);
         }
         catch (Exception e)
@@ -449,27 +554,31 @@ public class GUI
             g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
             g2d.drawRect(5,5,790,90);
         }
-
-        //Icon Next Move.
+        return selectionRiver;
+    }
+    private ImageIcon initializeIconNextMove()
+    {
         BufferedImage imageNextMove = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
         Graphics2D g2d = imageNextMove.createGraphics();
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
         g2d.drawPolygon(new Polygon(new int[]{10,50,10,10}, new int[] {10,30,50,10}, 4));
-        iconNextMove = new ImageIcon(imageNextMove);
-
-        //Icon unmuted.
+        return new ImageIcon(imageNextMove);
+    }
+    private ImageIcon initializeIconUnmuted()
+    {
         BufferedImage imageUnmuted = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-        g2d = imageUnmuted.createGraphics();
+        Graphics2D g2d = imageUnmuted.createGraphics();
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
         g2d.drawPolygon(new Polygon(new int[]{10,23,45,45,23,10,10}, new int[] {23,23,10,50,37,37,23}, 7));
         g2d.drawLine(23, 23, 23, 37);
-        iconUnmuted = new ImageIcon(imageUnmuted);
-
-        //Icon muted.
+        return new ImageIcon(imageUnmuted);
+    }
+    private ImageIcon initializeIconMuted()
+    {
         BufferedImage imageMuted = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-        g2d = imageMuted.createGraphics();
+        Graphics2D g2d = imageMuted.createGraphics();
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
         g2d.drawPolygon(new Polygon(new int[]{10,23,45,45,23,10,10}, new int[] {23,23,10,50,37,37,23}, 7));
@@ -477,11 +586,11 @@ public class GUI
         g2d.setColor(Color.RED);
         g2d.drawLine(5, 5, 55, 55);
         g2d.drawLine(5, 55, 55, 5);
-        iconMuted = new ImageIcon(imageMuted);
+        return new ImageIcon(imageMuted);
     }
-    private void initializeImagesOfFigures()
+    private HashMap<Class<? extends Figure>, BufferedImage> initializeImagesOfFigures()
     {
-        imagesOfFigures = new HashMap<>();
+        HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures = new HashMap<>();
 
         //Red figures.
         imagesOfFigures.put(GeneralRed.class, generalRedImage);
@@ -500,21 +609,8 @@ public class GUI
         imagesOfFigures.put(ChariotBlack.class, chariotBlackImage);
         imagesOfFigures.put(CannonBlack.class, cannonBlackImage);
         imagesOfFigures.put(SoldierBlack.class, soldierBlackImage);
-    }
-    private void initializeDefaultFigureImage(BufferedImage figure, Color color, String label)
-    {
-        Graphics2D g2d = figure.createGraphics();
-        g2d.setColor(Color.BLACK);
-        g2d.fillOval(0,0,100,100);
-        g2d.setColor(new Color(255,221,170));
-        g2d.fillOval(3,3,94,94);
-        g2d.setColor(color);
-        g2d.fillOval(6,6,88,88);
-        g2d.setColor(new Color(255,221,170));
-        g2d.fillOval(9,9,82,82);
-        g2d.setColor(color);
-        g2d.setFont(new Font(Font.DIALOG, Font.BOLD, 60));
-        g2d.drawString(label,20,70);
+
+        return imagesOfFigures;
     }
     private void initializeCommonFrameFeatures()
     {
@@ -522,25 +618,31 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
+                //Frame.
                 frame = new JFrame(text.getTitle());
-                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-                //Bounds.
                 frame.setMinimumSize(new Dimension(800,800));
                 frame.setBounds((int)frame.getGraphicsConfiguration().getBounds().getCenterX() -
-                                (int)frame.getBounds().getCenterX(),
-                        (int)frame.getGraphicsConfiguration().getBounds().getCenterY() -
-                                (int)frame.getBounds().getCenterY(),
-                        800,800);
+                                  (int)frame.getBounds().getCenterX(),
+                                (int)frame.getGraphicsConfiguration().getBounds().getCenterY() -
+                                  (int)frame.getBounds().getCenterY(),
+                             800,800);
                 frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+                frame.setIconImage(iconFrame);
+                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-                //Icon.
-                frame.setIconImage(icon);
+                //Panel Background.
+                panelBackground = new PanelBackground(background);
+                frame.setContentPane(panelBackground);
+
+                //GridBag layout manager.
+                gridBagLayout = new GridBagLayout();
+                frame.getContentPane().setLayout(gridBagLayout);
 
                 //File Chooser.
                 fileChooser = new JFileChooser();
                 try
                 {
+                    //Set a directory where this program was invoked from as a default directory of a File Chooser.
                     String currentDirectoryPath = getClass().getProtectionDomain()
                                                             .getCodeSource()
                                                             .getLocation()
@@ -554,91 +656,37 @@ public class GUI
                     fileChooser.setCurrentDirectory(null);
                 }
                 fileChooser.setAcceptAllFileFilterUsed(false);
-                fileChooser.setFileFilter(
-                        new FileNameExtensionFilter("Chinese Chess Replay .ccrpl", "ccrpl"));
+                fileChooser.setFileFilter(new FileNameExtensionFilter("Chinese Chess Replay .ccrpl",
+                                                                      "ccrpl"));
 
                 //Menu Bar.
                 menuBar = new JMenuBar();
-
+                //Menu Navigation.
                 menuNavigation = new JMenu(text.getNavigation());
                 menuItemMainMenu = new JMenuItem(text.getMainMenu());
-                menuItemMainMenu.addActionListener(e->
-                {
-                    if((game.getState()==State.RUNNING)  ||  (replay.getState()==State.RUNNING))
-                    {
-                        int selectedOption = JOptionPane.showOptionDialog(frame,
-                                text.getAreYouSure(), text.getExitToMainMenu(),
-                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-                                new String[] {text.getYes(), text.getNo()}, text.getNo());
-                        if(selectedOption==JOptionPane.YES_OPTION)
-                        {
-                            game.stop();
-                            replay.stop();
-                            showFrameMainMenu();
-                        }
-                    }
-                    else
-                    {
-                        showFrameMainMenu();
-                    }
-                });
+                menuItemMainMenu.addActionListener(e-> showDialogExitToMainMenu());
                 menuNavigation.add(menuItemMainMenu);
-                menuBar.add(menuNavigation);
-
+                //Menu Replay.
                 menuReplay = new JMenu(text.getReplay());
                 menuItemSaveReplay = new JMenuItem(text.getSaveReplay());
-                menuItemSaveReplay.addActionListener(e->
-                {
-                    if(replay.getIsReplayOutputEmpty() == true)
-                    {
-                        JOptionPane.showMessageDialog(frame,
-                                text.getNothingToSave(), text.getReplayWarning(), JOptionPane.WARNING_MESSAGE);
-                    }
-                    else //replay.getIsReplayOutputEmpty() == false
-                    {
-                        fileChooser.setDialogTitle(text.getSaveReplay());
-                        int choice = fileChooser.showSaveDialog(frame);
-                        if(choice == JFileChooser.APPROVE_OPTION)
-                        {
-                            File selectedFile = fileChooser.getSelectedFile();
-                            int result = replay.save(selectedFile);
-                            if(result == Replay.FAILURE)
-                            {
-                                JOptionPane.showMessageDialog(frame,
-                                        text.getCouldNotSaveReplay(), text.getReplayError(), JOptionPane.ERROR_MESSAGE);
-                            }
-                        }
-                    }
-                });
+                menuItemSaveReplay.addActionListener(e-> showDialogSaveReplay());
                 menuReplay.add(menuItemSaveReplay);
-                menuBar.add(menuReplay);
-
+                //Menu Help.
                 menuHelp = new JMenu(text.getHelp());
                 menuItemRules = new JMenuItem(text.getRules());
-                menuItemSettings = new JMenuItem(text.getSettings());
-                menuItemAbout = new JMenuItem(text.getAbout());
                 menuItemRules.addActionListener(e->showFrameRules());
+                menuItemSettings = new JMenuItem(text.getSettings());
                 menuItemSettings.addActionListener(e->showFrameSettings());
-                menuItemAbout.addActionListener(e->
-                    JOptionPane.showMessageDialog(frame, text.getAboutVerbose(), text.getAbout(),
-                            JOptionPane.INFORMATION_MESSAGE));
+                menuItemAbout = new JMenuItem(text.getAbout());
+                menuItemAbout.addActionListener(e-> showDialogAbout());
                 menuHelp.add(menuItemRules);
                 menuHelp.add(menuItemSettings);
                 menuHelp.add(menuItemAbout);
+
+                menuBar.add(menuNavigation);
+                menuBar.add(menuReplay);
                 menuBar.add(menuHelp);
-
                 frame.setJMenuBar(menuBar);
-
-                //Content Pane with background image.
-                panelBackground = new PanelBackground(background);
-                frame.setContentPane(panelBackground);
-
-                //Layout manager.
-                gridBagLayout = new GridBagLayout();
-                frame.getContentPane().setLayout(gridBagLayout);
-
-                //Previous frames.
-                previousFrames = new ArrayList<>();
             });
         }
         catch (Exception e)
@@ -652,81 +700,52 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
-                //Buttons.
+                //Button Play.
                 buttonPlay = new JButton(text.getPlay());
-                buttonLoad = new JButton(text.getLoad());
-                buttonRules = new JButton(text.getRules());
-                buttonSettings = new JButton(text.getSettings());
-
-                //Preferred Size.
-                Dimension dimension = new Dimension(300,100);
-                buttonPlay.setPreferredSize(dimension);
-                buttonLoad.setPreferredSize(dimension);
-                buttonRules.setPreferredSize(dimension);
-                buttonSettings.setPreferredSize(dimension);
-
-                //Layout manager constraints.
-                Insets insets = new Insets(30,0,30,0);
-                constraintsForButtonPlay = new GridBagConstraints
-                        (0, 0,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                insets, 0,0);
-                constraintsForButtonLoad = new GridBagConstraints
-                        (0, 1,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                insets, 0,0);
-                constraintsForButtonRules = new GridBagConstraints
-                        (0, 2,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                insets, 0,0);
-                constraintsForButtonSettings = new GridBagConstraints
-                        (0, 3,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                insets, 0,0);
-
-                //Background Color.
+                buttonPlay.setPreferredSize(new Dimension(300, 100));
                 buttonPlay.setBackground(Color.WHITE);
-                buttonLoad.setBackground(Color.WHITE);
-                buttonRules.setBackground(Color.WHITE);
-                buttonSettings.setBackground(Color.WHITE);
-
-                //Border.
-                LineBorder border = new LineBorder(Color.BLACK, 2);
-                buttonPlay.setBorder(border);
-                buttonLoad.setBorder(border);
-                buttonRules.setBorder(border);
-                buttonSettings.setBorder(border);
-
-                //Font.
-                Font font = fontChinese.deriveFont(Font.BOLD, 50.f);
-                buttonPlay.setFont(font);
-                buttonLoad.setFont(font);
-                buttonRules.setFont(font);
-                buttonSettings.setFont(font);
-
-                //Action listeners.
+                buttonPlay.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonPlay.setFont(fontChinese.deriveFont(Font.BOLD, 50.f));
+                constraintsForButtonPlay = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
                 buttonPlay.addActionListener(e->showFrameGameMode());
-                buttonLoad.addActionListener(e->
-                {
-                    fileChooser.setDialogTitle(text.getLoadReplay());
-                    int choice = fileChooser.showOpenDialog(frame);
-                    if(choice == JFileChooser.APPROVE_OPTION)
-                    {
-                        File selectedFile = fileChooser.getSelectedFile();
-                        int result = replay.load(selectedFile);
-                        if(result == Replay.FAILURE)
-                        {
-                            JOptionPane.showMessageDialog(frame,
-                                    text.getCouldNotLoadReplay(), text.getReplayError(), JOptionPane.ERROR_MESSAGE);
-                        }
-                        else
-                        {
-                            replay.start();
-                            showFrameReplay();
-                        }
-                    }
-                });
+
+                //Button Load.
+                buttonLoad = new JButton(text.getLoad());
+                buttonLoad.setPreferredSize(new Dimension(300, 100));
+                buttonLoad.setBackground(Color.WHITE);
+                buttonLoad.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonLoad.setFont(fontChinese.deriveFont(Font.BOLD, 50.f));
+                constraintsForButtonLoad = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
+                buttonLoad.addActionListener(e->showDialogLoadReplay());
+
+                //Button Rules.
+                buttonRules = new JButton(text.getRules());
+                buttonRules.setPreferredSize(new Dimension(300, 100));
+                buttonRules.setBackground(Color.WHITE);
+                buttonRules.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonRules.setFont(fontChinese.deriveFont(Font.BOLD, 50.f));
+                constraintsForButtonRules = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
                 buttonRules.addActionListener(e->showFrameRules());
+
+                //Button Settings.
+                buttonSettings = new JButton(text.getSettings());
+                buttonSettings.setPreferredSize(new Dimension(300, 100));
+                buttonSettings.setBackground(Color.WHITE);
+                buttonSettings.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonSettings.setFont(fontChinese.deriveFont(Font.BOLD, 50.f));
+                constraintsForButtonSettings = new GridBagConstraints(
+                        0, 3, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
                 buttonSettings.addActionListener(e->showFrameSettings());
             });
         }
@@ -741,64 +760,50 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
-                //Buttons.
+                //Button Single Player.
                 buttonSinglePlayer = new JButton(text.getSinglePlayer());
-                buttonLocalMultiplayer = new JButton(text.getLocalMultiplayer());
-                buttonOnlineMultiplayer = new JButton(text.getOnlineMultiplayer());
-                buttonBackGameMode = new JButton(text.getBack());
-
-                //Preferred Size.
-                buttonSinglePlayer.setPreferredSize(new Dimension(500,100));
-                buttonLocalMultiplayer.setPreferredSize(new Dimension(500,100));
-                buttonOnlineMultiplayer.setPreferredSize(new Dimension(500,100));
-                buttonBackGameMode.setPreferredSize(new Dimension(200,100));
-
-                //Layout manager constraints.
-                Insets insets = new Insets(30,0,30,0);
-                constraintsForButtonSinglePlayer = new GridBagConstraints
-                        (0, 0,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                insets, 0,0);
-                constraintsForButtonLocalMultiplayer = new GridBagConstraints
-                        (0, 1,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                insets, 0,0);
-                constraintsForButtonOnlineMultiplayer = new GridBagConstraints
-                        (0, 2,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                insets, 0,0);
-                constraintsForButtonBackGameMode = new GridBagConstraints
-                        (0, 3,1,1,0,0,
-                                GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                insets, 0,0);
-
-                //Background Color.
+                buttonSinglePlayer.setPreferredSize(new Dimension(500, 100));
                 buttonSinglePlayer.setBackground(Color.WHITE);
+                buttonSinglePlayer.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonSinglePlayer.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonSinglePlayer = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
+
+                //Button Local Multiplayer.
+                buttonLocalMultiplayer = new JButton(text.getLocalMultiplayer());
+                buttonLocalMultiplayer.setPreferredSize(new Dimension(500, 100));
                 buttonLocalMultiplayer.setBackground(Color.WHITE);
+                buttonLocalMultiplayer.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonLocalMultiplayer.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonLocalMultiplayer = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
+                buttonLocalMultiplayer.addActionListener(e->startLocalMultiplayerGame());
+
+                //Button Online Multiplayer.
+                buttonOnlineMultiplayer = new JButton(text.getOnlineMultiplayer());
+                buttonOnlineMultiplayer.setPreferredSize(new Dimension(500, 100));
                 buttonOnlineMultiplayer.setBackground(Color.WHITE);
+                buttonOnlineMultiplayer.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonOnlineMultiplayer.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonOnlineMultiplayer = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
+
+                //Button Back.
+                buttonBackGameMode = new JButton(text.getBack());
+                buttonBackGameMode.setPreferredSize(new Dimension(200, 100));
                 buttonBackGameMode.setBackground(Color.WHITE);
-
-                //Border.
-                LineBorder border = new LineBorder(Color.BLACK, 2);
-                buttonSinglePlayer.setBorder(border);
-                buttonLocalMultiplayer.setBorder(border);
-                buttonOnlineMultiplayer.setBorder(border);
-                buttonBackGameMode.setBorder(border);
-
-                //Font.
-                Font font = fontChinese.deriveFont(Font.BOLD, 46.f);
-                buttonSinglePlayer.setFont(font);
-                buttonLocalMultiplayer.setFont(font);
-                buttonOnlineMultiplayer.setFont(font);
-                buttonBackGameMode.setFont(font);
-
-                //Action listener.
-                buttonLocalMultiplayer.addActionListener(e->
-                {
-                    replay.resetReplayOutput();
-                    game.start();
-                    showFrameBoard();
-                });
+                buttonBackGameMode.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackGameMode.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonBackGameMode = new GridBagConstraints(
+                        0, 3, 1, 1, 0, 0,
+                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
                 buttonBackGameMode.addActionListener(e->showFrameMainMenu());
             });
         }
@@ -813,28 +818,26 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
-                //Panel Board Interactive.
-                panelBoardInteractive = new PanelBoardInteractive(imagesOfFigures, selectionFigure);
+                //Panel Board.
+                panelBoardInteractive = new PanelBoardInteractive(imagesOfFigures, selection);
                 panelBoardInteractive.setOpaque(false);
+                constraintsForPanelBoardInteractive = new GridBagConstraints(
+                        0, 0, 1, 1, 1, 1,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0);
                 panelBoardInteractive.addMouseListener(panelBoardInteractive);
 
                 //Status Bar.
                 statusBar = new JTextField(1);
-                statusBar.setDisabledTextColor(Color.BLACK);
                 statusBar.setEnabled(false);
+                statusBar.setDisabledTextColor(Color.BLACK);
                 statusBar.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
-                                                       new EmptyBorder(5,5,5,5)));
+                                                       new EmptyBorder(5, 5, 5, 5)));
                 statusBar.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
-
-                //Layout manager constraints.
-                constraintsForPanelBoardInteractive = new GridBagConstraints
-                        (0, 0,1,1,1,1,
-                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                                new Insets(0,0,0,0), 0,0);
-                constraintsForStatusBar = new GridBagConstraints
-                        (0, 1,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                                new Insets(0,0,0,0), 0,0);
+                constraintsForStatusBar = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                        new Insets(0, 0, 0, 0), 0, 0);
             });
         }
         catch (Exception e)
@@ -848,34 +851,23 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
-                //Panel Board Replay.
-                panelBoardReplay = new PanelBoard(imagesOfFigures, selectionFigure);
+                //Panel Board.
+                panelBoardReplay = new PanelBoard(imagesOfFigures, selection);
                 panelBoardReplay.setOpaque(false);
+                constraintsForPanelBoardReplay = new GridBagConstraints(
+                        0, 0, 1, 1, 1, 1,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0);
 
-                //Buttons.
+                //Button Next Move.
                 buttonNextMove = new JButton(iconNextMove);
-
-                //Preferred Size.
-                buttonNextMove.setPreferredSize(new Dimension(60,60));
-
-                //Layout manager constraints.
-                constraintsForPanelBoardReplay = new GridBagConstraints
-                        (0, 0,1,1,1,1,
-                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                                new Insets(0,0,0,0), 0,0);
-                constraintsForButtonNextMove = new GridBagConstraints
-                        (0, 1,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                new Insets(10,0,10,0), 0,0);
-
-                //Background Color.
+                buttonNextMove.setPreferredSize(new Dimension(60, 60));
                 buttonNextMove.setBackground(Color.WHITE);
-
-                //Border.
-                LineBorder border = new LineBorder(Color.BLACK, 2);
-                buttonNextMove.setBorder(border);
-
-                //Action listeners.
+                buttonNextMove.setBorder(new LineBorder(Color.BLACK, 2));
+                constraintsForButtonNextMove = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(10, 0, 10, 0), 0, 0);
                 buttonNextMove.addActionListener(e->replay.nextMove());
             });
         }
@@ -890,13 +882,18 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
-                //Panel Board Rules.
-                panelBoardRules = new PanelBoardRules(imagesOfFigures, selectionFigure,
-                                                      selectionPalace, selectionRiver);
+                //Panel Board.
+                panelBoardRules = new PanelBoardRules(imagesOfFigures, selection, selectionPalace, selectionRiver);
                 panelBoardRules.setOpaque(false);
+                constraintsForPanelBoardRules = new GridBagConstraints(
+                        0, 0, 1, 1, 1, 1,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0);
 
-                //Combo box.
+                //Combo Box.
                 comboBoxRules = new JComboBox<>();
+                comboBoxRules.setPreferredSize(new Dimension(135, 40));
+                comboBoxRules.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
                 comboBoxRules.addItem(text.getGoal());
                 comboBoxRules.addItem(text.getPalace());
                 comboBoxRules.addItem(text.getRiver());
@@ -907,121 +904,45 @@ public class GUI
                 comboBoxRules.addItem(text.getChariot());
                 comboBoxRules.addItem(text.getCannon());
                 comboBoxRules.addItem(text.getSoldier());
+                constraintsForComboBoxRules = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(10, 0, 10, 160), 0, 0);
+                comboBoxRules.addActionListener(e->changeDisplayedRule());
 
-                //Button back.
+                //Button Back.
                 buttonBackRules = new JButton(text.getBack());
+                buttonBackRules.setPreferredSize(new Dimension(80, 40));
+                buttonBackRules.setBackground(Color.WHITE);
+                buttonBackRules.setBorder(new LineBorder(Color.BLACK, 1));
+                buttonBackRules.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
+                constraintsForButtonBackRules = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(10, 120, 10, 0), 0, 0);
+                buttonBackRules.addActionListener(e->showPreviousFrame());
 
-                //Text area and Scroll pane.
-                textAreaRules = new JTextArea(2, 1);
-                textAreaRules.setMargin(new Insets(5,5,5,5));
-                textAreaRules.setDisabledTextColor(Color.BLACK);
-                textAreaRules.setEnabled(false);
-                textAreaRules.setLineWrap(true);
-                textAreaRules.setWrapStyleWord(true);
-                textAreaRules.setText(text.getGoalRule());
-                textAreaRules.setCaretPosition(0);
+                //Scroll Pane.
                 scrollPaneRules = new JScrollPane(textAreaRules,
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-                //Preferred Size.
-                comboBoxRules.setPreferredSize(new Dimension(120,40));
-                buttonBackRules.setPreferredSize(new Dimension(80, 40));
                 scrollPaneRules.setPreferredSize(new Dimension(1, 65));
+                scrollPaneRules.setBorder(new LineBorder(Color.BLACK, 1));
+                constraintsForScrollPaneRules = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                        new Insets(0, 0, 0, 0), 0, 0);
 
-                //Layout manager constraints.
-                constraintsForPanelBoardRules = new GridBagConstraints
-                        (0, 0,1,1,1,1,
-                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                                new Insets(0,0,0,0), 0,0);
-                constraintsForComboBoxRules = new GridBagConstraints
-                        (0, 1,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                new Insets(10,0,10,160), 0,0);
-                constraintsForButtonBackRules = new GridBagConstraints
-                        (0, 1,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                new Insets(10,120,10,0), 0,0);
-                constraintsForScrollPaneRules = new GridBagConstraints
-                        (0, 2,1,1,0,0,
-                                GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                                new Insets(0,0,0,0), 0,0);
-
-                //Background Color.
-                buttonBackRules.setBackground(Color.WHITE);
-
-                //Border.
-                LineBorder border = new LineBorder(Color.BLACK, 1);
-                buttonBackRules.setBorder(border);
-                scrollPaneRules.setBorder(border);
-
-                //Font.
-                Font font = new Font(Font.DIALOG, Font.PLAIN, 20);
-                comboBoxRules.setFont(font);
-                buttonBackRules.setFont(font);
-                textAreaRules.setFont(font);
-
-                //Action listeners.
-                comboBoxRules.addActionListener(e->
-                {
-                    int index = comboBoxRules.getSelectedIndex();
-                    switch(index)
-                    {
-                        case 0 ->
-                        {
-                            rules.setGridForGoalRule();
-                            textAreaRules.setText(text.getGoalRule());
-                        }
-                        case 1 ->
-                        {
-                            rules.setGridForPalaceRule();
-                            textAreaRules.setText(text.getPalaceRule());
-                        }
-                        case 2 ->
-                        {
-                            rules.setGridForRiverRule();
-                            textAreaRules.setText(text.getRiverRule());
-                        }
-                        case 3 ->
-                        {
-                            rules.setGridForGeneralRule();
-                            textAreaRules.setText(text.getGeneralRule());
-                        }
-                        case 4 ->
-                        {
-                            rules.setGridForAdvisorRule();
-                            textAreaRules.setText(text.getAdvisorRule());
-                        }
-                        case 5 ->
-                        {
-                            rules.setGridForElephantRule();
-                            textAreaRules.setText(text.getElephantRule());
-                        }
-                        case 6 ->
-                        {
-                            rules.setGridForHorseRule();
-                            textAreaRules.setText(text.getHorseRule());
-                        }
-                        case 7 ->
-                        {
-                            rules.setGridForChariotRule();
-                            textAreaRules.setText(text.getChariotRule());
-                        }
-                        case 8 ->
-                        {
-                            rules.setGridForCannonRule();
-                            textAreaRules.setText(text.getCannonRule());
-                        }
-                        case 9 ->
-                        {
-                            rules.setGridForSoldierRule();
-                            textAreaRules.setText(text.getSoldierRule());
-                        }
-                    }
-                    textAreaRules.setCaretPosition(0);
-                    repaint();
-                });
-                buttonBackRules.addActionListener(e->showPreviousFrame());
+                //Text Area.
+                textAreaRules = new JTextArea(2, 1);
+                textAreaRules.setMargin(new Insets(5, 5, 5, 5));
+                textAreaRules.setEnabled(false);
+                textAreaRules.setDisabledTextColor(Color.BLACK);
+                textAreaRules.setLineWrap(true);
+                textAreaRules.setWrapStyleWord(true);
+                textAreaRules.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
+                textAreaRules.setText(text.getGoalRule());
+                textAreaRules.setCaretPosition(0);
             });
         }
         catch (Exception e)
@@ -1035,157 +956,113 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
-                //Language.
+                //Label Language.
                 labelLanguage = new JLabel(text.getLanguage());
+                labelLanguage.setPreferredSize(new Dimension(300, 100));
+                labelLanguage.setFont(fontChinese.deriveFont(Font.BOLD, 37.f));
+                constraintsForLabelLanguage = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        new Insets(0, 30, 0, 30), 0, 0);
+
+                //ComboBox Language.
                 comboBoxLanguage = new JComboBox<>();
+                comboBoxLanguage.setPreferredSize(new Dimension(300, 80));
+                comboBoxLanguage.setFont(fontChinese.deriveFont(Font.BOLD, 37.f));
                 comboBoxLanguage.addItem("English");
                 comboBoxLanguage.addItem("Русский");
-
-                //Music.
-                labelMusic = new JLabel(text.getMusic());
-                buttonMuteMusic = new JToggleButton(iconUnmuted, false);
-                buttonMuteMusic.setSelectedIcon(iconMuted);
-                buttonMuteMusic.setOpaque(false);
-                sliderGainMusic = new JSlider();
-                sliderGainMusic.setOpaque(false);
-
-                //Sfx.
-                labelSfx = new JLabel(text.getSfx());
-                buttonMuteSfx = new JToggleButton(iconUnmuted, false);
-                buttonMuteSfx.setSelectedIcon(iconMuted);
-                buttonMuteSfx.setOpaque(false);
-                sliderGainSfx = new JSlider();
-                sliderGainSfx.setOpaque(false);
-
-                //Buttons.
-                buttonApply = new JButton(text.getApply());
-                buttonBackSettings = new JButton(text.getBack());
-
-                //Preferred Size.
-                labelLanguage.setPreferredSize(new Dimension(300,100));
-                comboBoxLanguage.setPreferredSize(new Dimension(300,80));
-                labelMusic.setPreferredSize(new Dimension(300,100));
-                buttonMuteMusic.setPreferredSize(new Dimension(60,60));
-                sliderGainMusic.setPreferredSize(new Dimension(270,20));
-                labelSfx.setPreferredSize(new Dimension(300,100));
-                buttonMuteSfx.setPreferredSize(new Dimension(60,60));
-                sliderGainSfx.setPreferredSize(new Dimension(270,20));
-                buttonApply.setPreferredSize(new Dimension(230,100));
-                buttonBackSettings.setPreferredSize(new Dimension(200,100));
-
-                //Layout manager constraints.
-                constraintsForLabelLanguage = new GridBagConstraints
-                        (0, 0,1,1,0,0,
-                                GridBagConstraints.EAST, GridBagConstraints.NONE,
-                                new Insets(0,30,0,30), 0,0);
-                constraintsForComboBoxLanguage = new GridBagConstraints
-                        (1, 0,2,1,0,0,
-                                GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                new Insets(0,30,10,30), 0,0);
-                constraintsForLabelMusic = new GridBagConstraints
-                        (0, 1,1,1,0,0,
-                                GridBagConstraints.EAST, GridBagConstraints.NONE,
-                                new Insets(0,30,0,30), 0,0);
-                constraintsForButtonMuteMusic = new GridBagConstraints
-                        (1, 1,1,1,0,0,
-                                GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                new Insets(0,30,20,30), 0,0);
-                constraintsForSliderGainMusic = new GridBagConstraints
-                        (2, 1,1,1,0,0,
-                                GridBagConstraints.EAST, GridBagConstraints.NONE,
-                                new Insets(0,0,0,30), 0,0);
-                constraintsForLabelSfx = new GridBagConstraints
-                        (0, 2,1,1,0,0,
-                                GridBagConstraints.EAST, GridBagConstraints.NONE,
-                                new Insets(0,30,0,30), 0,0);
-                constraintsForButtonMuteSfx = new GridBagConstraints
-                        (1, 2,1,1,0,0,
-                                GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                new Insets(0,30,20,30), 0,0);
-                constraintsForSliderGainSfx = new GridBagConstraints
-                        (2, 2,1,1,0,0,
-                                GridBagConstraints.EAST, GridBagConstraints.NONE,
-                                new Insets(0,0,0,30), 0,0);
-                constraintsForButtonApply = new GridBagConstraints
-                        (0, 3,1,1,0,0,
-                                GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                new Insets(80,30,0,30), 0,0);
-                constraintsForButtonBackSettings = new GridBagConstraints
-                        (2, 3,1,1,0,0,
-                                GridBagConstraints.EAST, GridBagConstraints.NONE,
-                                new Insets(80,30,0,30), 0,0);
-
-                //Background Color.
-                buttonMuteMusic.setBackground(Color.WHITE);
-                buttonMuteSfx.setBackground(Color.WHITE);
-                buttonApply.setBackground(Color.WHITE);
-                buttonBackSettings.setBackground(Color.WHITE);
-
-                //Border.
-                LineBorder border = new LineBorder(Color.BLACK, 2);
-                LineBorder borderSmall = new LineBorder(Color.BLACK, 1);
-                buttonMuteMusic.setBorder(borderSmall);
-                buttonMuteSfx.setBorder(borderSmall);
-                buttonApply.setBorder(border);
-                buttonBackSettings.setBorder(border);
-
-                //Font.
-                Font font = fontChinese.deriveFont(Font.BOLD, 46.f);
-                Font fontSmall = fontChinese.deriveFont(Font.BOLD, 37.f);
-                labelLanguage.setFont(fontSmall);
-                comboBoxLanguage.setFont(fontSmall);
-                labelMusic.setFont(fontSmall);
-                labelSfx.setFont(fontSmall);
-                buttonApply.setFont(font);
-                buttonBackSettings.setFont(font);
-
-                //Action listeners.
+                constraintsForComboBoxLanguage = new GridBagConstraints(
+                        1, 0, 2, 1, 0, 0,
+                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(0, 30, 10, 30), 0, 0);
                 comboBoxLanguage.addActionListener(e->refreshText());
-                buttonMuteMusic.addActionListener(e->
-                {
-                    JToggleButton buttonSource = (JToggleButton)e.getSource();
-                    boolean selected = buttonSource.isSelected();
-                    if(selected == true)
-                    {
-                        musicPlayer.muteMusic();
-                    }
-                    else //selected == false
-                    {
-                        musicPlayer.unmuteMusic();
-                    }
-                });
-                sliderGainMusic.addChangeListener(e->
-                {
-                    JSlider sliderSource = (JSlider)e.getSource();
-                    if(sliderSource.getValueIsAdjusting()==false)
-                    {
-                        int sliderValue = sliderSource.getValue();
-                        musicPlayer.setGainMusicDb(sliderValue);
-                    }
-                });
-                buttonMuteSfx.addActionListener(e->
-                {
-                    JToggleButton buttonSource = (JToggleButton)e.getSource();
-                    boolean selected = buttonSource.isSelected();
-                    if(selected == true)
-                    {
-                        musicPlayer.muteSfx();
-                    }
-                    else //selected == false
-                    {
-                        musicPlayer.unmuteSfx();
-                    }
-                });
-                sliderGainSfx.addChangeListener(e->
-                {
-                    JSlider sliderSource = (JSlider)e.getSource();
-                    if(sliderSource.getValueIsAdjusting()==false)
-                    {
-                        int sliderValue = sliderSource.getValue();
-                        musicPlayer.setGainSfxDb(sliderValue);
-                    }
-                });
+
+                //Label Music.
+                labelMusic = new JLabel(text.getMusic());
+                labelMusic.setPreferredSize(new Dimension(300, 100));
+                labelMusic.setFont(fontChinese.deriveFont(Font.BOLD, 37.f));
+                constraintsForLabelMusic = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        new Insets(0, 30, 0, 30), 0, 0);
+
+                //Button Mute Music.
+                buttonMuteMusic = new JToggleButton(iconUnmuted, false);
+                buttonMuteMusic.setPreferredSize(new Dimension(60, 60));
+                buttonMuteMusic.setOpaque(false);
+                buttonMuteMusic.setBackground(Color.WHITE);
+                buttonMuteMusic.setBorder(new LineBorder(Color.BLACK, 1));
+                buttonMuteMusic.setSelectedIcon(iconMuted);
+                constraintsForButtonMuteMusic = new GridBagConstraints(
+                        1, 1, 1, 1, 0, 0,
+                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(0, 30, 20, 30), 0, 0);
+                buttonMuteMusic.addActionListener(e->muteOrUnmuteMusic(e));
+
+                //Slider Gain Music.
+                sliderGainMusic = new JSlider();
+                sliderGainMusic.setPreferredSize(new Dimension(270, 20));
+                sliderGainMusic.setOpaque(false);
+                constraintsForSliderGainMusic = new GridBagConstraints(
+                        2, 1, 1, 1, 0, 0,
+                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 30), 0, 0);
+                sliderGainMusic.addChangeListener(e->changeGainMusic(e));
+
+                //Label SFX.
+                labelSfx = new JLabel(text.getSfx());
+                labelSfx.setPreferredSize(new Dimension(300, 100));
+                labelSfx.setFont(fontChinese.deriveFont(Font.BOLD, 37.f));
+                constraintsForLabelSfx = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        new Insets(0, 30, 0, 30), 0, 0);
+
+                //Button Mute SFX.
+                buttonMuteSfx = new JToggleButton(iconUnmuted, false);
+                buttonMuteSfx.setPreferredSize(new Dimension(60, 60));
+                buttonMuteSfx.setOpaque(false);
+                buttonMuteSfx.setBackground(Color.WHITE);
+                buttonMuteSfx.setBorder(new LineBorder(Color.BLACK, 1));
+                buttonMuteSfx.setSelectedIcon(iconMuted);
+                constraintsForButtonMuteSfx = new GridBagConstraints(
+                        1, 2, 1, 1, 0, 0,
+                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(0, 30, 20, 30), 0, 0);
+                buttonMuteSfx.addActionListener(e->muteOrUnmuteSfx(e));
+
+                //Slider Gain SFX.
+                sliderGainSfx = new JSlider();
+                sliderGainSfx.setPreferredSize(new Dimension(270, 20));
+                sliderGainSfx.setOpaque(false);
+                constraintsForSliderGainSfx = new GridBagConstraints(
+                        2, 2, 1, 1, 0, 0,
+                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 30), 0, 0);
+                sliderGainSfx.addChangeListener(e->changeGainSfx(e));
+
+                //Button Apply.
+                buttonApply = new JButton(text.getApply());
+                buttonApply.setPreferredSize(new Dimension(230, 100));
+                buttonApply.setBackground(Color.WHITE);
+                buttonApply.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonApply.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonApply = new GridBagConstraints(
+                        0, 3, 1, 1, 0, 0,
+                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(80, 30, 0, 30), 0, 0);
                 //buttonApply.addActionListener(e->); //TODO: Implement. Возможно, кнопка понадобится для сервера.
+
+                //Button Back.
+                buttonBackSettings = new JButton(text.getBack());
+                buttonBackSettings.setPreferredSize(new Dimension(200, 100));
+                buttonBackSettings.setBackground(Color.WHITE);
+                buttonBackSettings.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackSettings.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonBackSettings = new GridBagConstraints(
+                        2, 3, 1, 1, 0, 0,
+                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        new Insets(80, 30, 0, 30), 0, 0);
                 buttonBackSettings.addActionListener(e->showPreviousFrame());
             });
         }
@@ -1221,7 +1098,6 @@ public class GUI
     {
         this.musicPlayer = musicPlayer;
 
-        //Slider gain music.
         try
         {
             SwingUtilities.invokeAndWait(()->
@@ -1229,18 +1105,7 @@ public class GUI
                 sliderGainMusic.setMinimum(musicPlayer.getGainMusicPercentMinimum());
                 sliderGainMusic.setMaximum(musicPlayer.getGainMusicPercentMaximum());
                 sliderGainMusic.setValue(musicPlayer.getGainMusicPercentCurrent());
-            });
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
 
-        //Slider gain sfx.
-        try
-        {
-            SwingUtilities.invokeAndWait(()->
-            {
                 sliderGainSfx.setMinimum(musicPlayer.getGainSfxPercentMinimum());
                 sliderGainSfx.setMaximum(musicPlayer.getGainSfxPercentMaximum());
                 sliderGainSfx.setValue(musicPlayer.getGainSfxPercentCurrent());
@@ -1261,27 +1126,30 @@ public class GUI
 
                 frame.setVisible(true);
 
-                if(resourcesMissing==true)
+                if(resourcesMissing)
                 {
                     JOptionPane.showMessageDialog(frame,
-                            text.getSomeResourcesAreMissing(), text.getGuiWarning(), JOptionPane.WARNING_MESSAGE);
+                            text.getSomeResourcesAreMissing(), text.getGuiWarning(),
+                            JOptionPane.WARNING_MESSAGE);
                 }
 
-                if(musicPlayer.getResourcesMissing()==true)
+                if(musicPlayer.getResourcesMissing())
                 {
                     JOptionPane.showMessageDialog(frame,
-                            text.getSomeResourcesAreMissing(), text.getMusicPlayerWarning(), JOptionPane.WARNING_MESSAGE);
+                            text.getSomeResourcesAreMissing(), text.getMusicPlayerWarning(),
+                            JOptionPane.WARNING_MESSAGE);
                 }
 
-                if((musicPlayer.getLineMusicAvailable()==false) ||
-                        (musicPlayer.getMuteMusicAvailable()==false) ||
-                        (musicPlayer.getGainMusicAvailable()==false) ||
-                        (musicPlayer.getLineSfxAvailable()==false)   ||
-                        (musicPlayer.getMuteSfxAvailable()==false)   ||
-                        (musicPlayer.getGainSfxAvailable()==false))
+                if((!musicPlayer.getLineMusicAvailable()) ||
+                   (!musicPlayer.getMuteMusicAvailable()) ||
+                   (!musicPlayer.getGainMusicAvailable()) ||
+                   (!musicPlayer.getLineSfxAvailable())   ||
+                   (!musicPlayer.getMuteSfxAvailable())   ||
+                   (!musicPlayer.getGainSfxAvailable()))
                 {
                     JOptionPane.showMessageDialog(frame,
-                            text.getSomeFeaturesAreNotAvailable(), text.getMusicPlayerWarning(), JOptionPane.WARNING_MESSAGE);
+                            text.getSomeFeaturesAreNotAvailable(), text.getMusicPlayerWarning(),
+                            JOptionPane.WARNING_MESSAGE);
                 }
             });
         }
@@ -1292,10 +1160,9 @@ public class GUI
     }
     private void showFrameMainMenu()
     {
-        addToPreviousFrames(FrameType.MAIN_MENU);
-
         SwingUtilities.invokeLater(()->
         {
+            addToPreviousFrames(FrameType.MAIN_MENU);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(buttonPlay, constraintsForButtonPlay);
             frame.getContentPane().add(buttonLoad, constraintsForButtonLoad);
@@ -1306,10 +1173,9 @@ public class GUI
     }
     private void showFrameGameMode()
     {
-        addToPreviousFrames(FrameType.GAME_MODE);
-
         SwingUtilities.invokeLater(()->
         {
+            addToPreviousFrames(FrameType.GAME_MODE);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(buttonSinglePlayer, constraintsForButtonSinglePlayer);
             frame.getContentPane().add(buttonLocalMultiplayer, constraintsForButtonLocalMultiplayer);
@@ -1320,10 +1186,9 @@ public class GUI
     }
     private void showFrameBoard()
     {
-        addToPreviousFrames(FrameType.BOARD);
-
         SwingUtilities.invokeLater(()->
         {
+            addToPreviousFrames(FrameType.BOARD);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(panelBoardInteractive, constraintsForPanelBoardInteractive);
             frame.getContentPane().add(statusBar, constraintsForStatusBar);
@@ -1332,10 +1197,9 @@ public class GUI
     }
     private void showFrameReplay()
     {
-        addToPreviousFrames(FrameType.REPLAY);
-
         SwingUtilities.invokeLater(()->
         {
+            addToPreviousFrames(FrameType.REPLAY);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(panelBoardReplay, constraintsForPanelBoardReplay);
             frame.getContentPane().add(buttonNextMove, constraintsForButtonNextMove);
@@ -1344,10 +1208,9 @@ public class GUI
     }
     private void showFrameRules()
     {
-        addToPreviousFrames(FrameType.RULES);
-
         SwingUtilities.invokeLater(()->
         {
+            addToPreviousFrames(FrameType.RULES);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(panelBoardRules, constraintsForPanelBoardRules);
             frame.getContentPane().add(comboBoxRules, constraintsForComboBoxRules);
@@ -1358,10 +1221,9 @@ public class GUI
     }
     private void showFrameSettings()
     {
-        addToPreviousFrames(FrameType.SETTINGS);
-
         SwingUtilities.invokeLater(()->
         {
+            addToPreviousFrames(FrameType.SETTINGS);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(labelLanguage, constraintsForLabelLanguage);
             frame.getContentPane().add(comboBoxLanguage, constraintsForComboBoxLanguage);
@@ -1371,48 +1233,237 @@ public class GUI
             frame.getContentPane().add(labelSfx, constraintsForLabelSfx);
             frame.getContentPane().add(buttonMuteSfx, constraintsForButtonMuteSfx);
             frame.getContentPane().add(sliderGainSfx, constraintsForSliderGainSfx);
-            frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
             frame.getContentPane().add(buttonApply, constraintsForButtonApply);
+            frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
             repaint();
         });
     }
-    public void repaint()
+    private void showDialogExitToMainMenu()
     {
         SwingUtilities.invokeLater(()->
         {
-            frame.revalidate();
-            frame.repaint();
+            State gameState = game.getState();
+            State replayState = replay.getState();
+            if(gameState.equals(State.RUNNING)  ||  replayState.equals(State.RUNNING))
+            {
+                //Show warning.
+                int selectedOption = JOptionPane.showOptionDialog(frame,
+                        text.getAreYouSure(), text.getExitToMainMenu(),
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                        new String[] {text.getYes(), text.getNo()}, text.getNo());
+                if(selectedOption == JOptionPane.YES_OPTION)
+                {
+                    if(gameState.equals(State.RUNNING))
+                    {
+                        game.stop();
+                    }
+                    if(replayState.equals(State.RUNNING))
+                    {
+                        replay.stop();
+                    }
+                    showFrameMainMenu();
+                }
+            }
+            else
+            {
+                showFrameMainMenu();
+            }
         });
     }
-    private void addToPreviousFrames(FrameType currentFrame)
+    private void showDialogSaveReplay()
     {
-        int size = previousFrames.size();
-        if(size==0)
+        SwingUtilities.invokeLater(()->
         {
-            previousFrames.add(currentFrame);
-        }
-        else if(size>0)
-        {
-            FrameType previousFrame = previousFrames.get(size-1);
-            if(currentFrame != previousFrame)
+            if(replay.getIsReplayOutputEmpty())
             {
-                previousFrames.add(currentFrame);
+                JOptionPane.showMessageDialog(frame,
+                        text.getNothingToSave(), text.getReplayWarning(), JOptionPane.WARNING_MESSAGE);
             }
-        }
+            else //replayOutput is not empty.
+            {
+                fileChooser.setDialogTitle(text.getSaveReplay());
+                int selectedOption = fileChooser.showSaveDialog(frame);
+                if(selectedOption == JFileChooser.APPROVE_OPTION)
+                {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    int result = replay.save(selectedFile);
+                    if(result == Replay.FAILURE)
+                    {
+                        JOptionPane.showMessageDialog(frame,
+                                text.getCouldNotSaveReplay(), text.getReplayError(), JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+    }
+    private void showDialogAbout()
+    {
+        SwingUtilities.invokeLater(()->
+            JOptionPane.showMessageDialog(frame,
+                    text.getAboutVerbose(), text.getAbout(), JOptionPane.INFORMATION_MESSAGE)
+        );
+    }
+    private void showDialogLoadReplay()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            fileChooser.setDialogTitle(text.getLoadReplay());
+            int selectedOption = fileChooser.showOpenDialog(frame);
+            if(selectedOption == JFileChooser.APPROVE_OPTION)
+            {
+                File selectedFile = fileChooser.getSelectedFile();
+                int result = replay.load(selectedFile);
+                if(result == Replay.FAILURE)
+                {
+                    JOptionPane.showMessageDialog(frame,
+                            text.getCouldNotLoadReplay(), text.getReplayError(), JOptionPane.ERROR_MESSAGE);
+                }
+                else
+                {
+                    replay.start();
+                    showFrameReplay();
+                }
+            }
+        });
+    }
+    private void startLocalMultiplayerGame()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            replay.resetReplayOutput();
+            game.start();
+            showFrameBoard();
+        });
+    }
+    private void changeDisplayedRule()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            int selectedIndex = comboBoxRules.getSelectedIndex();
+            switch(selectedIndex)
+            {
+                case 0 ->
+                {
+                    rules.setGridForGoalRule();
+                    textAreaRules.setText(text.getGoalRule());
+                }
+                case 1 ->
+                {
+                    rules.setGridForPalaceRule();
+                    textAreaRules.setText(text.getPalaceRule());
+                }
+                case 2 ->
+                {
+                    rules.setGridForRiverRule();
+                    textAreaRules.setText(text.getRiverRule());
+                }
+                case 3 ->
+                {
+                    rules.setGridForGeneralRule();
+                    textAreaRules.setText(text.getGeneralRule());
+                }
+                case 4 ->
+                {
+                    rules.setGridForAdvisorRule();
+                    textAreaRules.setText(text.getAdvisorRule());
+                }
+                case 5 ->
+                {
+                    rules.setGridForElephantRule();
+                    textAreaRules.setText(text.getElephantRule());
+                }
+                case 6 ->
+                {
+                    rules.setGridForHorseRule();
+                    textAreaRules.setText(text.getHorseRule());
+                }
+                case 7 ->
+                {
+                    rules.setGridForChariotRule();
+                    textAreaRules.setText(text.getChariotRule());
+                }
+                case 8 ->
+                {
+                    rules.setGridForCannonRule();
+                    textAreaRules.setText(text.getCannonRule());
+                }
+                case 9 ->
+                {
+                    rules.setGridForSoldierRule();
+                    textAreaRules.setText(text.getSoldierRule());
+                }
+            }
+            textAreaRules.setCaretPosition(0);
+            repaint();
+        });
+    }
+    private void muteOrUnmuteMusic(ActionEvent e)
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            JToggleButton buttonSource = (JToggleButton)e.getSource();
+            boolean selected = buttonSource.isSelected();
+            if(selected)
+            {
+                musicPlayer.muteMusic();
+            }
+            else
+            {
+                musicPlayer.unmuteMusic();
+            }
+        });
+    }
+    private void changeGainMusic(ChangeEvent e)
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            JSlider sliderSource = (JSlider)e.getSource();
+            if(!sliderSource.getValueIsAdjusting())
+            {
+                int sliderValue = sliderSource.getValue();
+                musicPlayer.setGainMusicDb(sliderValue);
+            }
+        });
+    }
+    private void muteOrUnmuteSfx(ActionEvent e)
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            JToggleButton buttonSource = (JToggleButton)e.getSource();
+            boolean selected = buttonSource.isSelected();
+            if(selected)
+            {
+                musicPlayer.muteSfx();
+            }
+            else
+            {
+                musicPlayer.unmuteSfx();
+            }
+        });
+    }
+    private void changeGainSfx(ChangeEvent e)
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            JSlider sliderSource = (JSlider)e.getSource();
+            if(!sliderSource.getValueIsAdjusting())
+            {
+                int sliderValue = sliderSource.getValue();
+                musicPlayer.setGainSfxDb(sliderValue);
+            }
+        });
     }
     private void showPreviousFrame()
     {
-        int size;
-
-        size = previousFrames.size();
-        if(size>0)
+        int size = previousFrames.size();
+        if(size > 0)
         {
-            previousFrames.remove(size-1); //Skip current frame.
+            previousFrames.remove(size - 1); //Delete current frame from array.
             size = previousFrames.size();
-            if(size>0)
+            if(size > 0)
             {
-                FrameType previousFrame = previousFrames.get(size-1);
-                previousFrames.remove(size-1);
+                FrameType previousFrame = previousFrames.get(size - 1);
+                previousFrames.remove(size - 1); //Delete previous frame from array.
                 switch(previousFrame)
                 {
                     case MAIN_MENU -> showFrameMainMenu();
@@ -1425,12 +1476,28 @@ public class GUI
             }
         }
     }
+    private void addToPreviousFrames(FrameType currentFrame)
+    {
+        int size = previousFrames.size();
+        if(size == 0)
+        {
+            previousFrames.add(currentFrame);
+        }
+        else
+        {
+            FrameType previousFrame = previousFrames.get(size - 1);
+            if(currentFrame != previousFrame)
+            {
+                previousFrames.add(currentFrame);
+            }
+        }
+    }
     private void refreshText()
     {
         SwingUtilities.invokeLater(()->
         {
-            int index = comboBoxLanguage.getSelectedIndex();
-            switch (index)
+            int selectedIndex = comboBoxLanguage.getSelectedIndex();
+            switch (selectedIndex)
             {
                 case 0 -> text = textEnglish;
                 case 1 -> text = textRussian;
@@ -1460,8 +1527,7 @@ public class GUI
             buttonBackGameMode.setText(text.getBack());
 
             //Frame Rules.
-            buttonBackRules.setText(text.getBack());
-            index = comboBoxRules.getSelectedIndex();
+            selectedIndex = comboBoxRules.getSelectedIndex();
             comboBoxRules.removeAllItems();
             comboBoxRules.addItem(text.getGoal());
             comboBoxRules.addItem(text.getPalace());
@@ -1473,86 +1539,35 @@ public class GUI
             comboBoxRules.addItem(text.getChariot());
             comboBoxRules.addItem(text.getCannon());
             comboBoxRules.addItem(text.getSoldier());
-            comboBoxRules.setSelectedIndex(index);
+            comboBoxRules.setSelectedIndex(selectedIndex);
+            buttonBackRules.setText(text.getBack());
 
             //Frame Settings.
             labelLanguage.setText(text.getLanguage());
             labelMusic.setText(text.getMusic());
             labelSfx.setText(text.getSfx());
-            buttonBackSettings.setText(text.getBack());
             buttonApply.setText(text.getApply());
+            buttonBackSettings.setText(text.getBack());
 
             //Game.
             game.refreshText();
+        });
+    }
+    public void repaint()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            frame.revalidate();
+            frame.repaint();
         });
     }
     public Text getText()
     {
         return text;
     }
-    public BufferedImage getGeneralRedImage()
-    {
-        return generalRedImage;
-    }
-    public BufferedImage getAdvisorRedImage()
-    {
-        return advisorRedImage;
-    }
-    public BufferedImage getElephantRedImage()
-    {
-        return elephantRedImage;
-    }
-    public BufferedImage getHorseRedImage()
-    {
-        return horseRedImage;
-    }
-    public BufferedImage getChariotRedImage()
-    {
-        return chariotRedImage;
-    }
-    public BufferedImage getCannonRedImage()
-    {
-        return cannonRedImage;
-    }
-    public BufferedImage getSoldierRedImage()
-    {
-        return soldierRedImage;
-    }
-    public BufferedImage getGeneralBlackImage()
-    {
-        return generalBlackImage;
-    }
-    public BufferedImage getAdvisorBlackImage()
-    {
-        return advisorBlackImage;
-    }
-    public BufferedImage getElephantBlackImage()
-    {
-        return elephantBlackImage;
-    }
-    public BufferedImage getHorseBlackImage()
-    {
-        return horseBlackImage;
-    }
-    public BufferedImage getChariotBlackImage()
-    {
-        return chariotBlackImage;
-    }
-    public BufferedImage getCannonBlackImage()
-    {
-        return cannonBlackImage;
-    }
-    public BufferedImage getSoldierBlackImage()
-    {
-        return soldierBlackImage;
-    }
-    public BufferedImage getSelectionFigure()
-    {
-        return selectionFigure;
-    }
     public void setStatusBarText(String message)
     {
-        SwingUtilities.invokeLater(() -> statusBar.setText(message));
+        SwingUtilities.invokeLater(()->statusBar.setText(message));
     }
     public void setPanelBoardReplayGrid(HashMap<Location, Tile> grid)
     {
@@ -1560,10 +1575,10 @@ public class GUI
     }
     public void enableButtonNextMove()
     {
-        SwingUtilities.invokeLater(() -> buttonNextMove.setEnabled(true));
+        SwingUtilities.invokeLater(()->buttonNextMove.setEnabled(true));
     }
     public void disableButtonNextMove()
     {
-        SwingUtilities.invokeLater(() -> buttonNextMove.setEnabled(false));
+        SwingUtilities.invokeLater(()->buttonNextMove.setEnabled(false));
     }
 }

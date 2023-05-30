@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class Location implements Serializable
 {
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
     public Location(int x, int y)
     {
         this.x = x;
@@ -22,12 +22,13 @@ public class Location implements Serializable
         return Integer.hashCode(y*9 + x);
     }
     @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public boolean equals(Object obj)
     {
-        Integer integerX = Integer.valueOf(x);
-        Integer integerY = Integer.valueOf(y);
-        Integer comparedIntegerX = Integer.valueOf(((Location)obj).getX());
-        Integer comparedIntegerY = Integer.valueOf(((Location)obj).getY());
+        Integer integerX = x;
+        Integer integerY = y;
+        Integer comparedIntegerX = ((Location) obj).getX();
+        Integer comparedIntegerY = ((Location) obj).getY();
         return integerX.equals(comparedIntegerX) && integerY.equals(comparedIntegerY);
     }
 

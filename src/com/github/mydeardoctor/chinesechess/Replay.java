@@ -9,7 +9,7 @@ public class Replay
     public static final int FAILURE = -1;
     public static final int SUCCESS = 0;
     private State state;
-    private ArrayList<HashMap<Location, Tile>> replayOutput;
+    private final ArrayList<HashMap<Location, Tile>> replayOutput;
     private ArrayList<HashMap<Location, Tile>> replayInput;
     private int movesIndex;
 
@@ -57,35 +57,23 @@ public class Replay
     }
     public boolean getIsReplayOutputEmpty()
     {
-        if(replayOutput.size() <= 0)
-        {
-            return true;
-        }
-        else //replayOutput.size() > 0
-        {
-            return false;
-        }
+        return (replayOutput.size() == 0);
     }
     public int save(File selectedFile)
     {
-        String path = null;
+        File fileWithExtension;
         try
         {
-            path = selectedFile.getCanonicalPath();
-            if(path.endsWith(".ccrpl") == false)
+            String path = selectedFile.getCanonicalPath();
+            if(!path.endsWith(".ccrpl"))
             {
                 path = path.concat(".ccrpl"); //Add extension if there is none.
             }
+            fileWithExtension = new File(path);
         }
         catch (Exception e)
         {
             return FAILURE;
-        }
-
-        File fileWithExtension = null;
-        if(path != null)
-        {
-            fileWithExtension = new File(path);
         }
 
         try(FileOutputStream fileOutputStream = new FileOutputStream(fileWithExtension);
@@ -97,6 +85,7 @@ public class Replay
         {
             return FAILURE;
         }
+
         return SUCCESS;
     }
     public int load(File selectedFile)
@@ -104,6 +93,7 @@ public class Replay
         try(FileInputStream fileInputStream = new FileInputStream(selectedFile);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream))
         {
+            //noinspection unchecked
             replayInput = (ArrayList<HashMap<Location, Tile>>)objectInputStream.readObject();
         }
         catch(Exception e)
@@ -125,7 +115,7 @@ public class Replay
         if(getMovesIndex() <= (replayInput.size()-1))
         {
             HashMap<Location, Tile> grid = replayInput.get(movesIndex);
-            gui.setPanelBoardReplayGrid(grid); //TODO Сделать доступ к другим объектам черещ геттеры, а не новые функции
+            gui.setPanelBoardReplayGrid(grid);
             gui.repaint();
             incrementMovesIndex();
 
