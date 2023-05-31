@@ -15,8 +15,8 @@ public class AdvisorRed extends Advisor
         HashSet<Location> possibleMoves = new HashSet<>();
 
         Location origin = getLocation(this, grid);
-        int x = origin.getX();
-        int y = origin.getY();
+        int x = origin.x();
+        int y = origin.y();
 
         //Check tile above-left.
         if((x>=4)&&(y>=8))

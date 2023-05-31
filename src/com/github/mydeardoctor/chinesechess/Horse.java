@@ -15,8 +15,8 @@ public abstract class Horse extends Figure
         HashSet<Location> possibleMoves = new HashSet<>();
 
         Location origin = getLocation(this, grid);
-        int x = origin.getX();
-        int y = origin.getY();
+        int x = origin.x();
+        int y = origin.y();
 
         //Check tile above, above-left.
         if(  ((x-1)>=0)  &&  ((y-2)>=0)  ) //If destination is inside the board.

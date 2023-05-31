@@ -9,28 +9,28 @@ public class MusicPlayer
     private boolean resourcesMissing;
 
     //Music.
-    private Clip lineMusic;
-    private BooleanControl muteMusic;
-    private FloatControl gainMusic;
-    private float gainMusicDbMinimum;
-    private float gainMusicDbMaximum;
-    private int gainMusicPercentMinimum;
-    private int gainMusicPercentMaximum;
-    private int gainMusicPercentCurrent;
+    private final Clip lineMusic;
+    private final BooleanControl muteMusic;
+    private final FloatControl gainMusic;
+    private final float gainMusicDbMinimum;
+    private final float gainMusicDbMaximum;
+    private final int gainMusicPercentMinimum;
+    private final int gainMusicPercentMaximum;
+    private final int gainMusicPercentCurrent;
 
     private boolean lineMusicAvailable;
     private boolean muteMusicAvailable;
     private boolean gainMusicAvailable;
 
     //Sfx.
-    private Clip lineSfx;
-    private BooleanControl muteSfx;
-    private FloatControl gainSfx;
-    private float gainSfxDbMinimum;
-    private float gainSfxDbMaximum;
-    private int gainSfxPercentMinimum;
-    private int gainSfxPercentMaximum;
-    private int gainSfxPercentCurrent;
+    private final Clip lineSfx;
+    private final BooleanControl muteSfx;
+    private final FloatControl gainSfx;
+    private final float gainSfxDbMinimum;
+    private final float gainSfxDbMaximum;
+    private final int gainSfxPercentMinimum;
+    private final int gainSfxPercentMaximum;
+    private final int gainSfxPercentCurrent;
 
     private boolean lineSfxAvailable;
     private boolean muteSfxAvailable;
@@ -38,18 +38,39 @@ public class MusicPlayer
 
     public MusicPlayer()
     {
+        //Resources.
         resourcesMissing = false;
-        initializeLineMusic();
-        initializeLineSfx();
+
+        //Music.
+        lineMusic = initializeLineMusic();
+        muteMusic = initializeMuteMusic();
+        gainMusic = initializeGainMusic();
+        gainMusicDbMinimum = initializeGainMusicDbMinimum();
+        gainMusicDbMaximum = initializeGainMusicDbMaximum();
+        gainMusicPercentMinimum = initializeGainMusicPercentMinimum();
+        gainMusicPercentMaximum = initializeGainMusicPercentMaximum();
+        gainMusicPercentCurrent = initializeGainMusicPercentCurrent();
+
+        //SFX.
+        lineSfx = initializeLineSfx();
+        muteSfx = initializeMuteSfx();
+        gainSfx = initializeGainSfx();
+        gainSfxDbMinimum = initializeGainSfxDbMinimum();
+        gainSfxDbMaximum = initializeGainSfxDbMaximum();
+        gainSfxPercentMinimum = initializeGainSfxPercentMinimum();
+        gainSfxPercentMaximum = initializeGainSfxPercentMaximum();
+        gainSfxPercentCurrent = initializeGainSfxPercentCurrent();
     }
-    private void initializeLineMusic()
+    private Clip initializeLineMusic()
     {
-        //Line.
+        Clip lineMusic = null;
+
         URL url = getClass().getResource("/mainTheme.wav");
         if(url == null)
         {
             resourcesMissing = true;
         }
+        //noinspection DataFlowIssue
         try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url))
         {
             AudioFormat audioFormat = audioInputStream.getFormat();
@@ -62,15 +83,21 @@ public class MusicPlayer
         catch(Exception e)
         {
             lineMusicAvailable = false;
-            if(lineMusic!=null)
+            if(lineMusic != null)
             {
                 lineMusic.close();
             }
         }
 
-        //Mute control.
+        return lineMusic;
+    }
+    private BooleanControl initializeMuteMusic()
+    {
+        BooleanControl muteMusic = null;
+
         try
         {
+            //noinspection DataFlowIssue
             muteMusic = (BooleanControl)lineMusic.getControl(BooleanControl.Type.MUTE);
             muteMusic.setValue(false);
             muteMusicAvailable = true;
@@ -80,31 +107,80 @@ public class MusicPlayer
             muteMusicAvailable = false;
         }
 
-        //Gain control.
+        return muteMusic;
+    }
+    private FloatControl initializeGainMusic()
+    {
+        FloatControl gainMusic = null;
+
         try
         {
             gainMusic = (FloatControl)lineMusic.getControl(FloatControl.Type.MASTER_GAIN);
-            gainMusicDbMinimum = gainMusic.getMinimum();
-            gainMusicDbMaximum = gainMusic.getMaximum();
-            float gainMusicDbCurrent = gainMusic.getValue();
-            gainMusicPercentMinimum = getPercent(gainMusicDbMinimum);
-            gainMusicPercentMaximum = getPercent(gainMusicDbMaximum);
-            gainMusicPercentCurrent = getPercent(gainMusicDbCurrent);
             gainMusicAvailable = true;
         }
         catch(Exception e)
         {
             gainMusicAvailable = false;
         }
+
+        return gainMusic;
     }
-    private void initializeLineSfx()
+    private float initializeGainMusicDbMinimum()
     {
-        //Line.
+        float gainMusicDbMinimum = 0;
+        if(gainMusicAvailable)
+        {
+            gainMusicDbMinimum = gainMusic.getMinimum();
+        }
+        return gainMusicDbMinimum;
+    }
+    private float initializeGainMusicDbMaximum()
+    {
+        float gainMusicDbMaximum = 0;
+        if(gainMusicAvailable)
+        {
+            gainMusicDbMaximum = gainMusic.getMaximum();
+        }
+        return gainMusicDbMaximum;
+    }
+    private int initializeGainMusicPercentMinimum()
+    {
+        int gainMusicPercentMinimum = 0;
+        if(gainMusicAvailable)
+        {
+            gainMusicPercentMinimum = getPercent(gainMusicDbMinimum);
+        }
+        return gainMusicPercentMinimum;
+    }
+    private int initializeGainMusicPercentMaximum()
+    {
+        int gainMusicPercentMaximum = 0;
+        if(gainMusicAvailable)
+        {
+            gainMusicPercentMaximum = getPercent(gainMusicDbMaximum);
+        }
+        return gainMusicPercentMaximum;
+    }
+    private int initializeGainMusicPercentCurrent()
+    {
+        int gainMusicPercentCurrent = 0;
+        if(gainMusicAvailable)
+        {
+            float gainMusicDbCurrent = gainMusic.getValue();
+            gainMusicPercentCurrent = getPercent(gainMusicDbCurrent);
+        }
+        return gainMusicPercentCurrent;
+    }
+    private Clip initializeLineSfx()
+    {
+        Clip lineSfx = null;
+
         URL url = getClass().getResource("/sfx.wav");
         if(url == null)
         {
             resourcesMissing = true;
         }
+        //noinspection DataFlowIssue
         try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url))
         {
             AudioFormat audioFormat = audioInputStream.getFormat();
@@ -122,9 +198,15 @@ public class MusicPlayer
             }
         }
 
-        //Mute control.
+        return lineSfx;
+    }
+    private BooleanControl initializeMuteSfx()
+    {
+        BooleanControl muteSfx = null;
+
         try
         {
+            //noinspection DataFlowIssue
             muteSfx = (BooleanControl)lineSfx.getControl(BooleanControl.Type.MUTE);
             muteSfx.setValue(false);
             muteSfxAvailable = true;
@@ -134,22 +216,79 @@ public class MusicPlayer
             muteSfxAvailable = false;
         }
 
-        //Gain control.
+        return muteSfx;
+    }
+    private FloatControl initializeGainSfx()
+    {
+        FloatControl gainSfx = null;
+
         try
         {
             gainSfx = (FloatControl) lineSfx.getControl(FloatControl.Type.MASTER_GAIN);
-            gainSfxDbMinimum = gainSfx.getMinimum();
-            gainSfxDbMaximum = gainSfx.getMaximum();
-            float gainSfxDbCurrent = gainSfx.getValue();
-            gainSfxPercentMinimum = getPercent(gainSfxDbMinimum);
-            gainSfxPercentMaximum = getPercent(gainSfxDbMaximum);
-            gainSfxPercentCurrent = getPercent(gainSfxDbCurrent);
             gainSfxAvailable = true;
         }
         catch(Exception e)
         {
             gainSfxAvailable = false;
         }
+
+        return gainSfx;
+    }
+    private float initializeGainSfxDbMinimum()
+    {
+        float gainSfxDbMinimum = 0;
+
+        if(gainSfxAvailable)
+        {
+            gainSfxDbMinimum = gainSfx.getMinimum();
+        }
+
+        return gainSfxDbMinimum;
+    }
+    private float initializeGainSfxDbMaximum()
+    {
+        float gainSfxDbMaximum = 0;
+
+        if(gainSfxAvailable)
+        {
+            gainSfxDbMaximum = gainSfx.getMaximum();
+        }
+
+        return gainSfxDbMaximum;
+    }
+    private int initializeGainSfxPercentMinimum()
+    {
+        int gainSfxPercentMinimum = 0;
+
+        if(gainSfxAvailable)
+        {
+            gainSfxPercentMinimum = getPercent(gainSfxDbMinimum);
+        }
+
+        return gainSfxPercentMinimum;
+    }
+    private int initializeGainSfxPercentMaximum()
+    {
+        int gainSfxPercentMaximum = 0;
+
+        if(gainSfxAvailable)
+        {
+            gainSfxPercentMaximum = getPercent(gainSfxDbMaximum);
+        }
+
+        return gainSfxPercentMaximum;
+    }
+    private int initializeGainSfxPercentCurrent()
+    {
+        int gainSfxPercentCurrent = 0;
+
+        if(gainSfxAvailable)
+        {
+            float gainSfxDbCurrent = gainSfx.getValue();
+            gainSfxPercentCurrent = getPercent(gainSfxDbCurrent);
+        }
+
+        return gainSfxPercentCurrent;
     }
     private int getPercent(float db)
     {

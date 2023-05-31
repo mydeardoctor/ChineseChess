@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class Rules
 {
     //Rules attributes.
-    private HashMap<Location, Tile> grid;
+    private final HashMap<Location, Tile> grid;
     private boolean palaceSelected;
     private boolean riverSelected;
 
@@ -16,12 +16,12 @@ public class Rules
 
     public Rules()
     {
-        initializeGrid();
-        initializeSelections();
+        grid = initializeGrid();
+        setPalaceAndRiverSelections(false, false);
     }
-    private void initializeGrid()
+    private HashMap<Location, Tile> initializeGrid()
     {
-        grid = new HashMap<>();
+        HashMap<Location, Tile> grid = new HashMap<>();
         for(int y = 0; y <= 9; y++)
         {
             for(int x = 0; x <= 8; x++)
@@ -31,11 +31,7 @@ public class Rules
                 grid.put(location, tile);
             }
         }
-    }
-    private void initializeSelections()
-    {
-        setPalaceSelected(false);
-        setRiverSelected(false);
+        return grid;
     }
     public void setGame(Game game)
     {
@@ -44,7 +40,6 @@ public class Rules
     public void setGridForGoalRule()
     {
         resetGrid();
-        resetSelections();
 
         //Move red figures.
         grid.get(new Location(4,6)).setFigure(null);
@@ -65,23 +60,27 @@ public class Rules
         grid.get(new Location(7,2)).setFigure(null);
         grid.get(new Location(7,3)).setFigure(game.getCannonBlack2());
         grid.get(new Location(4,3)).setFigure(null);
+
+        //Set selections.
+        setPalaceAndRiverSelections(false, false);
     }
     public void setGridForPalaceRule()
     {
         resetGrid();
-        resetSelections();
-        setPalaceSelected(true);
+
+        //Set selections.
+        setPalaceAndRiverSelections(true, false);
     }
     public void setGridForRiverRule()
     {
         resetGrid();
-        resetSelections();
-        setRiverSelected(true);
+
+        //Set selections.
+        setPalaceAndRiverSelections(false, true);
     }
     public void setGridForGeneralRule()
     {
         resetGrid();
-        resetSelections();
 
         //Move red figures.
         grid.get(new Location(4,9)).setFigure(null);
@@ -97,11 +96,11 @@ public class Rules
         grid.get(new Location(4,8)).setSelected(true);
         grid.get(new Location(5,8)).setSelected(true);
         grid.get(new Location(4,9)).setSelected(true);
+        setPalaceAndRiverSelections(false, false);
     }
     public void setGridForAdvisorRule()
     {
         resetGrid();
-        resetSelections();
 
         //Move red figures.
         grid.get(new Location(3,9)).setFigure(null);
@@ -116,11 +115,11 @@ public class Rules
         grid.get(new Location(5,7)).setSelected(true);
         grid.get(new Location(4,8)).setSelected(true);
         grid.get(new Location(3,9)).setSelected(true);
+        setPalaceAndRiverSelections(false, false);
     }
     public void setGridForElephantRule()
     {
         resetGrid();
-        resetSelections();
 
         //Move red figures.
         grid.get(new Location(2,9)).setFigure(null);
@@ -135,11 +134,11 @@ public class Rules
         grid.get(new Location(6,5)).setSelected(true);
         grid.get(new Location(4,7)).setSelected(true);
         grid.get(new Location(2,9)).setSelected(true);
+        setPalaceAndRiverSelections(false, false);
     }
     public void setGridForHorseRule()
     {
         resetGrid();
-        resetSelections();
 
         //Move red figures.
         grid.get(new Location(1,9)).setFigure(null);
@@ -159,11 +158,11 @@ public class Rules
         grid.get(new Location(6,5)).setSelected(true);
         grid.get(new Location(3,6)).setSelected(true);
         grid.get(new Location(5,6)).setSelected(true);
+        setPalaceAndRiverSelections(false, false);
     }
     public void setGridForChariotRule()
     {
         resetGrid();
-        resetSelections();
 
         //Move red figures.
         grid.get(new Location(0,9)).setFigure(null);
@@ -183,11 +182,11 @@ public class Rules
         grid.get(new Location(5,7)).setSelected(true);
         grid.get(new Location(6,7)).setSelected(true);
         grid.get(new Location(3,8)).setSelected(true);
+        setPalaceAndRiverSelections(false, false);
     }
     public void setGridForCannonRule()
     {
         resetGrid();
-        resetSelections();
 
         //Set selections.
         grid.get(new Location(1,0)).setSelected(true);
@@ -203,11 +202,11 @@ public class Rules
         grid.get(new Location(5,7)).setSelected(true);
         grid.get(new Location(6,7)).setSelected(true);
         grid.get(new Location(1,8)).setSelected(true);
+        setPalaceAndRiverSelections(false, false);
     }
     public void setGridForSoldierRule()
     {
         resetGrid();
-        resetSelections();
 
         //Move red figures.
         grid.get(new Location(4,6)).setFigure(null);
@@ -218,6 +217,7 @@ public class Rules
         grid.get(new Location(3,4)).setSelected(true);
         grid.get(new Location(4,4)).setSelected(true);
         grid.get(new Location(5,4)).setSelected(true);
+        setPalaceAndRiverSelections(false, false);
     }
     private void resetGrid()
     {
@@ -264,11 +264,6 @@ public class Rules
         grid.get(new Location(6,3)).setFigure(game.getSoldierBlack4());
         grid.get(new Location(8,3)).setFigure(game.getSoldierBlack5());
     }
-    private void resetSelections()
-    {
-        setPalaceSelected(false);
-        setRiverSelected(false);
-    }
     public HashMap<Location, Tile> getGrid()
     {
         return grid;
@@ -277,16 +272,13 @@ public class Rules
     {
         return palaceSelected;
     }
-    public void setPalaceSelected(boolean palaceSelected)
-    {
-        this.palaceSelected = palaceSelected;
-    }
     public boolean getRiverSelected()
     {
         return riverSelected;
     }
-    public void setRiverSelected(boolean riverSelected)
+    private void setPalaceAndRiverSelections(boolean palaceSelected, boolean riverSelected)
     {
+        this.palaceSelected = palaceSelected;
         this.riverSelected = riverSelected;
     }
 }

@@ -18,7 +18,7 @@ public class Replay
 
     public Replay()
     {
-        setState(State.OVER);
+        state = State.OVER;
         replayOutput = new ArrayList<>();
         replayInput = new ArrayList<>();
     }
@@ -90,6 +90,19 @@ public class Replay
     }
     public int load(File selectedFile)
     {
+        try
+        {
+            String path = selectedFile.getCanonicalPath();
+            if(!path.endsWith(".ccrpl"))
+            {
+                return FAILURE;
+            }
+        }
+        catch (Exception e)
+        {
+            return FAILURE;
+        }
+
         try(FileInputStream fileInputStream = new FileInputStream(selectedFile);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream))
         {
@@ -100,61 +113,76 @@ public class Replay
         {
             return FAILURE;
         }
+
         return SUCCESS;
     }
     public void start()
     {
-        setState(State.RUNNING);
-        resetMovesIndex();
-        gui.enableButtonNextMove();
-        nextMove();
-    }
+        state = State.RUNNING;
 
-    public void nextMove()
+        movesIndex = 0;
+        HashMap<Location, Tile> grid = replayInput.get(movesIndex);
+        gui.setPanelBoardReplayGrid(grid);
+        gui.repaint();
+
+        gui.disableButtonPreviousMove();
+        if((movesIndex + 1) > (replayInput.size()-1))
+        {
+            gui.disableButtonNextMove();
+        }
+        else
+        {
+            gui.enableButtonNextMove();
+        }
+    }
+    public void previousMove()
     {
-        if(getMovesIndex() <= (replayInput.size()-1))
+        movesIndex--;
+
+        if(movesIndex >= 0)
         {
             HashMap<Location, Tile> grid = replayInput.get(movesIndex);
             gui.setPanelBoardReplayGrid(grid);
             gui.repaint();
-            incrementMovesIndex();
 
-            if(getMovesIndex() > (replayInput.size()-1))
+            if((movesIndex - 1) < 0)
             {
-                stop();
+                gui.disableButtonPreviousMove();
             }
+            gui.enableButtonNextMove();
         }
         else
         {
-            stop();
+            movesIndex = 0;
         }
+    }
+    public void nextMove()
+    {
+        movesIndex++;
 
+        if(movesIndex <= (replayInput.size()-1))
+        {
+            HashMap<Location, Tile> grid = replayInput.get(movesIndex);
+            gui.setPanelBoardReplayGrid(grid);
+            gui.repaint();
 
-
+            if((movesIndex + 1) > (replayInput.size()-1))
+            {
+                gui.disableButtonNextMove();
+            }
+            gui.enableButtonPreviousMove();
+        }
+        else
+        {
+            movesIndex = replayInput.size() - 1;
+        }
     }
     public void stop()
     {
-        setState(State.OVER);
-        gui.disableButtonNextMove();
-    }
-    private void resetMovesIndex()
-    {
-        movesIndex = 0;
+        state = State.OVER;
     }
     public State getState()
     {
         return state;
-    }
-    public void setState(State state)
-    {
-        this.state = state;
-    }
-    public int getMovesIndex()
-    {
-        return movesIndex;
-    }
-    private void incrementMovesIndex()
-    {
-        movesIndex++;
     }
 }

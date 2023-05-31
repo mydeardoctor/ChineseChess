@@ -15,8 +15,8 @@ public abstract class Cannon extends Figure
         HashSet<Location> possibleMoves = new HashSet<>();
 
         Location origin = getLocation(this, grid);
-        int x = origin.getX();
-        int y = origin.getY();
+        int x = origin.x();
+        int y = origin.y();
         boolean platformInPath;
         Location destination;
         TileType destinationType;

@@ -22,9 +22,9 @@ public abstract class Figure implements Serializable
         Location origin = getLocation(this, grid);
 
         HashMap<Location, Tile> gridCopy = new HashMap<>();
-        for(int y = 0; y <= 9; y++)
+        for(byte y = 0; y <= 9; y++)
         {
-            for(int x = 0; x <= 8; x++)
+            for(byte x = 0; x <= 8; x++)
             {
                 Location location = new Location(x, y);
                 Tile tile = new Tile(null, false);
@@ -58,11 +58,11 @@ public abstract class Figure implements Serializable
                 continue;
             }
 
-            if(generalRedLocation.getX()==generalBlackLocation.getX())
+            if(generalRedLocation.x()==generalBlackLocation.x())
             {
                 boolean generalsSeeEachOther = true;
-                int x = generalBlackLocation.getX();
-                for(int y = generalBlackLocation.getY() + 1; y < generalRedLocation.getY(); y++)
+                int x = generalBlackLocation.x();
+                for(int y = generalBlackLocation.y() + 1; y < generalRedLocation.y(); y++)
                 {
                     Location destination = new Location(x, y);
                     TileType tileType = game.getTileType(destination, gridCopy, game.getTurn());

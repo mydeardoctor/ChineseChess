@@ -8,7 +8,10 @@ public class PanelBoardRules extends PanelBoard
 {
     private final BufferedImage selectionPalace;
     private final BufferedImage selectionRiver;
+
+    //Rules attributes.
     private Rules rules;
+
     public PanelBoardRules(HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures,
                            BufferedImage selectionFigure,
                            BufferedImage selectionPalace,

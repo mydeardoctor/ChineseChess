@@ -1,17 +1,19 @@
 package com.github.mydeardoctor.chinesechess;
 
-import java.awt.image.BufferedImage;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
+import java.awt.image.BufferedImage;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class PanelBoardInteractive extends PanelBoard implements MouseListener
 {
+    //Game attributes.
     private Game game;
-    public PanelBoardInteractive(HashMap<Class<? extends Figure>,
-            BufferedImage> imagesOfFigures, BufferedImage selectionFigure)
+
+    public PanelBoardInteractive(HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures,
+                                 BufferedImage selectionFigure)
     {
         super(imagesOfFigures, selectionFigure);
     }
@@ -31,7 +33,7 @@ public class PanelBoardInteractive extends PanelBoard implements MouseListener
     @Override
     public void mouseReleased(MouseEvent e)
     {
-        if(e.getButton()!=MouseEvent.BUTTON1)
+        if(e.getButton() != MouseEvent.BUTTON1)
         {
             return;
         }
@@ -43,8 +45,8 @@ public class PanelBoardInteractive extends PanelBoard implements MouseListener
         Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
         for(Map.Entry<Location, Tile> gridEntry : gridSet)
         {
-            int x = gridEntry.getKey().getX();
-            int y = gridEntry.getKey().getY();
+            int x = gridEntry.getKey().x();
+            int y = gridEntry.getKey().y();
             int x0Tile = getX0Board() + getTileLength() + getTileLength()*x;
             int y0Tile = getY0Board() + getTileLength() + getTileLength()*y;
 
@@ -56,7 +58,7 @@ public class PanelBoardInteractive extends PanelBoard implements MouseListener
             }
         }
 
-        if(selectedLocation!=null)
+        if(selectedLocation != null)
         {
             game.handleSelectedLocation(selectedLocation);
         }

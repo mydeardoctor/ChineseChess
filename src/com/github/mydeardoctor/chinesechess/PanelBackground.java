@@ -15,6 +15,6 @@ public class PanelBackground extends JPanel
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        g.drawImage(background, 0,0, this.getWidth(), this.getHeight(),this);
+        g.drawImage(background, 0,0, this.getWidth(), this.getHeight(), this);
     }
 }

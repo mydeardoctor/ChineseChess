@@ -43,6 +43,7 @@ public class GUI
     private final BufferedImage selection;
     private final BufferedImage selectionPalace;
     private final BufferedImage selectionRiver;
+    private final ImageIcon iconPreviousMove;
     private final ImageIcon iconNextMove;
     private final ImageIcon iconUnmuted;
     private final ImageIcon iconMuted;
@@ -95,16 +96,18 @@ public class GUI
 
     //Frame Replay.
     private PanelBoard panelBoardReplay;
+    private JButton buttonPreviousMove;
     private JButton buttonNextMove;
     private GridBagConstraints constraintsForPanelBoardReplay;
+    private GridBagConstraints constraintsForButtonPreviousMove;
     private GridBagConstraints constraintsForButtonNextMove;
 
     //Frame Rules.
     private PanelBoardRules panelBoardRules;
     private JComboBox<String> comboBoxRules;
     private JButton buttonBackRules;
-    private JScrollPane scrollPaneRules;
     private JTextArea textAreaRules;
+    private JScrollPane scrollPaneRules;
     private GridBagConstraints constraintsForPanelBoardRules;
     private GridBagConstraints constraintsForComboBoxRules;
     private GridBagConstraints constraintsForButtonBackRules;
@@ -173,6 +176,7 @@ public class GUI
         selection = initializeSelection();
         selectionPalace = initializeSelectionPalace();
         selectionRiver = initializeSelectionRiver();
+        iconPreviousMove = initializeIconPreviousMove();
         iconNextMove = initializeIconNextMove();
         iconUnmuted = initializeIconUnmuted();
         iconMuted = initializeIconMuted();
@@ -192,7 +196,8 @@ public class GUI
     {
         Font fontChinese;
         URL url = getClass().getResource("/kashimarusbycop.otf");
-        try (InputStream inputStream = url.openStream()) //TODO try with resources
+        //noinspection DataFlowIssue
+        try (InputStream inputStream = url.openStream())
         {
             fontChinese = Font.createFont(Font.TRUETYPE_FONT, inputStream);
         }
@@ -556,6 +561,15 @@ public class GUI
         }
         return selectionRiver;
     }
+    private ImageIcon initializeIconPreviousMove()
+    {
+        BufferedImage imagePreviousMove = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imagePreviousMove.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawPolygon(new Polygon(new int[]{10,50,50,10}, new int[] {30,10,50,30}, 4));
+        return new ImageIcon(imagePreviousMove);
+    }
     private ImageIcon initializeIconNextMove()
     {
         BufferedImage imageNextMove = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
@@ -859,6 +873,17 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0);
 
+                //Button Previous Move.
+                buttonPreviousMove = new JButton(iconPreviousMove);
+                buttonPreviousMove.setPreferredSize(new Dimension(60, 60));
+                buttonPreviousMove.setBackground(Color.WHITE);
+                buttonPreviousMove.setBorder(new LineBorder(Color.BLACK, 2));
+                constraintsForButtonPreviousMove = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(10, 0, 10, 120), 0, 0);
+                buttonPreviousMove.addActionListener(e->replay.previousMove());
+
                 //Button Next Move.
                 buttonNextMove = new JButton(iconNextMove);
                 buttonNextMove.setPreferredSize(new Dimension(60, 60));
@@ -867,7 +892,7 @@ public class GUI
                 constraintsForButtonNextMove = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 0, 10, 0), 0, 0);
+                        new Insets(10, 120, 10, 0), 0, 0);
                 buttonNextMove.addActionListener(e->replay.nextMove());
             });
         }
@@ -922,6 +947,17 @@ public class GUI
                         new Insets(10, 120, 10, 0), 0, 0);
                 buttonBackRules.addActionListener(e->showPreviousFrame());
 
+                //Text Area.
+                textAreaRules = new JTextArea(2, 1);
+                textAreaRules.setMargin(new Insets(5, 5, 5, 5));
+                textAreaRules.setEnabled(false);
+                textAreaRules.setDisabledTextColor(Color.BLACK);
+                textAreaRules.setLineWrap(true);
+                textAreaRules.setWrapStyleWord(true);
+                textAreaRules.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
+                textAreaRules.setText(text.getGoalRule());
+                textAreaRules.setCaretPosition(0);
+
                 //Scroll Pane.
                 scrollPaneRules = new JScrollPane(textAreaRules,
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -933,16 +969,7 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                         new Insets(0, 0, 0, 0), 0, 0);
 
-                //Text Area.
-                textAreaRules = new JTextArea(2, 1);
-                textAreaRules.setMargin(new Insets(5, 5, 5, 5));
-                textAreaRules.setEnabled(false);
-                textAreaRules.setDisabledTextColor(Color.BLACK);
-                textAreaRules.setLineWrap(true);
-                textAreaRules.setWrapStyleWord(true);
-                textAreaRules.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
-                textAreaRules.setText(text.getGoalRule());
-                textAreaRules.setCaretPosition(0);
+
             });
         }
         catch (Exception e)
@@ -997,7 +1024,7 @@ public class GUI
                         1, 1, 1, 1, 0, 0,
                         GridBagConstraints.WEST, GridBagConstraints.NONE,
                         new Insets(0, 30, 20, 30), 0, 0);
-                buttonMuteMusic.addActionListener(e->muteOrUnmuteMusic(e));
+                buttonMuteMusic.addActionListener(this::muteOrUnmuteMusic);
 
                 //Slider Gain Music.
                 sliderGainMusic = new JSlider();
@@ -1007,7 +1034,7 @@ public class GUI
                         2, 1, 1, 1, 0, 0,
                         GridBagConstraints.EAST, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 30), 0, 0);
-                sliderGainMusic.addChangeListener(e->changeGainMusic(e));
+                sliderGainMusic.addChangeListener(this::changeGainMusic);
 
                 //Label SFX.
                 labelSfx = new JLabel(text.getSfx());
@@ -1029,7 +1056,7 @@ public class GUI
                         1, 2, 1, 1, 0, 0,
                         GridBagConstraints.WEST, GridBagConstraints.NONE,
                         new Insets(0, 30, 20, 30), 0, 0);
-                buttonMuteSfx.addActionListener(e->muteOrUnmuteSfx(e));
+                buttonMuteSfx.addActionListener(this::muteOrUnmuteSfx);
 
                 //Slider Gain SFX.
                 sliderGainSfx = new JSlider();
@@ -1039,7 +1066,7 @@ public class GUI
                         2, 2, 1, 1, 0, 0,
                         GridBagConstraints.EAST, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 30), 0, 0);
-                sliderGainSfx.addChangeListener(e->changeGainSfx(e));
+                sliderGainSfx.addChangeListener(this::changeGainSfx);
 
                 //Button Apply.
                 buttonApply = new JButton(text.getApply());
@@ -1202,6 +1229,7 @@ public class GUI
             addToPreviousFrames(FrameType.REPLAY);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(panelBoardReplay, constraintsForPanelBoardReplay);
+            frame.getContentPane().add(buttonPreviousMove, constraintsForButtonPreviousMove);
             frame.getContentPane().add(buttonNextMove, constraintsForButtonNextMove);
             repaint();
         });
@@ -1572,6 +1600,14 @@ public class GUI
     public void setPanelBoardReplayGrid(HashMap<Location, Tile> grid)
     {
         panelBoardReplay.setGrid(grid);
+    }
+    public void enableButtonPreviousMove()
+    {
+        SwingUtilities.invokeLater(()->buttonPreviousMove.setEnabled(true));
+    }
+    public void disableButtonPreviousMove()
+    {
+        SwingUtilities.invokeLater(()->buttonPreviousMove.setEnabled(false));
     }
     public void enableButtonNextMove()
     {

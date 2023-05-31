@@ -9,20 +9,19 @@ import javax.swing.*;
 
 public class PanelBoard extends JPanel
 {
-
+    private final HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures;
+    private final BufferedImage selection;
     private int x0Board;
     private int y0Board;
     private int tileLength;
     private int figureRadius;
     private HashMap<Location, Tile> grid;
-    private final HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures;
-    private final BufferedImage selectionFigure;
 
-    public PanelBoard(HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures, BufferedImage selectionFigure)
+    public PanelBoard(HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures, BufferedImage selection)
     {
         super();
         this.imagesOfFigures = imagesOfFigures;
-        this.selectionFigure = selectionFigure;
+        this.selection = selection;
     }
     public void setGrid(HashMap<Location, Tile> grid)
     {
@@ -94,19 +93,19 @@ public class PanelBoard extends JPanel
         for(Map.Entry<Location, Tile> gridEntry : gridSet)
         {
             Figure figure = gridEntry.getValue().getFigure();
-            if(figure!=null)
+            if(figure != null)
             {
                 g2d.drawImage(imagesOfFigures.get(figure.getClass()),
-                        x0Board + tileLength + tileLength* gridEntry.getKey().getX() - figureRadius,
-                        y0Board + tileLength + tileLength* gridEntry.getKey().getY() - figureRadius,
+                        x0Board + tileLength + tileLength* gridEntry.getKey().x() - figureRadius,
+                        y0Board + tileLength + tileLength* gridEntry.getKey().y() - figureRadius,
                         figureDiameter, figureDiameter, this);
             }
             boolean selected = gridEntry.getValue().getSelected();
             if(selected)
             {
-                g2d.drawImage(selectionFigure,
-                        x0Board + tileLength + tileLength* gridEntry.getKey().getX() - selectionRadius,
-                        y0Board + tileLength + tileLength* gridEntry.getKey().getY() - selectionRadius,
+                g2d.drawImage(selection,
+                        x0Board + tileLength + tileLength* gridEntry.getKey().x() - selectionRadius,
+                        y0Board + tileLength + tileLength* gridEntry.getKey().y() - selectionRadius,
                         selectionDiameter, selectionDiameter, this);
             }
         }
