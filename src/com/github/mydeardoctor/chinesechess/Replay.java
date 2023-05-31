@@ -128,10 +128,12 @@ public class Replay
         gui.disableButtonPreviousMove();
         if((movesIndex + 1) > (replayInput.size()-1))
         {
+            gui.disableButtonPlayMoves();
             gui.disableButtonNextMove();
         }
         else
         {
+            gui.enableButtonPlayMoves();
             gui.enableButtonNextMove();
         }
     }
@@ -149,11 +151,12 @@ public class Replay
             {
                 gui.disableButtonPreviousMove();
             }
+            gui.enableButtonPlayMoves();
             gui.enableButtonNextMove();
         }
         else
         {
-            movesIndex = 0;
+            movesIndex = 0; //TODO Лишнее
         }
     }
     public void nextMove()
@@ -168,13 +171,15 @@ public class Replay
 
             if((movesIndex + 1) > (replayInput.size()-1))
             {
+                gui.stopTimer();
+                gui.disableButtonPlayMoves();
                 gui.disableButtonNextMove();
             }
             gui.enableButtonPreviousMove();
         }
         else
         {
-            movesIndex = replayInput.size() - 1;
+            movesIndex = replayInput.size() - 1; //TODO лишнее
         }
     }
     public void stop()

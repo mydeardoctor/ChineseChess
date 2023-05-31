@@ -44,6 +44,7 @@ public class GUI
     private final BufferedImage selectionPalace;
     private final BufferedImage selectionRiver;
     private final ImageIcon iconPreviousMove;
+    private final ImageIcon iconPlayMoves;
     private final ImageIcon iconNextMove;
     private final ImageIcon iconUnmuted;
     private final ImageIcon iconMuted;
@@ -97,10 +98,13 @@ public class GUI
     //Frame Replay.
     private PanelBoard panelBoardReplay;
     private JButton buttonPreviousMove;
+    private JButton buttonPlayMoves;
     private JButton buttonNextMove;
     private GridBagConstraints constraintsForPanelBoardReplay;
     private GridBagConstraints constraintsForButtonPreviousMove;
+    private GridBagConstraints constraintsForButtonPlayMoves;
     private GridBagConstraints constraintsForButtonNextMove;
+    private Timer timer;
 
     //Frame Rules.
     private PanelBoardRules panelBoardRules;
@@ -177,6 +181,7 @@ public class GUI
         selectionPalace = initializeSelectionPalace();
         selectionRiver = initializeSelectionRiver();
         iconPreviousMove = initializeIconPreviousMove();
+        iconPlayMoves = initializeIconPlayMoves();
         iconNextMove = initializeIconNextMove();
         iconUnmuted = initializeIconUnmuted();
         iconMuted = initializeIconMuted();
@@ -568,7 +573,17 @@ public class GUI
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
         g2d.drawPolygon(new Polygon(new int[]{10,50,50,10}, new int[] {30,10,50,30}, 4));
+        g2d.drawLine(10, 50, 10, 10);
         return new ImageIcon(imagePreviousMove);
+    }
+    private ImageIcon initializeIconPlayMoves()
+    {
+        BufferedImage imagePlayMoves = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imagePlayMoves.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawPolygon(new Polygon(new int[]{10,50,10,10}, new int[] {10,30,50,10}, 4));
+        return new ImageIcon(imagePlayMoves);
     }
     private ImageIcon initializeIconNextMove()
     {
@@ -577,6 +592,7 @@ public class GUI
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
         g2d.drawPolygon(new Polygon(new int[]{10,50,10,10}, new int[] {10,30,50,10}, 4));
+        g2d.drawLine(50, 50, 50, 10);
         return new ImageIcon(imageNextMove);
     }
     private ImageIcon initializeIconUnmuted()
@@ -881,8 +897,19 @@ public class GUI
                 constraintsForButtonPreviousMove = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 0, 10, 120), 0, 0);
+                        new Insets(10, 0, 10, 240), 0, 0);
                 buttonPreviousMove.addActionListener(e->replay.previousMove());
+
+                //Button Play.
+                buttonPlayMoves = new JButton(iconPlayMoves);
+                buttonPlayMoves.setPreferredSize(new Dimension(60, 60));
+                buttonPlayMoves.setBackground(Color.WHITE);
+                buttonPlayMoves.setBorder(new LineBorder(Color.BLACK, 2));
+                constraintsForButtonPlayMoves = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(10, 0, 10, 0), 0, 0);
+                buttonPlayMoves.addActionListener(e->timer.restart());
 
                 //Button Next Move.
                 buttonNextMove = new JButton(iconNextMove);
@@ -892,8 +919,12 @@ public class GUI
                 constraintsForButtonNextMove = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 120, 10, 0), 0, 0);
-                buttonNextMove.addActionListener(e->replay.nextMove());
+                        new Insets(10, 240, 10, 0), 0, 0);
+                buttonNextMove.addActionListener(e->replay.nextMove()); //TODO isRunning. Пауза. Скорость.
+
+                //Timer.
+                timer = new Timer(500, e->replay.nextMove());
+                timer.setInitialDelay(500);
             });
         }
         catch (Exception e)
@@ -1230,6 +1261,7 @@ public class GUI
             frame.getContentPane().removeAll();
             frame.getContentPane().add(panelBoardReplay, constraintsForPanelBoardReplay);
             frame.getContentPane().add(buttonPreviousMove, constraintsForButtonPreviousMove);
+            frame.getContentPane().add(buttonPlayMoves, constraintsForButtonPlayMoves);
             frame.getContentPane().add(buttonNextMove, constraintsForButtonNextMove);
             repaint();
         });
@@ -1609,6 +1641,14 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->buttonPreviousMove.setEnabled(false));
     }
+    public void enableButtonPlayMoves()
+    {
+        SwingUtilities.invokeLater(()->buttonPlayMoves.setEnabled(true));
+    }
+    public void disableButtonPlayMoves()
+    {
+        SwingUtilities.invokeLater(()->buttonPlayMoves.setEnabled(false));
+    }
     public void enableButtonNextMove()
     {
         SwingUtilities.invokeLater(()->buttonNextMove.setEnabled(true));
@@ -1616,5 +1656,9 @@ public class GUI
     public void disableButtonNextMove()
     {
         SwingUtilities.invokeLater(()->buttonNextMove.setEnabled(false));
+    }
+    public void stopTimer()
+    {
+        SwingUtilities.invokeLater(()->timer.stop());
     }
 }
