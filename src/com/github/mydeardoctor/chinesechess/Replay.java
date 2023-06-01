@@ -128,59 +128,48 @@ public class Replay
         gui.disableButtonPreviousMove();
         if((movesIndex + 1) > (replayInput.size()-1))
         {
-            gui.disableButtonPlayMoves();
             gui.disableButtonNextMove();
+            gui.disableButtonPlayPause();
         }
         else
         {
-            gui.enableButtonPlayMoves();
             gui.enableButtonNextMove();
+            gui.enableButtonPlayPause();
         }
     }
     public void previousMove()
     {
         movesIndex--;
 
-        if(movesIndex >= 0)
-        {
-            HashMap<Location, Tile> grid = replayInput.get(movesIndex);
-            gui.setPanelBoardReplayGrid(grid);
-            gui.repaint();
+        HashMap<Location, Tile> grid = replayInput.get(movesIndex);
+        gui.setPanelBoardReplayGrid(grid);
+        gui.repaint();
 
-            if((movesIndex - 1) < 0)
-            {
-                gui.disableButtonPreviousMove();
-            }
-            gui.enableButtonPlayMoves();
-            gui.enableButtonNextMove();
-        }
-        else
+        if((movesIndex - 1) < 0)
         {
-            movesIndex = 0; //TODO Лишнее
+            gui.disableButtonPreviousMove();
         }
+
+        gui.enableButtonNextMove();
+        gui.enableButtonPlayPause();
     }
     public void nextMove()
     {
         movesIndex++;
 
-        if(movesIndex <= (replayInput.size()-1))
-        {
-            HashMap<Location, Tile> grid = replayInput.get(movesIndex);
-            gui.setPanelBoardReplayGrid(grid);
-            gui.repaint();
+        HashMap<Location, Tile> grid = replayInput.get(movesIndex);
+        gui.setPanelBoardReplayGrid(grid);
+        gui.repaint();
 
-            if((movesIndex + 1) > (replayInput.size()-1))
-            {
-                gui.stopTimer();
-                gui.disableButtonPlayMoves();
-                gui.disableButtonNextMove();
-            }
-            gui.enableButtonPreviousMove();
-        }
-        else
+        if((movesIndex + 1) > (replayInput.size()-1))
         {
-            movesIndex = replayInput.size() - 1; //TODO лишнее
+            gui.stopTimer();
+            gui.disableButtonNextMove();
+            gui.disableButtonPlayPause();
+            gui.setButtonPlayPauseUnselected();
         }
+
+        gui.enableButtonPreviousMove();
     }
     public void stop()
     {

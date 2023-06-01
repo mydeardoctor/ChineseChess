@@ -44,7 +44,11 @@ public class GUI
     private final BufferedImage selectionPalace;
     private final BufferedImage selectionRiver;
     private final ImageIcon iconPreviousMove;
-    private final ImageIcon iconPlayMoves;
+    private final ImageIcon iconSlower;
+    private final ImageIcon iconPlay;
+    private final ImageIcon iconPause;
+    private final ImageIcon iconStop;
+    private final ImageIcon iconFaster;
     private final ImageIcon iconNextMove;
     private final ImageIcon iconUnmuted;
     private final ImageIcon iconMuted;
@@ -98,11 +102,17 @@ public class GUI
     //Frame Replay.
     private PanelBoard panelBoardReplay;
     private JButton buttonPreviousMove;
-    private JButton buttonPlayMoves;
+    private JButton buttonSlower;
+    private JToggleButton buttonPlayPause;
+    private JButton buttonStop;
+    private JButton buttonFaster;
     private JButton buttonNextMove;
     private GridBagConstraints constraintsForPanelBoardReplay;
     private GridBagConstraints constraintsForButtonPreviousMove;
-    private GridBagConstraints constraintsForButtonPlayMoves;
+    private GridBagConstraints constraintsForButtonSlower;
+    private GridBagConstraints constraintsForButtonPlayPause;
+    private GridBagConstraints constraintsForButtonStop;
+    private GridBagConstraints constraintsForButtonFaster;
     private GridBagConstraints constraintsForButtonNextMove;
     private Timer timer;
 
@@ -181,7 +191,11 @@ public class GUI
         selectionPalace = initializeSelectionPalace();
         selectionRiver = initializeSelectionRiver();
         iconPreviousMove = initializeIconPreviousMove();
-        iconPlayMoves = initializeIconPlayMoves();
+        iconSlower = initializeIconSLower();
+        iconPlay = initializeIconPlay();
+        iconPause = initializeIconPause();
+        iconStop = initializeIconStop();
+        iconFaster = initializeIconFaster();
         iconNextMove = initializeIconNextMove();
         iconUnmuted = initializeIconUnmuted();
         iconMuted = initializeIconMuted();
@@ -572,18 +586,56 @@ public class GUI
         Graphics2D g2d = imagePreviousMove.createGraphics();
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
-        g2d.drawPolygon(new Polygon(new int[]{10,50,50,10}, new int[] {30,10,50,30}, 4));
-        g2d.drawLine(10, 50, 10, 10);
+        g2d.fillPolygon(new Polygon(new int[]{15,50,50,15}, new int[] {30,10,50,30}, 4));
+        g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawLine(15, 50, 15, 10);
         return new ImageIcon(imagePreviousMove);
     }
-    private ImageIcon initializeIconPlayMoves()
+    private ImageIcon initializeIconSLower()
     {
-        BufferedImage imagePlayMoves = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-        Graphics2D g2d = imagePlayMoves.createGraphics();
+        BufferedImage imageSlower = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imageSlower.createGraphics();
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
-        g2d.drawPolygon(new Polygon(new int[]{10,50,10,10}, new int[] {10,30,50,10}, 4));
-        return new ImageIcon(imagePlayMoves);
+        g2d.fillPolygon(new Polygon(new int[]{7,32,32,47,47,32,32,7}, new int[] {30,10,20,10,50,40,50,30}, 8));
+        return new ImageIcon(imageSlower);
+    }
+    private ImageIcon initializeIconPlay()
+    {
+        BufferedImage imagePlay = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imagePlay.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.fillPolygon(new Polygon(new int[]{13,48,13,13}, new int[] {10,30,50,10}, 4));
+        return new ImageIcon(imagePlay);
+    }
+    private ImageIcon initializeIconPause()
+    {
+        BufferedImage imagePause = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imagePause.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawLine(20, 13, 20, 47);
+        g2d.drawLine(40, 13, 40, 47);
+        return new ImageIcon(imagePause);
+    }
+    private ImageIcon initializeIconStop()
+    {
+        BufferedImage imageStop = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imageStop.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.fillPolygon(new Polygon(new int[]{12,48,48,12,12}, new int[] {12,12,48,48,12}, 5));
+        return new ImageIcon(imageStop);
+    }
+    private ImageIcon initializeIconFaster()
+    {
+        BufferedImage imageFaster = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imageFaster.createGraphics();
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.fillPolygon(new Polygon(new int[]{13,28,28,53,28,28,13,13}, new int[] {10,20,10,30,50,40,50,10}, 8));
+        return new ImageIcon(imageFaster);
     }
     private ImageIcon initializeIconNextMove()
     {
@@ -591,8 +643,9 @@ public class GUI
         Graphics2D g2d = imageNextMove.createGraphics();
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
-        g2d.drawPolygon(new Polygon(new int[]{10,50,10,10}, new int[] {10,30,50,10}, 4));
-        g2d.drawLine(50, 50, 50, 10);
+        g2d.fillPolygon(new Polygon(new int[]{10,45,10,10}, new int[] {10,30,50,10}, 4));
+        g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawLine(45, 50, 45, 10);
         return new ImageIcon(imageNextMove);
     }
     private ImageIcon initializeIconUnmuted()
@@ -892,39 +945,79 @@ public class GUI
                 //Button Previous Move.
                 buttonPreviousMove = new JButton(iconPreviousMove);
                 buttonPreviousMove.setPreferredSize(new Dimension(60, 60));
+                buttonPreviousMove.setOpaque(false);
                 buttonPreviousMove.setBackground(Color.WHITE);
                 buttonPreviousMove.setBorder(new LineBorder(Color.BLACK, 2));
                 constraintsForButtonPreviousMove = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 0, 10, 240), 0, 0);
+                        new Insets(10, 0, 10, 450), 0, 0);
                 buttonPreviousMove.addActionListener(e->replay.previousMove());
 
-                //Button Play.
-                buttonPlayMoves = new JButton(iconPlayMoves);
-                buttonPlayMoves.setPreferredSize(new Dimension(60, 60));
-                buttonPlayMoves.setBackground(Color.WHITE);
-                buttonPlayMoves.setBorder(new LineBorder(Color.BLACK, 2));
-                constraintsForButtonPlayMoves = new GridBagConstraints(
+                //Button Slower.
+                buttonSlower = new JButton(iconSlower);
+                buttonSlower.setPreferredSize(new Dimension(60, 60));
+                buttonSlower.setOpaque(false);
+                buttonSlower.setBackground(Color.WHITE);
+                buttonSlower.setBorder(new LineBorder(Color.BLACK, 2));
+                constraintsForButtonSlower = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 0, 10, 0), 0, 0);
-                buttonPlayMoves.addActionListener(e->timer.restart());
+                        new Insets(10, 0, 10, 270), 0, 0);
+                buttonSlower.addActionListener(e-> replaySlower());
+
+                //Button Play Pause.
+                buttonPlayPause = new JToggleButton(iconPlay, false);
+                buttonPlayPause.setPreferredSize(new Dimension(60, 60));
+                buttonPlayPause.setOpaque(false);
+                buttonPlayPause.setBackground(Color.WHITE);
+                buttonPlayPause.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonPlayPause.setSelectedIcon(iconPause);
+                constraintsForButtonPlayPause = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(10, 0, 10, 90), 0, 0);
+                buttonPlayPause.addActionListener(this::replayPlayPause);
+
+                //Button Stop.
+                buttonStop = new JButton(iconStop);
+                buttonStop.setPreferredSize(new Dimension(60, 60));
+                buttonStop.setOpaque(false);
+                buttonStop.setBackground(Color.WHITE);
+                buttonStop.setBorder(new LineBorder(Color.BLACK, 2));
+                constraintsForButtonStop = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(10, 90, 10, 0), 0, 0);
+                buttonStop.addActionListener(e->replayStop());
+
+                //Button Faster.
+                buttonFaster = new JButton(iconFaster);
+                buttonFaster.setPreferredSize(new Dimension(60, 60));
+                buttonFaster.setOpaque(false);
+                buttonFaster.setBackground(Color.WHITE);
+                buttonFaster.setBorder(new LineBorder(Color.BLACK, 2));
+                constraintsForButtonFaster = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(10, 270, 10, 0), 0, 0);
+                buttonFaster.addActionListener(e-> replayFaster());
 
                 //Button Next Move.
                 buttonNextMove = new JButton(iconNextMove);
                 buttonNextMove.setPreferredSize(new Dimension(60, 60));
+                buttonNextMove.setOpaque(false);
                 buttonNextMove.setBackground(Color.WHITE);
                 buttonNextMove.setBorder(new LineBorder(Color.BLACK, 2));
                 constraintsForButtonNextMove = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 240, 10, 0), 0, 0);
-                buttonNextMove.addActionListener(e->replay.nextMove()); //TODO isRunning. Пауза. Скорость.
+                        new Insets(10, 450, 10, 0), 0, 0);
+                buttonNextMove.addActionListener(e->replay.nextMove());
 
                 //Timer.
                 timer = new Timer(500, e->replay.nextMove());
-                timer.setInitialDelay(500);
+                timer.setInitialDelay(0);
             });
         }
         catch (Exception e)
@@ -1109,7 +1202,8 @@ public class GUI
                         0, 3, 1, 1, 0, 0,
                         GridBagConstraints.WEST, GridBagConstraints.NONE,
                         new Insets(80, 30, 0, 30), 0, 0);
-                //buttonApply.addActionListener(e->); //TODO: Implement. Возможно, кнопка понадобится для сервера.
+                //TODO: Implement. Возможно, кнопка понадобится для сервера.
+                //buttonApply.addActionListener(e->);
 
                 //Button Back.
                 buttonBackSettings = new JButton(text.getBack());
@@ -1261,7 +1355,10 @@ public class GUI
             frame.getContentPane().removeAll();
             frame.getContentPane().add(panelBoardReplay, constraintsForPanelBoardReplay);
             frame.getContentPane().add(buttonPreviousMove, constraintsForButtonPreviousMove);
-            frame.getContentPane().add(buttonPlayMoves, constraintsForButtonPlayMoves);
+            frame.getContentPane().add(buttonSlower, constraintsForButtonSlower);
+            frame.getContentPane().add(buttonPlayPause, constraintsForButtonPlayPause);
+            frame.getContentPane().add(buttonStop, constraintsForButtonStop);
+            frame.getContentPane().add(buttonFaster, constraintsForButtonFaster);
             frame.getContentPane().add(buttonNextMove, constraintsForButtonNextMove);
             repaint();
         });
@@ -1393,6 +1490,63 @@ public class GUI
             replay.resetReplayOutput();
             game.start();
             showFrameBoard();
+        });
+    }
+    private void replaySlower()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            int currentDelay = timer.getDelay();
+            int delay = currentDelay + 100;
+
+            timer.setDelay(delay);
+            if(delay == 1000)
+            {
+                buttonSlower.setEnabled(false);
+            }
+
+            buttonFaster.setEnabled(true);
+        });
+    }
+    private void replayPlayPause(ActionEvent e)
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            JToggleButton buttonSource = (JToggleButton)e.getSource();
+            boolean selected = buttonSource.isSelected();
+            if(selected) //Play.
+            {
+                timer.restart();
+            }
+            else //Pause.
+            {
+                timer.stop();
+            }
+        });
+    }
+    private void replayStop()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            timer.stop();
+            replay.start();
+            buttonPlayPause.setSelected(false);
+        });
+    }
+    private void replayFaster()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            int currentDelay = timer.getDelay();
+            int delay = currentDelay - 100;
+
+            timer.setDelay(delay);
+            if(delay == 100)
+            {
+                buttonFaster.setEnabled(false);
+            }
+
+            buttonSlower.setEnabled(true);
         });
     }
     private void changeDisplayedRule()
@@ -1641,13 +1795,17 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->buttonPreviousMove.setEnabled(false));
     }
-    public void enableButtonPlayMoves()
+    public void enableButtonPlayPause()
     {
-        SwingUtilities.invokeLater(()->buttonPlayMoves.setEnabled(true));
+        SwingUtilities.invokeLater(()-> buttonPlayPause.setEnabled(true));
     }
-    public void disableButtonPlayMoves()
+    public void disableButtonPlayPause()
     {
-        SwingUtilities.invokeLater(()->buttonPlayMoves.setEnabled(false));
+        SwingUtilities.invokeLater(()-> buttonPlayPause.setEnabled(false));
+    }
+    public void setButtonPlayPauseUnselected()
+    {
+        SwingUtilities.invokeLater(()->buttonPlayPause.setSelected(false));
     }
     public void enableButtonNextMove()
     {

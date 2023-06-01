@@ -97,7 +97,6 @@ public class MusicPlayer
 
         try
         {
-            //noinspection DataFlowIssue
             muteMusic = (BooleanControl)lineMusic.getControl(BooleanControl.Type.MUTE);
             muteMusic.setValue(false);
             muteMusicAvailable = true;
@@ -206,7 +205,6 @@ public class MusicPlayer
 
         try
         {
-            //noinspection DataFlowIssue
             muteSfx = (BooleanControl)lineSfx.getControl(BooleanControl.Type.MUTE);
             muteSfx.setValue(false);
             muteSfxAvailable = true;

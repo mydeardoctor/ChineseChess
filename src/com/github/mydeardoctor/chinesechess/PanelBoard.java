@@ -11,10 +11,10 @@ public class PanelBoard extends JPanel
 {
     private final HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures;
     private final BufferedImage selection;
-    private int x0Board;
-    private int y0Board;
-    private int tileLength;
-    private int figureRadius;
+    protected int x0Board;
+    protected int y0Board;
+    protected int tileLength;
+    protected int figureRadius;
     private HashMap<Location, Tile> grid;
 
     public PanelBoard(HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures, BufferedImage selection)
@@ -109,21 +109,5 @@ public class PanelBoard extends JPanel
                         selectionDiameter, selectionDiameter, this);
             }
         }
-    }
-    public int getX0Board()
-    {
-        return x0Board;
-    }
-    public int getY0Board()
-    {
-        return y0Board;
-    }
-    public int getTileLength()
-    {
-        return tileLength;
-    }
-    public int getFigureRadius()
-    {
-        return figureRadius;
     }
 }

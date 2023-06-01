@@ -47,11 +47,11 @@ public class PanelBoardInteractive extends PanelBoard implements MouseListener
         {
             int x = gridEntry.getKey().x();
             int y = gridEntry.getKey().y();
-            int x0Tile = getX0Board() + getTileLength() + getTileLength()*x;
-            int y0Tile = getY0Board() + getTileLength() + getTileLength()*y;
+            int x0Tile = x0Board + tileLength + tileLength*x;
+            int y0Tile = y0Board + tileLength + tileLength*y;
 
             //Closed disk formula.
-            if((Math.pow(xMouse - x0Tile, 2) + Math.pow(yMouse - y0Tile, 2)) <= Math.pow(getFigureRadius(), 2))
+            if((Math.pow(xMouse - x0Tile, 2) + Math.pow(yMouse - y0Tile, 2)) <= Math.pow(figureRadius, 2))
             {
                 selectedLocation = gridEntry.getKey();
                 break;
