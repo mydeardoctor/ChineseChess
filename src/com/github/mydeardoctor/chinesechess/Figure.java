@@ -14,7 +14,7 @@ public abstract class Figure implements Serializable
     {
         this.player = player;
     }
-    public HashSet<Location> getAllowedMoves(Game game)
+    public HashSet<Location> getAllowedMoves(Game game, Player turn)
     {
         HashSet<Location> allowedMoves = new HashSet<>();
 
@@ -32,7 +32,7 @@ public abstract class Figure implements Serializable
             }
         }
 
-        HashSet<Location> possibleMoves = getPossibleMoves(game, grid, game.getTurn());
+        HashSet<Location> possibleMoves = getPossibleMoves(game, grid, turn);
         for(Location possibleMove : possibleMoves)
         {
             //Reset grid copy.
@@ -65,7 +65,7 @@ public abstract class Figure implements Serializable
                 for(int y = generalBlackLocation.y() + 1; y < generalRedLocation.y(); y++)
                 {
                     Location destination = new Location(x, y);
-                    TileType tileType = game.getTileType(destination, gridCopy, game.getTurn());
+                    TileType tileType = game.getTileType(destination, gridCopy, turn);
                     if(tileType!=TileType.EMPTY)
                     {
                         generalsSeeEachOther = false;
@@ -82,7 +82,7 @@ public abstract class Figure implements Serializable
             boolean generalUnderAttack = false;
             Location friendlyGeneralLocation=null;
             Player nextTurn = null;
-            switch(game.getTurn())
+            switch(turn)
             {
                 case RED ->
                 {

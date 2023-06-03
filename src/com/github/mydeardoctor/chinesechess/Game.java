@@ -8,6 +8,9 @@ import java.util.HashMap;
 public class Game
 {
     //Game attributes.
+    private State state;
+    private Player turn;
+    private Phase phase;
     private final Figure generalRed;
     private final Figure advisorRed1;
     private final Figure advisorRed2;
@@ -40,13 +43,10 @@ public class Game
     private final Figure soldierBlack3;
     private final Figure soldierBlack4;
     private final Figure soldierBlack5;
-    private HashMap<Location, Tile> grid;
-    private State state;
-    private Player turn;
-    private Phase phase;
+    private final HashMap<Location, Tile> grid;
     private final HashMap<Location, HashSet<Location>> allAllowedMoves;
-    private Location prevSelectedLocation;
-    private Figure prevSelectedFigure;
+    private Location previouslySelectedLocation;
+    private Figure previouslySelectedFigure;
 
     //Replay attributes.
     private Replay replay;
@@ -59,6 +59,8 @@ public class Game
 
     public Game()
     {
+        initializeGameState();
+
         //Initialize figures.
         //Red figures.
         generalRed = new GeneralRed();
@@ -95,13 +97,18 @@ public class Game
         soldierBlack4 = new SoldierBlack();
         soldierBlack5 = new SoldierBlack();
 
-        initializeGrid();
-        initializeGameState();
+        grid = initializeGrid();
         allAllowedMoves = new HashMap<>();
     }
-    private void initializeGrid()
+    private void initializeGameState()
     {
-        grid = new HashMap<>();
+        state = State.OVER;
+        turn = Player.RED;
+        phase = Phase.CHOOSE_FIGURE;
+    }
+    private HashMap<Location, Tile> initializeGrid()
+    {
+        HashMap<Location, Tile> grid = new HashMap<>();
         for(int y = 0; y <= 9; y++)
         {
             for(int x = 0; x <= 8; x++)
@@ -111,12 +118,7 @@ public class Game
                 grid.put(location, tile);
             }
         }
-    }
-    private void initializeGameState()
-    {
-        setState(State.OVER);
-        setTurn(Player.RED);
-        setPhase(Phase.CHOOSE_FIGURE);
+        return grid;
     }
     public void setReplay(Replay replay)
     {
@@ -132,11 +134,22 @@ public class Game
     }
     public void start()
     {
-        resetGrid();
         resetGameState();
+        resetGrid();
+
+        replay.resetReplayOutput();
         replay.addToReplayOutput(grid);
-        gui.repaint();
+        gui.addMouseListenerToPanelBoardInteractive();
+        gui.setStatusBarText(gui.getText().getRedPlayer() + ", " + gui.getText().getChooseFigure());
         musicPlayer.playMusic();
+
+        getAllAllowedMoves();
+    }
+    private void resetGameState()
+    {
+        state = State.RUNNING;
+        turn = Player.RED;
+        phase = Phase.CHOOSE_FIGURE;
     }
     private void resetGrid()
     {
@@ -184,16 +197,6 @@ public class Game
         grid.get(new Location(6,3)).setFigure(soldierBlack4);
         grid.get(new Location(8,3)).setFigure(soldierBlack5);
     }
-    private void resetGameState()
-    {
-        setState(State.RUNNING);
-        setTurn(Player.RED);
-        setPhase(Phase.CHOOSE_FIGURE);
-
-        gui.setStatusBarText(gui.getText().getRedPlayer() + ", " + gui.getText().getChooseFigure());
-
-        getAllAllowedMoves();
-    }
     private void getAllAllowedMoves()
     {
         allAllowedMoves.clear();
@@ -202,13 +205,13 @@ public class Game
         for(Map.Entry<Location, Tile> gridEntry : gridSet)
         {
             Figure figure = gridEntry.getValue().getFigure();
-            if(figure!=null)
+            if(figure != null)
             {
                 Player player = figure.getPlayer();
-                if(player == getTurn()) //For every friendly figure.
+                if(player.equals(turn)) //For every friendly figure.
                 {
-                    HashSet<Location> allowedMoves = figure.getAllowedMoves(this);
-                    if(allowedMoves.size() > 0)
+                    HashSet<Location> allowedMoves = figure.getAllowedMoves(this, turn);
+                    if(allowedMoves.size() != 0)
                     {
                         Location origin = gridEntry.getKey();
                         allAllowedMoves.put(origin, allowedMoves);
@@ -219,23 +222,18 @@ public class Game
 
         if(allAllowedMoves.size() == 0) //If there are no allowed moves, the game is over.
         {
-            gameOver();
+            over();
         }
     }
     public void handleSelectedLocation(Location selectedLocation)
     {
-        if(state == State.OVER)
-        {
-            return;
-        }
-
         TileType tileType = getTileType(selectedLocation, grid, turn);
 
         switch(phase)
         {
             case CHOOSE_FIGURE->
             {
-                if(tileType == TileType.FRIENDLY)
+                if(tileType.equals(TileType.FRIENDLY))
                 {
                     saveSelectedFigure(selectedLocation);
                     highlightSelectedFigureAndAllowedMoves(selectedLocation);
@@ -255,10 +253,10 @@ public class Game
                     }
                     case ENEMY, EMPTY ->
                     {
-                        if(allAllowedMoves.containsKey(prevSelectedLocation)) //If selected figure has allowed moves.
+                        if(allAllowedMoves.containsKey(previouslySelectedLocation)) //If selected figure has allowed moves.
                         {
                             //If this is one of the allowed moves for selected figure.
-                            if(allAllowedMoves.get(prevSelectedLocation).contains(selectedLocation))
+                            if(allAllowedMoves.get(previouslySelectedLocation).contains(selectedLocation))
                             {
                                 unhighlightEverything();
                                 moveFigure(selectedLocation);
@@ -281,7 +279,7 @@ public class Game
         else
         {
             Player playerOfFigureAtDestination = figureAtDestination.getPlayer();
-            if(playerOfFigureAtDestination==turn)
+            if(playerOfFigureAtDestination.equals(turn))
             {
                 return TileType.FRIENDLY;
             }
@@ -294,8 +292,8 @@ public class Game
     private void saveSelectedFigure(Location locationSelected)
     {
         Figure figureSelected = grid.get(locationSelected).getFigure();
-        prevSelectedLocation = locationSelected;
-        prevSelectedFigure = figureSelected;
+        previouslySelectedLocation = locationSelected;
+        previouslySelectedFigure = figureSelected;
     }
     private void highlightSelectedFigureAndAllowedMoves(Location locationSelected)
     {
@@ -321,16 +319,16 @@ public class Game
     }
     private void moveFigure(Location locationSelected)
     {
-        grid.get(prevSelectedLocation).setFigure(null);           //Move figure from previous location...
-        grid.get(locationSelected).setFigure(prevSelectedFigure); //...to a new location.
+        grid.get(previouslySelectedLocation).setFigure(null);           //Move figure from previous location...
+        grid.get(locationSelected).setFigure(previouslySelectedFigure); //...to a new location.
 
         gui.repaint();
         musicPlayer.playSfx();
     }
     private void nextPhase()
     {
-        setPhase(Phase.CHOOSE_DESTINATION);
-        switch(getTurn())
+        phase = Phase.CHOOSE_DESTINATION;
+        switch(turn)
         {
             case RED -> gui.setStatusBarText(gui.getText().getRedPlayer() + ", " +
                         gui.getText().getChooseAnotherFigureOrDestination());
@@ -340,27 +338,29 @@ public class Game
     }
     private void nextTurn()
     {
-        switch(getTurn())
+        switch(turn)
         {
             case RED ->
             {
-                setTurn(Player.BLACK);
-                setPhase(Phase.CHOOSE_FIGURE);
+                turn = Player.BLACK;
+                phase = Phase.CHOOSE_FIGURE;
                 gui.setStatusBarText(gui.getText().getBlackPlayer() + ", " + gui.getText().getChooseFigure());
             }
             case BLACK ->
             {
-                setTurn(Player.RED);
-                setPhase(Phase.CHOOSE_FIGURE);
+                turn = Player.RED;
+                phase = Phase.CHOOSE_FIGURE;
                 gui.setStatusBarText(gui.getText().getRedPlayer() + ", " + gui.getText().getChooseFigure());
             }
         }
         getAllAllowedMoves();
     }
-    private void gameOver()
+    private void over()
     {
-        setState(State.OVER);
-        switch(getTurn())
+        state = State.OVER;
+
+        gui.removeMouseListenerFromPanelBoardInteractive();
+        switch(turn)
         {
             case RED -> gui.setStatusBarText(gui.getText().getGameOver() + " " +
                                              gui.getText().getBlackPlayer() + " " +
@@ -369,27 +369,28 @@ public class Game
                                                gui.getText().getRedPlayer() + " " +
                                                gui.getText().getWon());
         }
+
         musicPlayer.stopMusic();
     }
     public void stop()
     {
-        setState(State.OVER);
+        state = State.OVER;
         replay.resetReplayOutput();
         musicPlayer.stopMusic();
     }
     public void refreshText()
     {
-        switch (getState())
+        switch (state)
         {
             case RUNNING ->
             {
                 String message = "";
-                switch(getTurn())
+                switch(turn)
                 {
                     case RED -> message = gui.getText().getRedPlayer();
                     case BLACK -> message = gui.getText().getBlackPlayer();
                 }
-                switch(getPhase())
+                switch(phase)
                 {
                     case CHOOSE_FIGURE -> message = message + ", " +
                                                     gui.getText().getChooseFigure();
@@ -400,7 +401,7 @@ public class Game
             }
             case OVER ->
             {
-                switch(getTurn())
+                switch(turn)
                 {
                     case RED -> gui.setStatusBarText(gui.getText().getGameOver() + " " +
                                                      gui.getText().getBlackPlayer() + " " +
@@ -411,6 +412,10 @@ public class Game
                 }
             }
         }
+    }
+    public State getState()
+    {
+        return state;
     }
     public Figure getGeneralRed()
     {
@@ -543,29 +548,5 @@ public class Game
     synchronized public HashMap<Location, Tile> getGrid()
     {
         return grid;
-    }
-    public State getState()
-    {
-        return state;
-    }
-    public void setState(State state)
-    {
-        this.state = state;
-    }
-    public Player getTurn()
-    {
-        return turn;
-    }
-    public void setTurn(Player turn)
-    {
-        this.turn = turn;
-    }
-    public Phase getPhase()
-    {
-        return phase;
-    }
-    public void setPhase(Phase phase)
-    {
-        this.phase = phase;
     }
 }

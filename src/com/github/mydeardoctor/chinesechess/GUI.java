@@ -908,7 +908,6 @@ public class GUI
                         0, 0, 1, 1, 1, 1,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0);
-                panelBoardInteractive.addMouseListener(panelBoardInteractive);
 
                 //Status Bar.
                 statusBar = new JTextField(1);
@@ -1487,7 +1486,6 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            replay.resetReplayOutput();
             game.start();
             showFrameBoard();
         });
@@ -1778,6 +1776,14 @@ public class GUI
     public Text getText()
     {
         return text;
+    }
+    public void addMouseListenerToPanelBoardInteractive()
+    {
+        SwingUtilities.invokeLater(()-> panelBoardInteractive.addMouseListener(panelBoardInteractive));
+    }
+    public void removeMouseListenerFromPanelBoardInteractive()
+    {
+        SwingUtilities.invokeLater(()-> panelBoardInteractive.removeMouseListener(panelBoardInteractive));
     }
     public void setStatusBarText(String message)
     {
