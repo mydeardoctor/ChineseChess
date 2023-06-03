@@ -21,6 +21,7 @@ public class ChineseChessClient
         GUI gui = new GUI();
         MusicPlayer musicPlayer = new MusicPlayer();
 
+
         gameSinglePlayer.setReplay(replay);
         gameSinglePlayer.setGui(gui);
         gameSinglePlayer.setMusicPlayer(musicPlayer);
