@@ -14,13 +14,15 @@ public class ChineseChessClient
 {
     public static void main(String[] args)
     {
+        Client client = new Client();
+        client.connectToServer();
+
         GameSinglePlayer gameSinglePlayer = new GameSinglePlayer();
         GameLocalMultiplayer gameLocalMultiplayer = new GameLocalMultiplayer();
         Replay replay = new Replay();
         Rules rules = new Rules();
         GUI gui = new GUI();
         MusicPlayer musicPlayer = new MusicPlayer();
-
 
         gameSinglePlayer.setReplay(replay);
         gameSinglePlayer.setGui(gui);

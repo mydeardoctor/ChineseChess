@@ -1,9 +1,13 @@
 package com.github.mydeardoctor.chinesechess.server;
 
+//TODO
+//Panel Board shared
+
 public class ChineseChessServer
 {
     public static void main(String[] args)
     {
-        System.out.println("Server");
+        Server server = new Server();
+        server.run();
     }
 }
