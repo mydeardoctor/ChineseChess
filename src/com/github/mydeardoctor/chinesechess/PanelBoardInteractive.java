@@ -37,11 +37,14 @@ public class PanelBoardInteractive extends PanelBoard implements MouseListener
         {
             return;
         }
+        if(game.getIsCpuTurn())
+        {
+            return;
+        }
 
         Location selectedLocation = null;
         int xMouse = e.getX();
         int yMouse = e.getY();
-        HashMap<Location, Tile> grid = game.getGrid();
         Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
         for(Map.Entry<Location, Tile> gridEntry : gridSet)
         {

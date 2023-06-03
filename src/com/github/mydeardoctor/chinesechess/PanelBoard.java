@@ -15,7 +15,7 @@ public class PanelBoard extends JPanel
     protected int y0Board;
     protected int tileLength;
     protected int figureRadius;
-    private HashMap<Location, Tile> grid;
+    protected HashMap<Location, Tile> grid;
 
     public PanelBoard(HashMap<Class<? extends Figure>, BufferedImage> imagesOfFigures, BufferedImage selection)
     {

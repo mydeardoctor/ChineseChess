@@ -150,7 +150,8 @@ public class GUI
     private GridBagConstraints constraintsForButtonBackSettings;
 
     //Game.
-    private Game game;
+    private GameSinglePlayer gameSinglePlayer;
+    private GameLocalMultiplayer gameLocalMultiplayer;
 
     //Replay.
     private Replay replay;
@@ -853,6 +854,7 @@ public class GUI
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
+                buttonSinglePlayer.addActionListener(e->startSinglePlayerGame());
 
                 //Button Local Multiplayer.
                 buttonLocalMultiplayer = new JButton(text.getLocalMultiplayer());
@@ -908,6 +910,7 @@ public class GUI
                         0, 0, 1, 1, 1, 1,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0);
+                panelBoardInteractive.addMouseListener(panelBoardInteractive);
 
                 //Status Bar.
                 statusBar = new JTextField(1);
@@ -1222,10 +1225,13 @@ public class GUI
             e.printStackTrace();
         }
     }
-    public void setGame(Game game)
+    public void setGameSinglePlayer(GameSinglePlayer gameSinglePlayer)
     {
-        this.game = game;
-        panelBoardInteractive.setGame(game);
+        this.gameSinglePlayer = gameSinglePlayer;
+    }
+    public void setGameLocalMultiplayer(GameLocalMultiplayer gameLocalMultiplayer)
+    {
+        this.gameLocalMultiplayer = gameLocalMultiplayer;
     }
     public void setReplay(Replay replay)
     {
@@ -1398,9 +1404,12 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            State gameState = game.getState();
+            State gameSinglePlayerState = gameSinglePlayer.getState();
+            State gameLocalMultiplayerState = gameLocalMultiplayer.getState();
             State replayState = replay.getState();
-            if(gameState.equals(State.RUNNING)  ||  replayState.equals(State.RUNNING))
+            if(gameSinglePlayerState.equals(State.RUNNING)     ||
+               gameLocalMultiplayerState.equals(State.RUNNING) ||
+               replayState.equals(State.RUNNING))
             {
                 //Show warning.
                 int selectedOption = JOptionPane.showOptionDialog(frame,
@@ -1409,9 +1418,13 @@ public class GUI
                         new String[] {text.getYes(), text.getNo()}, text.getNo());
                 if(selectedOption == JOptionPane.YES_OPTION)
                 {
-                    if(gameState.equals(State.RUNNING))
+                    if(gameSinglePlayerState.equals(State.RUNNING))
                     {
-                        game.stop();
+                        gameSinglePlayer.stop();
+                    }
+                    if(gameLocalMultiplayerState.equals(State.RUNNING))
+                    {
+                        gameLocalMultiplayer.stop();
                     }
                     if(replayState.equals(State.RUNNING))
                     {
@@ -1482,11 +1495,21 @@ public class GUI
             }
         });
     }
+    private void startSinglePlayerGame()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            panelBoardInteractive.setGame(gameSinglePlayer);
+            gameSinglePlayer.start();
+            showFrameBoard();
+        });
+    }
     private void startLocalMultiplayerGame()
     {
         SwingUtilities.invokeLater(()->
         {
-            game.start();
+            panelBoardInteractive.setGame(gameLocalMultiplayer);
+            gameLocalMultiplayer.start();
             showFrameBoard();
         });
     }
@@ -1762,7 +1785,8 @@ public class GUI
             buttonBackSettings.setText(text.getBack());
 
             //Game.
-            game.refreshText();
+            gameSinglePlayer.refreshText();
+            gameLocalMultiplayer.refreshText();
         });
     }
     public void repaint()
@@ -1777,17 +1801,16 @@ public class GUI
     {
         return text;
     }
-    public void addMouseListenerToPanelBoardInteractive()
-    {
-        SwingUtilities.invokeLater(()-> panelBoardInteractive.addMouseListener(panelBoardInteractive));
-    }
-    public void removeMouseListenerFromPanelBoardInteractive()
-    {
-        SwingUtilities.invokeLater(()-> panelBoardInteractive.removeMouseListener(panelBoardInteractive));
-    }
     public void setStatusBarText(String message)
     {
         SwingUtilities.invokeLater(()->statusBar.setText(message));
+    }
+    public void showDialogYouPlay(String message)
+    {
+        SwingUtilities.invokeLater(()->
+                JOptionPane.showMessageDialog(frame,
+                        message, text.getSinglePlayer(), JOptionPane.INFORMATION_MESSAGE)
+        );
     }
     public void setPanelBoardReplayGrid(HashMap<Location, Tile> grid)
     {

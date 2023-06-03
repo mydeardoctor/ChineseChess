@@ -4,6 +4,9 @@ public abstract class Text
 {
     //Game.
 
+    public abstract String getYouPlay();
+    public abstract String getRed();
+    public abstract String getBlack();
     public abstract String getRedPlayer();
     public abstract String getBlackPlayer();
     public abstract String getChooseFigure();

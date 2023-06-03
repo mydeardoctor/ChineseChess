@@ -5,6 +5,21 @@ public class TextEnglish extends Text
     //Game.
 
     @Override
+    public String getYouPlay()
+    {
+        return "You play ";
+    }
+    @Override
+    public String getRed()
+    {
+        return "Red.";
+    }
+    @Override
+    public String getBlack()
+    {
+        return "Black.";
+    }
+    @Override
     public String getRedPlayer()
     {
         return "Red player";

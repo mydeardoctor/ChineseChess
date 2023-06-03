@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 
-public class Game
+public abstract class Game
 {
     //Game attributes.
-    private State state;
-    private Player turn;
+    protected State state;
+    protected Player turn;
     private Phase phase;
     private final Figure generalRed;
     private final Figure advisorRed1;
@@ -43,16 +43,15 @@ public class Game
     private final Figure soldierBlack3;
     private final Figure soldierBlack4;
     private final Figure soldierBlack5;
-    private final HashMap<Location, Tile> grid;
-    private final HashMap<Location, HashSet<Location>> allAllowedMoves;
+    protected final HashMap<Location, Tile> grid;
+    protected final HashMap<Location, HashSet<Location>> allAllowedMoves;
     private Location previouslySelectedLocation;
-    private Figure previouslySelectedFigure;
 
     //Replay attributes.
-    private Replay replay;
+    protected Replay replay;
 
     //GUI attributes.
-    private GUI gui;
+    protected GUI gui;
 
     //Music player attributes.
     private MusicPlayer musicPlayer;
@@ -139,11 +138,11 @@ public class Game
 
         replay.resetReplayOutput();
         replay.addToReplayOutput(grid);
-        gui.addMouseListenerToPanelBoardInteractive();
         gui.setStatusBarText(gui.getText().getRedPlayer() + ", " + gui.getText().getChooseFigure());
         musicPlayer.playMusic();
 
-        getAllAllowedMoves();
+        initializeSidesForPlayers();
+        nextPlayerTurn();
     }
     private void resetGameState()
     {
@@ -197,7 +196,14 @@ public class Game
         grid.get(new Location(6,3)).setFigure(soldierBlack4);
         grid.get(new Location(8,3)).setFigure(soldierBlack5);
     }
-    private void getAllAllowedMoves()
+    protected abstract void initializeSidesForPlayers();
+    protected abstract void nextPlayerTurn();
+    protected void humanTurn()
+    {
+        getAllAllowedMoves();
+        //Handle user mouse clicks.
+    }
+    protected void getAllAllowedMoves()
     {
         allAllowedMoves.clear();
 
@@ -235,7 +241,8 @@ public class Game
             {
                 if(tileType.equals(TileType.FRIENDLY))
                 {
-                    saveSelectedFigure(selectedLocation);
+                    saveSelectedLocation(selectedLocation);
+                    unhighlightEverything();
                     highlightSelectedFigureAndAllowedMoves(selectedLocation);
                     nextPhase();
                 }
@@ -247,8 +254,8 @@ public class Game
                 {
                     case FRIENDLY ->
                     {
+                        saveSelectedLocation(selectedLocation);
                         unhighlightEverything();
-                        saveSelectedFigure(selectedLocation);
                         highlightSelectedFigureAndAllowedMoves(selectedLocation);
                     }
                     case ENEMY, EMPTY ->
@@ -259,7 +266,7 @@ public class Game
                             if(allAllowedMoves.get(previouslySelectedLocation).contains(selectedLocation))
                             {
                                 unhighlightEverything();
-                                moveFigure(selectedLocation);
+                                moveFigure(previouslySelectedLocation, selectedLocation);
                                 replay.addToReplayOutput(grid);
                                 nextTurn();
                             }
@@ -289,11 +296,17 @@ public class Game
             }
         }
     }
-    private void saveSelectedFigure(Location locationSelected)
+    private void saveSelectedLocation(Location locationSelected)
     {
-        Figure figureSelected = grid.get(locationSelected).getFigure();
         previouslySelectedLocation = locationSelected;
-        previouslySelectedFigure = figureSelected;
+    }
+    private void unhighlightEverything()
+    {
+        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
+        for(Map.Entry<Location, Tile> gridEntry : gridSet)
+        {
+            gridEntry.getValue().setSelected(false);
+        }
     }
     private void highlightSelectedFigureAndAllowedMoves(Location locationSelected)
     {
@@ -309,18 +322,11 @@ public class Game
 
         gui.repaint();
     }
-    private void unhighlightEverything()
+    protected void moveFigure(Location origin, Location destination)
     {
-        Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
-        for(Map.Entry<Location, Tile> gridEntry : gridSet)
-        {
-            gridEntry.getValue().setSelected(false);
-        }
-    }
-    private void moveFigure(Location locationSelected)
-    {
-        grid.get(previouslySelectedLocation).setFigure(null);           //Move figure from previous location...
-        grid.get(locationSelected).setFigure(previouslySelectedFigure); //...to a new location.
+        Figure selectedFigure = grid.get(origin).getFigure();
+        grid.get(origin).setFigure(null);                       //Move figure from previous location...
+        grid.get(destination).setFigure(selectedFigure);        //...to a new location.
 
         gui.repaint();
         musicPlayer.playSfx();
@@ -336,7 +342,7 @@ public class Game
                           gui.getText().getChooseAnotherFigureOrDestination());
         }
     }
-    private void nextTurn()
+    protected void nextTurn()
     {
         switch(turn)
         {
@@ -353,13 +359,13 @@ public class Game
                 gui.setStatusBarText(gui.getText().getRedPlayer() + ", " + gui.getText().getChooseFigure());
             }
         }
-        getAllAllowedMoves();
+
+        nextPlayerTurn();
     }
     private void over()
     {
         state = State.OVER;
 
-        gui.removeMouseListenerFromPanelBoardInteractive();
         switch(turn)
         {
             case RED -> gui.setStatusBarText(gui.getText().getGameOver() + " " +
@@ -417,135 +423,16 @@ public class Game
     {
         return state;
     }
+    public abstract boolean getIsCpuTurn();
     public Figure getGeneralRed()
     {
         return generalRed;
-    }
-    public Figure getAdvisorRed1()
-    {
-        return advisorRed1;
-    }
-    public Figure getAdvisorRed2()
-    {
-        return advisorRed2;
-    }
-    public Figure getElephantRed1()
-    {
-        return elephantRed1;
-    }
-    public Figure getElephantRed2()
-    {
-        return elephantRed2;
-    }
-    public Figure getHorseRed1()
-    {
-        return horseRed1;
-    }
-    public Figure getHorseRed2()
-    {
-        return horseRed2;
-    }
-    public Figure getChariotRed1()
-    {
-        return chariotRed1;
-    }
-    public Figure getChariotRed2()
-    {
-        return chariotRed2;
-    }
-    public Figure getCannonRed1()
-    {
-        return cannonRed1;
-    }
-    public Figure getCannonRed2()
-    {
-        return cannonRed2;
-    }
-    public Figure getSoldierRed1()
-    {
-        return soldierRed1;
-    }
-    public Figure getSoldierRed2()
-    {
-        return soldierRed2;
-    }
-    public Figure getSoldierRed3()
-    {
-        return soldierRed3;
-    }
-    public Figure getSoldierRed4()
-    {
-        return soldierRed4;
-    }
-    public Figure getSoldierRed5()
-    {
-        return soldierRed5;
     }
     public Figure getGeneralBlack()
     {
         return generalBlack;
     }
-    public Figure getAdvisorBlack1()
-    {
-        return advisorBlack1;
-    }
-    public Figure getAdvisorBlack2()
-    {
-        return advisorBlack2;
-    }
-    public Figure getElephantBlack1()
-    {
-        return elephantBlack1;
-    }
-    public Figure getElephantBlack2()
-    {
-        return elephantBlack2;
-    }
-    public Figure getHorseBlack1()
-    {
-        return horseBlack1;
-    }
-    public Figure getHorseBlack2()
-    {
-        return horseBlack2;
-    }
-    public Figure getChariotBlack1()
-    {
-        return chariotBlack1;
-    }
-    public Figure getChariotBlack2()
-    {
-        return chariotBlack2;
-    }
-    public Figure getCannonBlack1()
-    {
-        return cannonBlack1;
-    }
-    public Figure getCannonBlack2()
-    {
-        return cannonBlack2;
-    }
-    public Figure getSoldierBlack1()
-    {
-        return soldierBlack1;
-    }
-    public Figure getSoldierBlack2()
-    {
-        return soldierBlack2;
-    }
-    public Figure getSoldierBlack3()
-    {
-        return soldierBlack3;
-    }
-    public Figure getSoldierBlack4()
-    {
-        return soldierBlack4;
-    }
-    public Figure getSoldierBlack5()
-    {
-        return soldierBlack5;
-    }
-    synchronized public HashMap<Location, Tile> getGrid()
+    public HashMap<Location, Tile> getGrid()
     {
         return grid;
     }

@@ -57,7 +57,7 @@ public class Replay
     }
     public boolean getIsReplayOutputEmpty()
     {
-        return (replayOutput.size() == 0);
+        return (replayOutput.size() <= 1);
     }
     public int save(File selectedFile)
     {

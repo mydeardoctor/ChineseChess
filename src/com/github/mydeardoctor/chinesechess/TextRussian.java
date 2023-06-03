@@ -3,6 +3,22 @@ package com.github.mydeardoctor.chinesechess;
 class TextRussian extends Text
 {
     //Game.
+
+    @Override
+    public String getYouPlay()
+    {
+        return "Вы играете ";
+    }
+    @Override
+    public String getRed()
+    {
+        return "Красными.";
+    }
+    @Override
+    public String getBlack()
+    {
+        return "Чёрными.";
+    }
     @Override
     public String getRedPlayer()
     {
