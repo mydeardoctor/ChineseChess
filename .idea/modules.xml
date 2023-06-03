@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ChineseChess.iml" filepath="$PROJECT_DIR$/ChineseChess.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ChineseChessClient/ChineseChessClient.iml" filepath="$PROJECT_DIR$/ChineseChessClient/ChineseChessClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ChineseChessServer/ChineseChessServer.iml" filepath="$PROJECT_DIR$/ChineseChessServer/ChineseChessServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ChineseChessShared/ChineseChessShared.iml" filepath="$PROJECT_DIR$/ChineseChessShared/ChineseChessShared.iml" />
     </modules>
   </component>
 </project>
