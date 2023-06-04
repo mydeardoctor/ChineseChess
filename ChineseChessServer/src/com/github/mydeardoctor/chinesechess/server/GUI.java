@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class GUI
 {
@@ -22,14 +23,33 @@ public class GUI
     private final BufferedImage iconFrame;
     private final BufferedImage background;
 
+    //Previous frames.
+    private final ArrayList<FrameType> previousFrames;
+
     //Common frame features.
     private JFrame frame;
     private PanelBackground panelBackground;
     private GridBagLayout gridBagLayout;
+    private JMenuBar menuBar;
+    private JMenu menuHelp;
+    private JMenuItem menuItemSettings;
+    private JMenuItem menuItemAbout;
+
+    //Frame Main menu.
     private JLabel labelPort;
     private JButton buttonSetUp;
-    GridBagConstraints constraintsForLabelPort;
-    GridBagConstraints constraintsForButtonSetUp;
+    private GridBagConstraints constraintsForLabelPort;
+    private GridBagConstraints constraintsForButtonSetUp;
+
+    //Frame Settings.
+    private JLabel labelLanguage;
+    private JComboBox<String> comboBoxLanguage;
+    private JButton buttonApply;
+    private JButton buttonBackSettings;
+    private GridBagConstraints constraintsForLabelLanguage;
+    private GridBagConstraints constraintsForComboBoxLanguage;
+    private GridBagConstraints constraintsForButtonApply;
+    private GridBagConstraints constraintsForButtonBackSettings;
 
     public GUI()
     {
@@ -44,7 +64,11 @@ public class GUI
         iconFrame = initializeIconFrame();
         background = initializeBackground();
 
+        previousFrames = new ArrayList<>();
+
         initializeCommonFrameFeatures();
+        initializeFrameMainMenu();
+        initializeFrameSettings();
     }
     private Font initializeFontChinese()
     {
@@ -128,6 +152,30 @@ public class GUI
                 gridBagLayout = new GridBagLayout();
                 frame.getContentPane().setLayout(gridBagLayout);
 
+                //Menu Bar.
+                menuBar = new JMenuBar();
+                menuHelp = new JMenu(text.getHelp());
+                menuItemSettings = new JMenuItem(text.getSettings());
+                menuItemSettings.addActionListener(e->showFrameSettings());
+                menuItemAbout = new JMenuItem(text.getAbout());
+                menuItemAbout.addActionListener(e-> showDialogAbout());
+                menuHelp.add(menuItemSettings);
+                menuHelp.add(menuItemAbout);
+                menuBar.add(menuHelp);
+                frame.setJMenuBar(menuBar);
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    private void initializeFrameMainMenu()
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
                 //Label Port.
                 labelPort = new JLabel(text.getPort());
                 labelPort.setPreferredSize(new Dimension(300, 100));
@@ -139,7 +187,7 @@ public class GUI
 
                 //Button Set Up.
                 buttonSetUp = new JButton(text.getSetUp());
-                buttonSetUp.setPreferredSize(new Dimension(200, 100));
+                buttonSetUp.setPreferredSize(new Dimension(250, 100));
                 buttonSetUp.setBackground(Color.WHITE);
                 buttonSetUp.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonSetUp.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
@@ -154,11 +202,69 @@ public class GUI
             e.printStackTrace();
         }
     }
+    private void initializeFrameSettings()
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                //Label Language.
+                labelLanguage = new JLabel(text.getLanguage());
+                labelLanguage.setPreferredSize(new Dimension(300, 100));
+                labelLanguage.setFont(fontChinese.deriveFont(Font.BOLD, 37.f));
+                constraintsForLabelLanguage = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        new Insets(0, 30, 0, 30), 0, 0);
+
+                //ComboBox Language.
+                comboBoxLanguage = new JComboBox<>();
+                comboBoxLanguage.setPreferredSize(new Dimension(300, 80));
+                comboBoxLanguage.setFont(fontChinese.deriveFont(Font.BOLD, 37.f));
+                comboBoxLanguage.addItem("English");
+                comboBoxLanguage.addItem("Русский");
+                constraintsForComboBoxLanguage = new GridBagConstraints(
+                        1, 0, 2, 1, 0, 0,
+                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(0, 30, 10, 30), 0, 0);
+                comboBoxLanguage.addActionListener(e->refreshText());
+
+                //Button Apply.
+                buttonApply = new JButton(text.getApply());
+                buttonApply.setPreferredSize(new Dimension(230, 100));
+                buttonApply.setBackground(Color.WHITE);
+                buttonApply.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonApply.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonApply = new GridBagConstraints(
+                        0, 3, 1, 1, 0, 0,
+                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(80, 30, 0, 30), 0, 0);
+                //TODO: Implement. Возможно, кнопка понадобится для сервера.
+                //buttonApply.addActionListener(e->);
+
+                //Button Back.
+                buttonBackSettings = new JButton(text.getBack());
+                buttonBackSettings.setPreferredSize(new Dimension(200, 100));
+                buttonBackSettings.setBackground(Color.WHITE);
+                buttonBackSettings.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackSettings.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonBackSettings = new GridBagConstraints(
+                        2, 3, 1, 1, 0, 0,
+                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        new Insets(80, 30, 0, 30), 0, 0);
+                buttonBackSettings.addActionListener(e->showPreviousFrame());
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
     public void showFrameAndWarnings()
     {
         try
         {
-            showCommonFrame();
+            showFrameMainMenu();
 
             frame.setVisible(true);
 
@@ -174,14 +280,97 @@ public class GUI
             e.printStackTrace();
         }
     }
-    private void showCommonFrame()
+    private void showFrameMainMenu()
     {
         SwingUtilities.invokeLater(()->
         {
-            frame.getContentPane().removeAll(); //TODO
+            addToPreviousFrames(FrameType.MAIN_MENU);
+            frame.getContentPane().removeAll();
             frame.getContentPane().add(labelPort, constraintsForLabelPort);
             frame.getContentPane().add(buttonSetUp, constraintsForButtonSetUp);
             repaint();
+        });
+    }
+    private void showFrameSettings()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            addToPreviousFrames(FrameType.SETTINGS);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(labelLanguage, constraintsForLabelLanguage);
+            frame.getContentPane().add(comboBoxLanguage, constraintsForComboBoxLanguage);
+            frame.getContentPane().add(buttonApply, constraintsForButtonApply);
+            frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
+            repaint();
+        });
+    }
+    private void showDialogAbout()
+    {
+        SwingUtilities.invokeLater(()->
+                JOptionPane.showMessageDialog(frame,
+                        text.getAboutVerbose(), text.getAbout(), JOptionPane.INFORMATION_MESSAGE)
+        );
+    }
+    private void showPreviousFrame()
+    {
+        int size = previousFrames.size();
+        if(size > 0)
+        {
+            previousFrames.remove(size - 1); //Delete current frame from array.
+            size = previousFrames.size();
+            if(size > 0)
+            {
+                FrameType previousFrame = previousFrames.get(size - 1);
+                previousFrames.remove(size - 1); //Delete previous frame from array.
+                switch(previousFrame)
+                {
+                    case MAIN_MENU -> showFrameMainMenu();
+                    case SETTINGS -> showFrameSettings();
+                }
+            }
+        }
+    }
+    private void addToPreviousFrames(FrameType currentFrame)
+    {
+        int size = previousFrames.size();
+        if(size == 0)
+        {
+            previousFrames.add(currentFrame);
+        }
+        else
+        {
+            FrameType previousFrame = previousFrames.get(size - 1);
+            if(currentFrame != previousFrame)
+            {
+                previousFrames.add(currentFrame);
+            }
+        }
+    }
+    private void refreshText()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            int selectedIndex = comboBoxLanguage.getSelectedIndex();
+            switch (selectedIndex)
+            {
+                case 0 -> text = textEnglish;
+                case 1 -> text = textRussian;
+            }
+
+            //Common frame features.
+            frame.setTitle(text.getTitle());
+            menuHelp.setText(text.getHelp());
+            menuItemSettings.setText(text.getSettings());
+            menuItemAbout.setText(text.getAbout());
+
+            //Frame Main Menu.
+            labelPort.setText(text.getPort());
+            buttonSetUp.setText(text.getSetUp());
+
+            //Frame Settings.
+            labelLanguage.setText(text.getLanguage());
+            buttonApply.setText(text.getApply());
+            buttonBackSettings.setText(text.getBack());
         });
     }
     public void repaint()

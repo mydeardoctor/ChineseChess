@@ -10,6 +10,17 @@ public abstract class Text
 
     //Common frame features.
     public abstract String getTitle();
+    public abstract String getHelp();
+    public abstract String getSettings();
+    public abstract String getAbout();
+    public abstract String getAboutVerbose();
+
+    //Frame Main Menu.
     public abstract String getPort();
     public abstract String getSetUp();
+
+    //Frame Settings.
+    public abstract String getLanguage();
+    public abstract String getApply();
+    public abstract String getBack();
 }

@@ -130,7 +130,6 @@ class TextRussian extends Text
     {
         return "Не удалось сохранить запись игры!";
     }
-
     @Override
     public String getHelp()
     {

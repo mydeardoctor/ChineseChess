@@ -23,6 +23,28 @@ class TextRussian extends Text
         return "Китайские шахматы. Сервер";
     }
     @Override
+    public String getHelp()
+    {
+        return "Помощь";
+    }
+    @Override
+    public String getSettings()
+    {
+        return "Настройки";
+    }
+    @Override
+    public String getAbout()
+    {
+        return "О программе";
+    }
+    @Override
+    public String getAboutVerbose()
+    {
+        return String.format("Китайские шахматы\nПрограммист:%16s\nКомпозитор:%14s", "my_dear_doctor", "eskimolly");
+    }
+
+    //Frame Main Menu.
+    @Override
     public String getPort()
     {
         return "Порт";
@@ -33,4 +55,20 @@ class TextRussian extends Text
         return "Запустить";
     }
 
+    //Frame Settings.
+    @Override
+    public String getLanguage()
+    {
+        return "Язык";
+    }
+    @Override
+    public String getApply()
+    {
+        return "Применить";
+    }
+    @Override
+    public String getBack()
+    {
+        return "Назад";
+    }
 }

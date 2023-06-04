@@ -130,7 +130,6 @@ public class TextEnglish extends Text
     {
         return "Could not save replay!";
     }
-
     @Override
     public String getHelp()
     {
