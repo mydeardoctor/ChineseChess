@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/ChineseChessServer_jar</output-path>
     <root id="archive" name="ChineseChessServer.jar">
       <element id="module-output" name="ChineseChessServer" />
+      <element id="module-output" name="ChineseChessShared" />
     </root>
   </artifact>
 </component>

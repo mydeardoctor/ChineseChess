@@ -1,8 +1,8 @@
-package com.github.mydeardoctor.chinesechess.server;
+package com.github.mydeardoctor.chinesechess;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.swing.*;
 
 public class PanelBackground extends JPanel
 {

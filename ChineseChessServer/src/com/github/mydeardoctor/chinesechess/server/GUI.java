@@ -1,5 +1,6 @@
 package com.github.mydeardoctor.chinesechess.server;
 
+import com.github.mydeardoctor.chinesechess.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
