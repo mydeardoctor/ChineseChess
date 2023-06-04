@@ -3,12 +3,17 @@ package com.github.mydeardoctor.chinesechess.server;
 import com.github.mydeardoctor.chinesechess.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.text.Document;
+import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class GUI
 {
@@ -37,8 +42,10 @@ public class GUI
 
     //Frame Main menu.
     private JLabel labelPort;
+    private JTextField textFieldPort;
     private JButton buttonSetUp;
     private GridBagConstraints constraintsForLabelPort;
+    private GridBagConstraints constraintsForTextFieldPort;
     private GridBagConstraints constraintsForButtonSetUp;
 
     //Frame Settings.
@@ -178,12 +185,34 @@ public class GUI
             {
                 //Label Port.
                 labelPort = new JLabel(text.getPort());
-                labelPort.setPreferredSize(new Dimension(300, 100));
+                labelPort.setPreferredSize(new Dimension(250, 100));
                 labelPort.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForLabelPort = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 450), 0, 0);
+
+
+
+
+
+                //TODO
+                PlainDocument plainDocument = new PlainDocument();
+                DocumentFilterPort documentFilterPort = new DocumentFilterPort();
+                plainDocument.setDocumentFilter(documentFilterPort);
+                //Text Field Port.
+                textFieldPort = new JTextField(plainDocument, null, 5);
+                labelPort.setPreferredSize(new Dimension(100, 100));
+                textFieldPort.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
+                        new EmptyBorder(15, 5, 15, 5)));
+                //textFieldPort.setFont(new Font(Font.DIALOG, Font.PLAIN, 46)); //TODO
+                textFieldPort.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForTextFieldPort = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 0), 0, 0);
+
+
 
                 //Button Set Up.
                 buttonSetUp = new JButton(text.getSetUp());
@@ -192,9 +221,9 @@ public class GUI
                 buttonSetUp.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonSetUp.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForButtonSetUp = new GridBagConstraints(
-                        1, 0, 1, 1, 0, 0,
+                        0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 0), 0, 0);
+                        new Insets(0, 500, 0, 0), 0, 0);
             });
         }
         catch (Exception e)
@@ -287,6 +316,7 @@ public class GUI
             addToPreviousFrames(FrameType.MAIN_MENU);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(labelPort, constraintsForLabelPort);
+            frame.getContentPane().add(textFieldPort, constraintsForTextFieldPort);
             frame.getContentPane().add(buttonSetUp, constraintsForButtonSetUp);
             repaint();
         });
