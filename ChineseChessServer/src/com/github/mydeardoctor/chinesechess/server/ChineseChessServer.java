@@ -7,7 +7,10 @@ public class ChineseChessServer
 {
     public static void main(String[] args)
     {
-        Server server = new Server();
-        server.run();
+//        Server server = new Server();
+//        server.run();
+        GUI gui = new GUI();
+
+        gui.showFrameAndWarnings();
     }
 }
