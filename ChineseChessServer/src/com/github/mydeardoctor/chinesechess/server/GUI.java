@@ -6,14 +6,12 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 public class GUI
 {
@@ -27,6 +25,8 @@ public class GUI
     private final Font fontChinese;
     private final BufferedImage iconFrame;
     private final BufferedImage background;
+    private final ImageIcon iconIncorrect;
+    private final ImageIcon iconCorrect;
 
     //Previous frames.
     private final ArrayList<FrameType> previousFrames;
@@ -43,9 +43,13 @@ public class GUI
     //Frame Main menu.
     private JLabel labelPort;
     private JTextField textFieldPort;
+    private JLabel labelPortCheck;
+    private JLabel labelPortStatus;
     private JButton buttonSetUp;
     private GridBagConstraints constraintsForLabelPort;
     private GridBagConstraints constraintsForTextFieldPort;
+    private GridBagConstraints constraintsForLabelPortCheck;
+    private GridBagConstraints constraintsForLabelPortStatus;
     private GridBagConstraints constraintsForButtonSetUp;
 
     //Frame Settings.
@@ -70,6 +74,8 @@ public class GUI
         fontChinese = initializeFontChinese();
         iconFrame = initializeIconFrame();
         background = initializeBackground();
+        iconIncorrect = initializeIconIncorrect();
+        iconCorrect = initializeIconCorrect();
 
         previousFrames = new ArrayList<>();
 
@@ -134,6 +140,30 @@ public class GUI
         }
         return background;
     }
+    private ImageIcon initializeIconIncorrect()
+    {
+        BufferedImage imageIncorrect = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imageIncorrect.createGraphics();
+        g2d.setColor(Color.RED);
+        g2d.fillOval(0, 0, 60, 60);
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawLine(15, 15, 45, 45);
+        g2d.drawLine(15, 45, 45, 15);
+        return new ImageIcon(imageIncorrect);
+    }
+    private ImageIcon initializeIconCorrect()
+    {
+        BufferedImage imageCorrect = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imageCorrect.createGraphics();
+        g2d.setColor(new Color(117, 240, 131));
+        g2d.fillOval(0, 0, 60, 60);
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawLine(10, 32, 25, 45);
+        g2d.drawLine(25, 45, 45, 15);
+        return new ImageIcon(imageCorrect);
+    }
     private void initializeCommonFrameFeatures()
     {
         try
@@ -190,18 +220,18 @@ public class GUI
                 constraintsForLabelPort = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 450), 0, 0);
+                        new Insets(0, 0, 0, 550), 0, 0);
 
-
-
-
-
-                //TODO
-                PlainDocument plainDocument = new PlainDocument();
-                DocumentFilterPort documentFilterPort = new DocumentFilterPort();
-                plainDocument.setDocumentFilter(documentFilterPort);
                 //Text Field Port.
-                textFieldPort = new JTextField(plainDocument, null, 5);
+                PlainDocument plainDocumentForTextFieldPort = new PlainDocument();
+                DocumentFilterForTextFieldPort documentFilterForTextFieldPort =
+                        new DocumentFilterForTextFieldPort();
+                plainDocumentForTextFieldPort.setDocumentFilter(documentFilterForTextFieldPort);
+                DocumentListenerForTextFieldPort documentListenerForTextFieldPort =
+                        new DocumentListenerForTextFieldPort(this);
+                plainDocumentForTextFieldPort.addDocumentListener(documentListenerForTextFieldPort);
+
+                textFieldPort = new JTextField(plainDocumentForTextFieldPort, "4242", 5);
                 labelPort.setPreferredSize(new Dimension(100, 100));
                 textFieldPort.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
                         new EmptyBorder(15, 5, 15, 5)));
@@ -210,9 +240,25 @@ public class GUI
                 constraintsForTextFieldPort = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 250), 0, 0);
+
+                //Label Port Check.
+                //labelPortCheck = new JLabel(iconIncorrect); //TODO
+                labelPortCheck = new JLabel(iconCorrect); //TODO
+                // labelPortCheck.setPreferredSize(new Dimension(250, 100));
+                constraintsForLabelPortCheck = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 0), 0, 0);
 
-
+                //Label Port Status.
+                labelPortStatus = new JLabel("must be between 1024 and 65535"); //TODO
+                labelPortStatus.setPreferredSize(new Dimension(250, 100));
+                labelPortStatus.setFont(fontChinese.deriveFont(Font.BOLD, 20.f));
+                constraintsForLabelPortStatus = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 350, 0, 0), 0, 0);
 
                 //Button Set Up.
                 buttonSetUp = new JButton(text.getSetUp());
@@ -221,9 +267,9 @@ public class GUI
                 buttonSetUp.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonSetUp.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForButtonSetUp = new GridBagConstraints(
-                        0, 0, 1, 1, 0, 0,
+                        0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 500, 0, 0), 0, 0);
+                        new Insets(0, 0, 0, 0), 0, 0);
             });
         }
         catch (Exception e)
@@ -317,6 +363,8 @@ public class GUI
             frame.getContentPane().removeAll();
             frame.getContentPane().add(labelPort, constraintsForLabelPort);
             frame.getContentPane().add(textFieldPort, constraintsForTextFieldPort);
+            frame.getContentPane().add(labelPortCheck, constraintsForLabelPortCheck);
+            frame.getContentPane().add(labelPortStatus, constraintsForLabelPortStatus);
             frame.getContentPane().add(buttonSetUp, constraintsForButtonSetUp);
             repaint();
         });
@@ -340,6 +388,14 @@ public class GUI
                 JOptionPane.showMessageDialog(frame,
                         text.getAboutVerbose(), text.getAbout(), JOptionPane.INFORMATION_MESSAGE)
         );
+    }
+    public void setIconIncorrectToLabelPortCheck()
+    {
+        SwingUtilities.invokeLater(()-> labelPortCheck.setIcon(iconIncorrect));
+    }
+    public void setIconCorrectToLabelPortCheck()
+    {
+        SwingUtilities.invokeLater(()-> labelPortCheck.setIcon(iconCorrect));
     }
     private void showPreviousFrame()
     {
