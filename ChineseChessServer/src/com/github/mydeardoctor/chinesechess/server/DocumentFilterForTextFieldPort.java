@@ -8,12 +8,12 @@ import java.util.regex.Pattern;
 
 public class DocumentFilterForTextFieldPort extends DocumentFilter
 {
-    private final Pattern patternOnlyNumbers;
+    private final Pattern patternFiveNumbers;
     public DocumentFilterForTextFieldPort()
     {
         super();
-        String regExOnlyNumbers = "^[0-9]*$";
-        patternOnlyNumbers = Pattern.compile(regExOnlyNumbers);
+        String regExFiveNumbers = "^[0-9]*$";
+        patternFiveNumbers = Pattern.compile(regExFiveNumbers);
     }
     @Override
     public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException
@@ -45,8 +45,8 @@ public class DocumentFilterForTextFieldPort extends DocumentFilter
 
         if(finalString.length() <= 5)
         {
-            Matcher matcherOnlyNumbers = patternOnlyNumbers.matcher(finalString);
-            if(matcherOnlyNumbers.matches())
+            Matcher matcherFiveNumbers = patternFiveNumbers.matcher(finalString);
+            if(matcherFiveNumbers.matches())
             {
                 super.insertString(fb, offset, string, attr);
             }
@@ -84,8 +84,8 @@ public class DocumentFilterForTextFieldPort extends DocumentFilter
 
         if(finalString.length() <= 5)
         {
-            Matcher matcherOnlyNumbers = patternOnlyNumbers.matcher(finalString);
-            if(matcherOnlyNumbers.matches())
+            Matcher matcherFiveNumbers = patternFiveNumbers.matcher(finalString);
+            if(matcherFiveNumbers.matches())
             {
                 super.replace(fb, offset, length, text, attrs);
             }

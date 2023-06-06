@@ -23,14 +23,19 @@ class TextRussian extends Text
         return "Китайские шахматы. Сервер";
     }
     @Override
+    public String getServerIsOff()
+    {
+        return "Сервер выключен.";
+    }
+    @Override
+    public String getServerIsOn()
+    {
+        return "Сервер запущен.";
+    }
+    @Override
     public String getHelp()
     {
         return "Помощь";
-    }
-    @Override
-    public String getSettings()
-    {
-        return "Настройки";
     }
     @Override
     public String getAbout()
@@ -45,14 +50,46 @@ class TextRussian extends Text
 
     //Frame Main Menu.
     @Override
+    public String getStart()
+    {
+        return "Запустить";
+    }
+    @Override
+    public String getLobby()
+    {
+        return "Лобби";
+    }
+    @Override
+    public String getSettings()
+    {
+        return "Настройки";
+    }
+
+    //Frame Start.
+    @Override
     public String getPort()
     {
         return "Порт";
     }
     @Override
-    public String getSetUp()
+    public String getMustBeBetween()
     {
-        return "Запустить";
+        return String.format("%13s\nот 1024 до 65535", "Должен быть");
+    }
+    @Override
+    public String getServerError()
+    {
+        return "Ошибка Server";
+    }
+    @Override
+    public String getCouldNotStartServer()
+    {
+        return "Не удалось запустить сервер!";
+    }
+    @Override
+    public String getBack()
+    {
+        return "Назад";
     }
 
     //Frame Settings.
@@ -65,10 +102,5 @@ class TextRussian extends Text
     public String getApply()
     {
         return "Применить";
-    }
-    @Override
-    public String getBack()
-    {
-        return "Назад";
     }
 }

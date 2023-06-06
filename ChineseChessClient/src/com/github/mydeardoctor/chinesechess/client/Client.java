@@ -19,7 +19,7 @@ public class Client
         {
             InetAddress inetAddress = InetAddress.getLocalHost();
             Socket clientSocket = new Socket(inetAddress, 4242);
-            System.out.println("Client initialized");
+            System.out.println("Connected to server");
 
             OutputStream outputStream = clientSocket.getOutputStream();
             PrintWriter printWriter = new PrintWriter(outputStream);
@@ -29,7 +29,6 @@ public class Client
                 String message = "I send a message";
                 printWriter.println(message);
                 printWriter.flush();
-
                 System.out.println("sent message");
             }
         }

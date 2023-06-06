@@ -33,24 +33,39 @@ public class GUI
 
     //Common frame features.
     private JFrame frame;
-    private PanelBackground panelBackground;
     private GridBagLayout gridBagLayout;
+    private PanelBackground panelBackground;
+    private JPanel panelEmpty;
+    private JTextField statusBar;
+    private GridBagConstraints constraintsForPanelEmpty;
+    private GridBagConstraints constraintsForStatusBar;
     private JMenuBar menuBar;
     private JMenu menuHelp;
     private JMenuItem menuItemSettings;
     private JMenuItem menuItemAbout;
 
-    //Frame Main menu.
+    //Frame Main Menu.
+    private JButton buttonStartMainMenu;
+    private JButton buttonLobby;
+    private JButton buttonSettings;
+    private GridBagConstraints constraintsForButtonStartMainMenu;
+    private GridBagConstraints constraintsForButtonLobby;
+    private GridBagConstraints constraintsForButtonSettings;
+
+    //Frame Start.
+    private boolean portCorrect;
     private JLabel labelPort;
     private JTextField textFieldPort;
-    private JLabel labelPortCheck;
-    private JLabel labelPortStatus;
-    private JButton buttonSetUp;
+    private JLabel labelPortIcon;
+    private JTextArea textAreaPortWarning;
+    private JButton buttonStart;
+    private JButton buttonBackStart;
     private GridBagConstraints constraintsForLabelPort;
     private GridBagConstraints constraintsForTextFieldPort;
-    private GridBagConstraints constraintsForLabelPortCheck;
-    private GridBagConstraints constraintsForLabelPortStatus;
-    private GridBagConstraints constraintsForButtonSetUp;
+    private GridBagConstraints constraintsForLabelPortIcon;
+    private GridBagConstraints constraintsForTextAreaPortWarning;
+    private GridBagConstraints constraintsForButtonStart;
+    private GridBagConstraints constraintsForButtonBackStart;
 
     //Frame Settings.
     private JLabel labelLanguage;
@@ -61,6 +76,9 @@ public class GUI
     private GridBagConstraints constraintsForComboBoxLanguage;
     private GridBagConstraints constraintsForButtonApply;
     private GridBagConstraints constraintsForButtonBackSettings;
+
+    //Server attributes.
+    private Server server;
 
     public GUI()
     {
@@ -81,6 +99,7 @@ public class GUI
 
         initializeCommonFrameFeatures();
         initializeFrameMainMenu();
+        initializeFrameStart();
         initializeFrameSettings();
     }
     private Font initializeFontChinese()
@@ -166,7 +185,7 @@ public class GUI
     }
     private void initializeCommonFrameFeatures()
     {
-        try
+        try //TODO status bar
         {
             SwingUtilities.invokeAndWait(()->
             {
@@ -181,13 +200,36 @@ public class GUI
                 frame.setIconImage(iconFrame);
                 frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-                //Panel Background.
-                panelBackground = new PanelBackground(background);
-                frame.setContentPane(panelBackground);
-
                 //GridBag layout manager.
                 gridBagLayout = new GridBagLayout();
-                frame.getContentPane().setLayout(gridBagLayout);
+
+                //Panel Background.
+                panelBackground = new PanelBackground(background);
+                panelBackground.setLayout(gridBagLayout);
+                frame.setContentPane(panelBackground);
+
+                //Panel Empty.
+                panelEmpty = new JPanel();
+                panelEmpty.setOpaque(false);
+                panelEmpty.setLayout(gridBagLayout);
+                constraintsForPanelEmpty = new GridBagConstraints(
+                        0, 0, 1, 1, 1, 1,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0);
+                frame.getContentPane().add(panelEmpty, constraintsForPanelEmpty);
+
+                //Status Bar.
+                statusBar = new JTextField(text.getServerIsOff(), 1);
+                statusBar.setEnabled(false);
+                statusBar.setDisabledTextColor(Color.BLACK);
+                statusBar.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
+                        new EmptyBorder(5, 5, 5, 5)));
+                statusBar.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
+                constraintsForStatusBar = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                        new Insets(0, 0, 0, 0), 0, 0);
+                frame.getContentPane().add(statusBar, constraintsForStatusBar);
 
                 //Menu Bar.
                 menuBar = new JMenuBar();
@@ -213,6 +255,56 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
+                //Button Start.
+                buttonStartMainMenu = new JButton(text.getStart());
+                buttonStartMainMenu.setPreferredSize(new Dimension(300, 100));
+                buttonStartMainMenu.setBackground(Color.WHITE);
+                buttonStartMainMenu.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonStartMainMenu.setFont(fontChinese.deriveFont(Font.BOLD, 50.f));
+                constraintsForButtonStartMainMenu = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
+                buttonStartMainMenu.addActionListener(e->showFrameStart());
+
+                //Button Lobby.
+                buttonLobby = new JButton(text.getLobby());
+                buttonLobby.setPreferredSize(new Dimension(300, 100));
+                buttonLobby.setBackground(Color.WHITE);
+                buttonLobby.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonLobby.setFont(fontChinese.deriveFont(Font.BOLD, 50.f));
+                constraintsForButtonLobby = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
+                //buttonLobby.addActionListener(e->); //TODO Button Lobby
+
+                //Button Settings.
+                buttonSettings = new JButton(text.getSettings());
+                buttonSettings.setPreferredSize(new Dimension(300, 100));
+                buttonSettings.setBackground(Color.WHITE);
+                buttonSettings.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonSettings.setFont(fontChinese.deriveFont(Font.BOLD, 50.f));
+                constraintsForButtonSettings = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
+                buttonSettings.addActionListener(e->showFrameSettings());
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    private void initializeFrameStart()
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                portCorrect = true;
+
                 //Label Port.
                 labelPort = new JLabel(text.getPort());
                 labelPort.setPreferredSize(new Dimension(250, 100));
@@ -235,41 +327,57 @@ public class GUI
                 labelPort.setPreferredSize(new Dimension(100, 100));
                 textFieldPort.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
                         new EmptyBorder(15, 5, 15, 5)));
-                //textFieldPort.setFont(new Font(Font.DIALOG, Font.PLAIN, 46)); //TODO
                 textFieldPort.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForTextFieldPort = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 250), 0, 0);
 
-                //Label Port Check.
-                //labelPortCheck = new JLabel(iconIncorrect); //TODO
-                labelPortCheck = new JLabel(iconCorrect); //TODO
-                // labelPortCheck.setPreferredSize(new Dimension(250, 100));
-                constraintsForLabelPortCheck = new GridBagConstraints(
+                //Label Port Icon.
+                labelPortIcon = new JLabel(iconCorrect);
+                constraintsForLabelPortIcon = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 0), 0, 0);
 
                 //Label Port Status.
-                labelPortStatus = new JLabel("must be between 1024 and 65535"); //TODO
-                labelPortStatus.setPreferredSize(new Dimension(250, 100));
-                labelPortStatus.setFont(fontChinese.deriveFont(Font.BOLD, 20.f));
-                constraintsForLabelPortStatus = new GridBagConstraints(
+                textAreaPortWarning = new JTextArea(2, 10);
+                textAreaPortWarning.setPreferredSize(new Dimension(250, 80));
+                textAreaPortWarning.setOpaque(false);
+                textAreaPortWarning.setEnabled(false);
+                textAreaPortWarning.setDisabledTextColor(Color.BLACK);
+                textAreaPortWarning.setLineWrap(true);
+                textAreaPortWarning.setWrapStyleWord(true);
+                textAreaPortWarning.setFont(fontChinese.deriveFont(Font.BOLD, 33.f));
+                textAreaPortWarning.setCaretPosition(0);
+                constraintsForTextAreaPortWarning = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 350, 0, 0), 0, 0);
 
-                //Button Set Up.
-                buttonSetUp = new JButton(text.getSetUp());
-                buttonSetUp.setPreferredSize(new Dimension(250, 100));
-                buttonSetUp.setBackground(Color.WHITE);
-                buttonSetUp.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonSetUp.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
-                constraintsForButtonSetUp = new GridBagConstraints(
+                //Button Start.
+                buttonStart = new JButton(text.getStart());
+                buttonStart.setPreferredSize(new Dimension(250, 100));
+                buttonStart.setBackground(Color.WHITE);
+                buttonStart.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonStart.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonStart = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 0), 0, 0);
+                        new Insets(80, 0, 0, 400), 0, 0);
+                buttonStart.addActionListener(e->startServer());
+
+                //Button Back.
+                buttonBackStart = new JButton(text.getBack());
+                buttonBackStart.setPreferredSize(new Dimension(200, 100));
+                buttonBackStart.setBackground(Color.WHITE);
+                buttonBackStart.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackStart.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonBackStart = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(80, 400, 0, 0), 0, 0);
+                buttonBackStart.addActionListener(e->showPreviousFrame());
             });
         }
         catch (Exception e)
@@ -335,6 +443,10 @@ public class GUI
             e.printStackTrace();
         }
     }
+    public void setServer(Server server)
+    {
+        this.server = server;
+    }
     public void showFrameAndWarnings()
     {
         try
@@ -360,12 +472,25 @@ public class GUI
         SwingUtilities.invokeLater(()->
         {
             addToPreviousFrames(FrameType.MAIN_MENU);
-            frame.getContentPane().removeAll();
-            frame.getContentPane().add(labelPort, constraintsForLabelPort);
-            frame.getContentPane().add(textFieldPort, constraintsForTextFieldPort);
-            frame.getContentPane().add(labelPortCheck, constraintsForLabelPortCheck);
-            frame.getContentPane().add(labelPortStatus, constraintsForLabelPortStatus);
-            frame.getContentPane().add(buttonSetUp, constraintsForButtonSetUp);
+            panelEmpty.removeAll();
+            panelEmpty.add(buttonStartMainMenu, constraintsForButtonStartMainMenu);
+            panelEmpty.add(buttonLobby, constraintsForButtonLobby);
+            panelEmpty.add(buttonSettings, constraintsForButtonSettings);
+            repaint();
+        });
+    }
+    private void showFrameStart()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            addToPreviousFrames(FrameType.START);
+            panelEmpty.removeAll();
+            panelEmpty.add(labelPort, constraintsForLabelPort);
+            panelEmpty.add(textFieldPort, constraintsForTextFieldPort);
+            panelEmpty.add(labelPortIcon, constraintsForLabelPortIcon);
+            panelEmpty.add(textAreaPortWarning, constraintsForTextAreaPortWarning);
+            panelEmpty.add(buttonStart, constraintsForButtonStart);
+            panelEmpty.add(buttonBackStart, constraintsForButtonBackStart);
             repaint();
         });
     }
@@ -374,11 +499,11 @@ public class GUI
         SwingUtilities.invokeLater(()->
         {
             addToPreviousFrames(FrameType.SETTINGS);
-            frame.getContentPane().removeAll();
-            frame.getContentPane().add(labelLanguage, constraintsForLabelLanguage);
-            frame.getContentPane().add(comboBoxLanguage, constraintsForComboBoxLanguage);
-            frame.getContentPane().add(buttonApply, constraintsForButtonApply);
-            frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
+            panelEmpty.removeAll();
+            panelEmpty.add(labelLanguage, constraintsForLabelLanguage);
+            panelEmpty.add(comboBoxLanguage, constraintsForComboBoxLanguage);
+            panelEmpty.add(buttonApply, constraintsForButtonApply);
+            panelEmpty.add(buttonBackSettings, constraintsForButtonBackSettings);
             repaint();
         });
     }
@@ -389,13 +514,49 @@ public class GUI
                         text.getAboutVerbose(), text.getAbout(), JOptionPane.INFORMATION_MESSAGE)
         );
     }
-    public void setIconIncorrectToLabelPortCheck()
+    private void startServer()
     {
-        SwingUtilities.invokeLater(()-> labelPortCheck.setIcon(iconIncorrect));
+        SwingUtilities.invokeLater(()->
+        {
+            if(portCorrect)
+            {
+                boolean portNumberParsed = false;
+                int portNumber = 0;
+                try
+                {
+                    portNumber = Integer.parseInt(textFieldPort.getText());
+                    portNumberParsed = true;
+                }
+                catch (Exception e)
+                {
+                    showDialogCouldNotStartServer();
+                }
+
+                if(portNumberParsed)
+                {
+                    if((portNumber >= 1024) && (portNumber <= 65535))
+                    {
+                        server.initializeServerSocket(portNumber);
+                    }
+                    else
+                    {
+                        showDialogCouldNotStartServer();
+                    }
+                }
+            }
+            else
+            {
+                showDialogCouldNotStartServer();
+            }
+        });
     }
-    public void setIconCorrectToLabelPortCheck()
+    private void showDialogCouldNotStartServer()
     {
-        SwingUtilities.invokeLater(()-> labelPortCheck.setIcon(iconCorrect));
+        SwingUtilities.invokeLater(()->
+        {
+            JOptionPane.showMessageDialog(frame,
+                    text.getCouldNotStartServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE);
+        });
     }
     private void showPreviousFrame()
     {
@@ -411,6 +572,7 @@ public class GUI
                 switch(previousFrame)
                 {
                     case MAIN_MENU -> showFrameMainMenu();
+                    case START -> showFrameStart();
                     case SETTINGS -> showFrameSettings();
                 }
             }
@@ -445,13 +607,34 @@ public class GUI
 
             //Common frame features.
             frame.setTitle(text.getTitle());
+            if(server.getServerOn())
+            {
+                statusBar.setText(text.getServerIsOn());
+            }
+            else
+            {
+                statusBar.setText(text.getServerIsOff());
+            }
             menuHelp.setText(text.getHelp());
             menuItemSettings.setText(text.getSettings());
             menuItemAbout.setText(text.getAbout());
 
             //Frame Main Menu.
+            buttonStartMainMenu.setText(text.getStart());
+            buttonLobby.setText(text.getLobby());
+            buttonSettings.setText(text.getSettings());
+
+            //Frame Start.
             labelPort.setText(text.getPort());
-            buttonSetUp.setText(text.getSetUp());
+            if(portCorrect)
+            {
+                textAreaPortWarning.setText("");
+            }
+            else
+            {
+                textAreaPortWarning.setText(text.getMustBeBetween());
+            }
+            buttonStart.setText(text.getStart());
 
             //Frame Settings.
             labelLanguage.setText(text.getLanguage());
@@ -459,12 +642,40 @@ public class GUI
             buttonBackSettings.setText(text.getBack());
         });
     }
-    public void repaint()
+    private void repaint()
     {
         SwingUtilities.invokeLater(()->
         {
             frame.revalidate();
             frame.repaint();
         });
+    }
+    public void setPortIncorrect()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            portCorrect = false;
+            labelPortIcon.setIcon(iconIncorrect);
+            textAreaPortWarning.setText(text.getMustBeBetween());
+            buttonStart.setEnabled(false);
+        });
+    }
+    public void setPortCorrect()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            portCorrect = true;
+            labelPortIcon.setIcon(iconCorrect);
+            textAreaPortWarning.setText("");
+            buttonStart.setEnabled(true);
+        });
+    }
+    public Text getText()
+    {
+        return text;
+    }
+    public void setStatusBarText(String message)
+    {
+        SwingUtilities.invokeLater(()->statusBar.setText(message));
     }
 }

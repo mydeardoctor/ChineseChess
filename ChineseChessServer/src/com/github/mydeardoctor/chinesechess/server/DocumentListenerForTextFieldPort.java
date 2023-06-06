@@ -54,17 +54,16 @@ public class DocumentListenerForTextFieldPort implements DocumentListener
             Matcher matcherPortRange = patternPortRange.matcher(string);
             if(matcherPortRange.matches())
             {
-                gui.setIconCorrectToLabelPortCheck(); //TODO
+                gui.setPortCorrect();
             }
             else
             {
-                gui.setIconIncorrectToLabelPortCheck(); //TODO
+                gui.setPortIncorrect();
             }
         }
         catch(Exception exception)
         {
-            exception.printStackTrace(); //TODO
-            gui.setIconIncorrectToLabelPortCheck();
+            gui.setPortIncorrect();
         }
     }
 }

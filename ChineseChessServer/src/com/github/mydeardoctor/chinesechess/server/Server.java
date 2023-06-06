@@ -7,30 +7,41 @@ import java.net.Socket;
 
 public class Server
 {
+    //Server attributes.
+    private boolean serverOn;
     private ThreadPoolExecutor threadPoolExecutor;
     private ServerSocket serverSocket;
+
+    //GUI attributes.
+    private GUI gui;
     public Server()
     {
+        serverOn = false;
         initializeThreadPool();
-        initializeServerSocket();
     }
-    public void initializeThreadPool()
+    private void initializeThreadPool()
     {
-        threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(6);
+        threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
     }
-    public void initializeServerSocket()
+    public void setGui(GUI gui)
+    {
+        this.gui = gui;
+    }
+    public void initializeServerSocket(int portNumber) //TODO переподключение должно удалять старое подключение. сделать отдельный ексекьютор для сервера, чтобы остальной можно было очищать.
     {
         try
         {
-            serverSocket = new ServerSocket(4242);
-            System.out.println("Server initialized.");
+            serverSocket = new ServerSocket(portNumber);
+            serverOn = true;
+            gui.setStatusBarText(gui.getText().getServerIsOn());
+            threadPoolExecutor.execute(this::run);
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
     }
-    public void run()
+    private void run()
     {
 
         while (true)
@@ -52,10 +63,10 @@ public class Server
             {
                 e.printStackTrace();
             }
-
-
-
-
         }
+    }
+    public boolean getServerOn()
+    {
+        return serverOn;
     }
 }

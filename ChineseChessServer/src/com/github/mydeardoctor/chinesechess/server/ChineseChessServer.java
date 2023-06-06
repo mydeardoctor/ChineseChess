@@ -1,15 +1,14 @@
 package com.github.mydeardoctor.chinesechess.server;
 
-//TODO
-//Panel Board shared
-
 public class ChineseChessServer
 {
     public static void main(String[] args)
     {
-//        Server server = new Server();
-//        server.run();
+        Server server = new Server();
         GUI gui = new GUI();
+
+        server.setGui(gui);
+        gui.setServer(server);
 
         gui.showFrameAndWarnings();
     }

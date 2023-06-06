@@ -24,7 +24,7 @@ public class Client
             String message;
             while((message = bufferedReader.readLine())!=null)
             {
-                System.out.println(message);
+                System.out.println("from client: "+ message);
             }
             System.out.println("input stream ended");
         }
