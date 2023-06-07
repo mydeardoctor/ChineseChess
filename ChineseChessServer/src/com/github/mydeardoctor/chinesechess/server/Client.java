@@ -7,7 +7,7 @@ import java.net.Socket;
 
 public class Client //TODO перенести в Server
 {
-    private Socket clientSocket;
+    private final Socket clientSocket;
     public Client(Socket clientSocket)
     {
         this.clientSocket = clientSocket;

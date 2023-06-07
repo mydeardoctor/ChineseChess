@@ -5,21 +5,19 @@ import java.util.regex.Matcher;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 
-public class DocumentFilterForTextFieldPort extends DocumentFilterForTextField
+public class DocumentFilterForTextFieldPlayers extends DocumentFilterForTextField
 {
-    private final Pattern patternForFiveNumbers;
-    public DocumentFilterForTextFieldPort()
+    private final Pattern patternForThreeNumbers;
+    public DocumentFilterForTextFieldPlayers()
     {
         super();
-        String regExForFiveNumbers =
+        String regExForThreeNumbers =
                 "^" +
                 "[1-9]|" +
                 "[1-9][0-9]|" +
-                "[1-9][0-9][0-9]|" +
-                "[1-9][0-9][0-9][0-9]|" +
-                "[1-9][0-9][0-9][0-9][0-9]" +
+                "[1-9][0-9][0-9]" +
                 "$";
-        patternForFiveNumbers = Pattern.compile(regExForFiveNumbers);
+        patternForThreeNumbers = Pattern.compile(regExForThreeNumbers);
     }
     @Override
     public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
@@ -28,11 +26,11 @@ public class DocumentFilterForTextFieldPort extends DocumentFilterForTextField
         String finalString = getFinalStringWhenInserted(fb, offset, string);
 
         //Check length with regEx.
-        Matcher matcherForFiveNumbers = patternForFiveNumbers.matcher(finalString);
-        if(matcherForFiveNumbers.matches())
+        Matcher matcherForThreeNumbers = patternForThreeNumbers.matcher(finalString);
+        if(matcherForThreeNumbers.matches())
         {
             //Check length with math.
-            if(finalString.length() <= 5)
+            if(finalString.length() <= 3)
             {
                 super.insertString(fb, offset, string, attr);
             }
@@ -45,15 +43,14 @@ public class DocumentFilterForTextFieldPort extends DocumentFilterForTextField
         String finalString = getFinalStringWhenReplaced(fb, offset, length, text);
 
         //Check length with regEx.
-        Matcher matcherForFiveNumbers = patternForFiveNumbers.matcher(finalString);
-        if(matcherForFiveNumbers.matches())
+        Matcher matcherForThreeNumbers = patternForThreeNumbers.matcher(finalString);
+        if(matcherForThreeNumbers.matches())
         {
             //Check length with math.
-            if(finalString.length() <= 5)
+            if(finalString.length() <= 3)
             {
                 super.replace(fb, offset, length, text, attrs);
             }
         }
     }
-
 }

@@ -72,9 +72,19 @@ public class TextEnglish extends Text
         return "Port";
     }
     @Override
-    public String getMustBeBetween()
+    public String getPortMustBeBetween()
     {
         return String.format("Must be between\n%17s", "1024 and 65535");
+    }
+    @Override
+    public String getMaximumNumberOfPlayers()
+    {
+        return "Max number\nof players";
+    }
+    @Override
+    public String getPlayersMustBeBetween()
+    {
+        return String.format("Must be between\n%15s", "1 and 100");
     }
     @Override
     public String getServerError()

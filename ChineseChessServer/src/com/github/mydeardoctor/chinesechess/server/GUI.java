@@ -48,16 +48,25 @@ public class GUI
 
     //Frame Start Server.
     private boolean portCorrect;
+    private boolean playersCorrect;
     private JLabel labelPort;
     private JTextField textFieldPort;
     private JLabel labelPortCorrectnessIcon;
     private JTextArea textAreaPortTip;
+    private JTextArea textAreaPlayers;
+    private JTextField textFieldPlayers;
+    private JLabel labelPlayersCorrectnessIcon;
+    private JTextArea textAreaPlayersTip;
     private JButton buttonStartServer;
     private JButton buttonBackStartServer;
     private GridBagConstraints constraintsForLabelPort;
     private GridBagConstraints constraintsForTextFieldPort;
     private GridBagConstraints constraintsForLabelPortCorrectnessIcon;
     private GridBagConstraints constraintsForTextAreaPortTip;
+    private GridBagConstraints constraintsForTextAreaPlayers;
+    private GridBagConstraints constraintsForTextFieldPlayers;
+    private GridBagConstraints constraintsForLabelPlayersCorrectnessIcon;
+    private GridBagConstraints constraintsForTextAreaPlayersTip;
     private GridBagConstraints constraintsForButtonStartServer;
     private GridBagConstraints constraintsForButtonBackStartServer;
 
@@ -179,7 +188,7 @@ public class GUI
     }
     private void initializeCommonFrameFeatures()
     {
-        try //TODO status bar
+        try //TODO status bar следить за выключением
         {
             SwingUtilities.invokeAndWait(()->
             {
@@ -288,7 +297,7 @@ public class GUI
             e.printStackTrace();
         }
     }
-    private void initializeFrameStartServer() //TODO maxnumberofplayers, stop button, when start show dialog warning
+    private void initializeFrameStartServer() //TODO stop button, when start show dialog warning
     {
         try
         {
@@ -301,7 +310,7 @@ public class GUI
                 constraintsForLabelPort = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 550), 0, 0);
+                        new Insets(0, 0, 0, 530), 0, 0);
 
                 //Text Field Port.
                 PlainDocument documentForTextFieldPort = new PlainDocument();
@@ -318,14 +327,14 @@ public class GUI
                 constraintsForTextFieldPort = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 250), 0, 0);
+                        new Insets(0, 0, 0, 180), 0, 0);
 
                 //Label Port Correctness Icon.
                 labelPortCorrectnessIcon = new JLabel(iconCorrect);
                 constraintsForLabelPortCorrectnessIcon = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 0), 0, 0);
+                        new Insets(0, 70, 0, 0), 0, 0);
 
                 //Text Area Port Tip.
                 textAreaPortTip = new JTextArea(2, 10);
@@ -340,7 +349,63 @@ public class GUI
                 constraintsForTextAreaPortTip = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 350, 0, 0), 0, 0);
+                        new Insets(0, 440, 0, 0), 0, 0);
+
+                //Text Area Players.
+                textAreaPlayers = new JTextArea(2, 10);
+                textAreaPlayers.setPreferredSize(new Dimension(200, 80));
+                textAreaPlayers.setOpaque(false);
+                textAreaPlayers.setEnabled(false);
+                textAreaPlayers.setDisabledTextColor(Color.BLACK);
+                textAreaPlayers.setLineWrap(true);
+                textAreaPlayers.setWrapStyleWord(true);
+                textAreaPlayers.setFont(fontChinese.deriveFont(Font.BOLD, 36.f));
+                textAreaPlayers.setText(text.getMaximumNumberOfPlayers());
+                textAreaPlayers.setCaretPosition(0);
+                constraintsForTextAreaPlayers = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 530), 0, 0);
+
+                //Text Field Players.
+                PlainDocument documentForTextFieldPlayers = new PlainDocument();
+                DocumentFilterForTextFieldPlayers documentFilterForTextFieldPlayers =
+                        new DocumentFilterForTextFieldPlayers();
+                documentForTextFieldPlayers.setDocumentFilter(documentFilterForTextFieldPlayers);
+                DocumentListenerForTextFieldPlayers documentListenerForTextFieldPlayers =
+                        new DocumentListenerForTextFieldPlayers(this);
+                documentForTextFieldPlayers.addDocumentListener(documentListenerForTextFieldPlayers);
+
+                textFieldPlayers = new JTextField(documentForTextFieldPlayers, "6", 5);
+                textFieldPlayers.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
+                        new EmptyBorder(15, 5, 15, 5)));
+                textFieldPlayers.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForTextFieldPlayers = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 180), 0, 0);
+
+                //Label Players Correctness Icon.
+                labelPlayersCorrectnessIcon = new JLabel(iconCorrect);
+                constraintsForLabelPlayersCorrectnessIcon = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 70, 0, 0), 0, 0);
+
+                //Text Area Players Tip.
+                textAreaPlayersTip = new JTextArea(2, 10);
+                textAreaPlayersTip.setPreferredSize(new Dimension(250, 80));
+                textAreaPlayersTip.setOpaque(false);
+                textAreaPlayersTip.setEnabled(false);
+                textAreaPlayersTip.setDisabledTextColor(Color.BLACK);
+                textAreaPlayersTip.setLineWrap(true);
+                textAreaPlayersTip.setWrapStyleWord(true);
+                textAreaPlayersTip.setFont(fontChinese.deriveFont(Font.BOLD, 33.f));
+                textAreaPlayersTip.setCaretPosition(0);
+                constraintsForTextAreaPlayersTip = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 440, 0, 0), 0, 0);
 
                 //Button Start.
                 buttonStartServer = new JButton(text.getStart());
@@ -349,7 +414,7 @@ public class GUI
                 buttonStartServer.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonStartServer.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForButtonStartServer = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                        0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 0, 0, 400), 0, 0);
                 buttonStartServer.addActionListener(e->startServer());
@@ -361,12 +426,13 @@ public class GUI
                 buttonBackStartServer.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonBackStartServer.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForButtonBackStartServer = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                        0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 400, 0, 0), 0, 0);
                 buttonBackStartServer.addActionListener(e->showPreviousFrame());
 
                 setPortCorrect();
+                setPlayersCorrect();
             });
         }
         catch (Exception e)
@@ -481,6 +547,10 @@ public class GUI
             panelTransparent.add(textFieldPort, constraintsForTextFieldPort);
             panelTransparent.add(labelPortCorrectnessIcon, constraintsForLabelPortCorrectnessIcon);
             panelTransparent.add(textAreaPortTip, constraintsForTextAreaPortTip);
+            panelTransparent.add(textAreaPlayers, constraintsForTextAreaPlayers);
+            panelTransparent.add(textFieldPlayers, constraintsForTextFieldPlayers);
+            panelTransparent.add(labelPlayersCorrectnessIcon, constraintsForLabelPlayersCorrectnessIcon);
+            panelTransparent.add(textAreaPlayersTip, constraintsForTextAreaPlayersTip);
             panelTransparent.add(buttonStartServer, constraintsForButtonStartServer);
             panelTransparent.add(buttonBackStartServer, constraintsForButtonBackStartServer);
             repaint();
@@ -513,7 +583,8 @@ public class GUI
             try
             {
                 int portNumber = Integer.parseInt(textFieldPort.getText());
-                server.initializeServerSocket(portNumber);
+                int maximumNumberOfPlayers = Integer.parseInt(textFieldPlayers.getText());
+                server.start(portNumber, maximumNumberOfPlayers);
             }
             catch (Exception e)
             {
@@ -524,10 +595,9 @@ public class GUI
     private void showDialogCouldNotStartServer()
     {
         SwingUtilities.invokeLater(()->
-        {
-            JOptionPane.showMessageDialog(frame,
-                    text.getCouldNotStartServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE);
-        });
+                JOptionPane.showMessageDialog(frame,
+                        text.getCouldNotStartServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE)
+        );
     }
     private void showPreviousFrame()
     {
@@ -603,7 +673,16 @@ public class GUI
             }
             else
             {
-                textAreaPortTip.setText(text.getMustBeBetween());
+                textAreaPortTip.setText(text.getPortMustBeBetween());
+            }
+            textAreaPlayers.setText(text.getMaximumNumberOfPlayers());
+            if(playersCorrect)
+            {
+                textAreaPlayersTip.setText("");
+            }
+            else
+            {
+                textAreaPlayersTip.setText(text.getPlayersMustBeBetween());
             }
             buttonStartServer.setText(text.getStart());
             buttonBackStartServer.setText(text.getBack());
@@ -628,7 +707,7 @@ public class GUI
         {
             portCorrect = false;
             labelPortCorrectnessIcon.setIcon(iconIncorrect);
-            textAreaPortTip.setText(text.getMustBeBetween());
+            textAreaPortTip.setText(text.getPortMustBeBetween());
             buttonStartServer.setEnabled(false);
         });
     }
@@ -639,7 +718,33 @@ public class GUI
             portCorrect = true;
             labelPortCorrectnessIcon.setIcon(iconCorrect);
             textAreaPortTip.setText("");
-            buttonStartServer.setEnabled(true);
+            if(playersCorrect)
+            {
+                buttonStartServer.setEnabled(true);
+            }
+        });
+    }
+    public void setPlayersIncorrect()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            playersCorrect = false;
+            labelPlayersCorrectnessIcon.setIcon(iconIncorrect);
+            textAreaPlayersTip.setText(text.getPlayersMustBeBetween());
+            buttonStartServer.setEnabled(false);
+        });
+    }
+    public void setPlayersCorrect()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            playersCorrect = true;
+            labelPlayersCorrectnessIcon.setIcon(iconCorrect);
+            textAreaPlayersTip.setText("");
+            if(portCorrect)
+            {
+                buttonStartServer.setEnabled(true);
+            }
         });
     }
     public Text getText()

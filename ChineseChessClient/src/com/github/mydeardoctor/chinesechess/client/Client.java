@@ -1,11 +1,9 @@
 package com.github.mydeardoctor.chinesechess.client;
 
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class Client
 {

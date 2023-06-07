@@ -9,8 +9,8 @@ public class Server //TODO
 {
     //Server attributes.
     private boolean serverIsOn;
-    private ServerSocket serverSocket;
     private ThreadPoolExecutor threadPoolExecutor;
+    private ServerSocket serverSocket;
 
     //GUI attributes.
     private GUI gui;
@@ -18,18 +18,14 @@ public class Server //TODO
     public Server()
     {
         serverIsOn = false;
-        initializeThreadPool();
-    }
-    private void initializeThreadPool() //TODO отдельный пул для сервер сокет. Сделать количество потоков величиной, которую может задать пользователь.
-    {
-        threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
     }
     public void setGui(GUI gui)
     {
         this.gui = gui;
     }
-    public void initializeServerSocket(int portNumber) //TODO переподключение должно удалять старое подключение. сделать отдельный ексекьютор для сервера, чтобы остальной можно было очищать.
+    public void start(int portNumber, int maximumNumberOfPlayers) //TODO переподключение должно удалять старое подключение. сделать отдельный ексекьютор для сервера, чтобы остальной можно было очищать.
     {
+        threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(maximumNumberOfPlayers+1);
         try
         {
             serverSocket = new ServerSocket(portNumber);
@@ -39,7 +35,7 @@ public class Server //TODO
         }
         catch (Exception e)
         {
-            e.printStackTrace(); //TODO сообщение
+            e.printStackTrace(); //TODO сообщение об ошибке
         }
     }
     private void run()

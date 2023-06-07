@@ -72,9 +72,19 @@ class TextRussian extends Text
         return "Порт";
     }
     @Override
-    public String getMustBeBetween()
+    public String getPortMustBeBetween()
     {
         return String.format("%13s\nот 1024 до 65535", "Должен быть");
+    }
+    @Override
+    public String getMaximumNumberOfPlayers()
+    {
+        return String.format("Макс. кол-во\n%10s", "игроков");
+    }
+    @Override
+    public String getPlayersMustBeBetween()
+    {
+        return String.format("Должно быть\n%12s", "от 1 до 100");
     }
     @Override
     public String getServerError()

@@ -23,7 +23,9 @@ public abstract class Text
 
     //Frame Start Server.
     public abstract String getPort();
-    public abstract String getMustBeBetween();
+    public abstract String getPortMustBeBetween();
+    public abstract String getMaximumNumberOfPlayers();
+    public abstract String getPlayersMustBeBetween();
     public abstract String getServerError();
     public abstract String getCouldNotStartServer();
     public abstract String getBack();
