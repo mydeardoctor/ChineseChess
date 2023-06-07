@@ -21,7 +21,7 @@ public abstract class Text
     public abstract String getLobby();
     public abstract String getSettings();
 
-    //Frame Start.
+    //Frame Start Server.
     public abstract String getPort();
     public abstract String getMustBeBetween();
     public abstract String getServerError();

@@ -65,7 +65,7 @@ class TextRussian extends Text
         return "Настройки";
     }
 
-    //Frame Start.
+    //Frame Start Server.
     @Override
     public String getPort()
     {

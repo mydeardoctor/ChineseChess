@@ -1,12 +1,11 @@
 package com.github.mydeardoctor.chinesechess.server;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-public class Client
+public class Client //TODO перенести в Server
 {
     private Socket clientSocket;
     public Client(Socket clientSocket)

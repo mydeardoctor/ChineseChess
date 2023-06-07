@@ -5,21 +5,22 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server
+public class Server //TODO
 {
     //Server attributes.
-    private boolean serverOn;
-    private ThreadPoolExecutor threadPoolExecutor;
+    private boolean serverIsOn;
     private ServerSocket serverSocket;
+    private ThreadPoolExecutor threadPoolExecutor;
 
     //GUI attributes.
     private GUI gui;
+
     public Server()
     {
-        serverOn = false;
+        serverIsOn = false;
         initializeThreadPool();
     }
-    private void initializeThreadPool()
+    private void initializeThreadPool() //TODO отдельный пул для сервер сокет. Сделать количество потоков величиной, которую может задать пользователь.
     {
         threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
     }
@@ -32,13 +33,13 @@ public class Server
         try
         {
             serverSocket = new ServerSocket(portNumber);
-            serverOn = true;
+            serverIsOn = true;
             gui.setStatusBarText(gui.getText().getServerIsOn());
             threadPoolExecutor.execute(this::run);
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            e.printStackTrace(); //TODO сообщение
         }
     }
     private void run()
@@ -46,18 +47,13 @@ public class Server
 
         while (true)
         {
-            Socket clientSocket = null;
             try
             {
-                clientSocket = serverSocket.accept();
+                Socket clientSocket = serverSocket.accept();
                 System.out.println("Got clientSocket");
-                //Check if client socket is null
                 Client client = new Client(clientSocket);
-
                 //check if thread pool is full
                 threadPoolExecutor.execute(client::communicate);
-                //create a thread to deal with the client;
-
             }
             catch (Exception e)
             {
@@ -65,8 +61,8 @@ public class Server
             }
         }
     }
-    public boolean getServerOn()
+    public boolean getIsServerOn()
     {
-        return serverOn;
+        return serverIsOn;
     }
 }

@@ -1,21 +1,20 @@
 package com.github.mydeardoctor.chinesechess.server;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DocumentListenerForTextFieldPort implements DocumentListener
 {
-    private final Pattern patternPortRange;
-
-    //GUI attributres.
+    private final Pattern patternForPortRange;
     private final GUI gui;
+
     public DocumentListenerForTextFieldPort(GUI gui)
     {
         super();
 
-        String regExPortRange =
+        String regExForPortRange =
             "^"+
             "102[4-9]|" +
             "10[3-9][0-9]|" +
@@ -27,34 +26,47 @@ public class DocumentListenerForTextFieldPort implements DocumentListener
             "655[0-2][0-9]|" +
             "6553[0-5]" +
             "$";
-        patternPortRange = Pattern.compile(regExPortRange);
+        patternForPortRange = Pattern.compile(regExForPortRange);
 
         this.gui = gui;
     }
     @Override
     public void insertUpdate(DocumentEvent e)
     {
-        matchWithRegEx(e);
+        checkPort(e);
     }
     @Override
     public void removeUpdate(DocumentEvent e)
     {
-        matchWithRegEx(e);
+        checkPort(e);
     }
     @Override
     public void changedUpdate(DocumentEvent e)
     {
-        matchWithRegEx(e);
+        checkPort(e);
     }
-    private void matchWithRegEx(DocumentEvent e)
+    private void checkPort(DocumentEvent e)
     {
         try
         {
-            String string = e.getDocument().getText(0, e.getDocument().getLength());
-            Matcher matcherPortRange = patternPortRange.matcher(string);
-            if(matcherPortRange.matches())
+            String portText = e.getDocument().getText(0, e.getDocument().getLength());
+
+            //Check range with regEx.
+            Matcher matcherForPortRange = patternForPortRange.matcher(portText);
+            if(matcherForPortRange.matches())
             {
-                gui.setPortCorrect();
+                //Parse.
+                int portNumber = Integer.parseInt(portText);
+
+                //Check range with math.
+                if((portNumber >= 1024) && (portNumber <= 65535))
+                {
+                    gui.setPortCorrect();
+                }
+                else
+                {
+                    gui.setPortIncorrect();
+                }
             }
             else
             {

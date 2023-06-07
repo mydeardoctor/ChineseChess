@@ -65,7 +65,7 @@ public class TextEnglish extends Text
         return "Settings";
     }
 
-    //Frame Start.
+    //Frame Start Server.
     @Override
     public String getPort()
     {
