@@ -1,25 +1,23 @@
-package com.github.mydeardoctor.chinesechess.server;
+package com.github.mydeardoctor.chinesechess.client;
+
+import com.github.mydeardoctor.chinesechess.DocumentFilterForTextField;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 
-public class DocumentFilterForTextFieldPort extends DocumentFilterForTextField
+public class DocumentFilterForTextFieldIp extends DocumentFilterForTextField
 {
-    private final Pattern patternForFiveNumbers;
-    public DocumentFilterForTextFieldPort()
+    private final Pattern patternForNumbersAndDot;
+    public DocumentFilterForTextFieldIp()
     {
         super();
-        String regExForFiveNumbers =
-                "^" +
-                "[1-9]|" +
-                "[1-9][0-9]|" +
-                "[1-9][0-9][0-9]|" +
-                "[1-9][0-9][0-9][0-9]|" +
-                "[1-9][0-9][0-9][0-9][0-9]" +
-                "$";
-        patternForFiveNumbers = Pattern.compile(regExForFiveNumbers);
+        String regExForNumbersAndDot =
+            "^" +
+            "[0-9\\.]{1,15}" +
+            "$";
+        patternForNumbersAndDot = Pattern.compile(regExForNumbersAndDot);
     }
     @Override
     public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
@@ -27,12 +25,12 @@ public class DocumentFilterForTextFieldPort extends DocumentFilterForTextField
     {
         String finalString = getFinalStringWhenInserted(fb, offset, string);
 
-        //Check length with regEx.
-        Matcher matcherForFiveNumbers = patternForFiveNumbers.matcher(finalString);
-        if(matcherForFiveNumbers.matches())
+        //Check with regEx.
+        Matcher matcherForNumbersAndDot = patternForNumbersAndDot.matcher(finalString);
+        if(matcherForNumbersAndDot.matches())
         {
             //Check length with math.
-            if(finalString.length() <= 5)
+            if(finalString.length() <= 15)
             {
                 super.insertString(fb, offset, string, attr);
             }
@@ -45,15 +43,14 @@ public class DocumentFilterForTextFieldPort extends DocumentFilterForTextField
         String finalString = getFinalStringWhenReplaced(fb, offset, length, text);
 
         //Check length with regEx.
-        Matcher matcherForFiveNumbers = patternForFiveNumbers.matcher(finalString);
-        if(matcherForFiveNumbers.matches())
+        Matcher matcherForNumbersAndDot = patternForNumbersAndDot.matcher(finalString);
+        if(matcherForNumbersAndDot.matches())
         {
             //Check length with math.
-            if(finalString.length() <= 5)
+            if(finalString.length() <= 15)
             {
                 super.replace(fb, offset, length, text, attrs);
             }
         }
     }
-
 }

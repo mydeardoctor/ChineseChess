@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -46,6 +47,8 @@ public class GUI
     private final BufferedImage selection;
     private final BufferedImage selectionPalace;
     private final BufferedImage selectionRiver;
+    private final ImageIcon iconIncorrect;
+    private final ImageIcon iconCorrect;
     private final ImageIcon iconPreviousMove;
     private final ImageIcon iconSlower;
     private final ImageIcon iconPlay;
@@ -101,6 +104,30 @@ public class GUI
     private JTextField statusBar;
     private GridBagConstraints constraintsForPanelBoardInteractive;
     private GridBagConstraints constraintsForStatusBar;
+
+    //Frame Connect to Server.
+    private boolean ipCorrect;
+    private boolean portCorrect;
+    private JLabel labelIp;
+    private JTextField textFieldIp;
+    private JLabel labelIpCorrectnessIcon;
+    private JTextArea textAreaIpTip;
+    private JLabel labelPort;
+    private JTextField textFieldPort;
+    private JLabel labelPortCorrectnessIcon;
+    private JTextArea textAreaPortTip;
+    private JButton buttonConnect;
+    private JButton buttonBackConnectToServer;
+    private GridBagConstraints constraintsForLabelIp;
+    private GridBagConstraints constraintsForTextFieldIp;
+    private GridBagConstraints constraintsForLabelIpCorrectnessIcon;
+    private GridBagConstraints constraintsForTextAreaIpTip;
+    private GridBagConstraints constraintsForLabelPort;
+    private GridBagConstraints constraintsForTextFieldPort;
+    private GridBagConstraints constraintsForLabelPortCorrectnessIcon;
+    private GridBagConstraints constraintsForTextAreaPortTip;
+    private GridBagConstraints constraintsForButtonConnect;
+    private GridBagConstraints constraintsForButtonBackConnectToServer;
 
     //Frame Replay.
     private PanelBoard panelBoardReplay;
@@ -194,6 +221,8 @@ public class GUI
         selection = initializeSelection();
         selectionPalace = initializeSelectionPalace();
         selectionRiver = initializeSelectionRiver();
+        iconIncorrect = initializeIconIncorrect();
+        iconCorrect = initializeIconCorrect();
         iconPreviousMove = initializeIconPreviousMove();
         iconSlower = initializeIconSLower();
         iconPlay = initializeIconPlay();
@@ -211,6 +240,7 @@ public class GUI
         initializeFrameMainMenu();
         initializeFrameGameMode();
         initializeFrameBoard();
+        initializeFrameConnectToServer();
         initializeFrameReplay();
         initializeFrameRules();
         initializeFrameSettings();
@@ -584,6 +614,30 @@ public class GUI
         }
         return selectionRiver;
     }
+    private ImageIcon initializeIconIncorrect()
+    {
+        BufferedImage imageIncorrect = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imageIncorrect.createGraphics();
+        g2d.setColor(Color.RED);
+        g2d.fillOval(0, 0, 60, 60);
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawLine(15, 15, 45, 45);
+        g2d.drawLine(15, 45, 45, 15);
+        return new ImageIcon(imageIncorrect);
+    }
+    private ImageIcon initializeIconCorrect()
+    {
+        BufferedImage imageCorrect = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        Graphics2D g2d = imageCorrect.createGraphics();
+        g2d.setColor(new Color(117, 240, 131));
+        g2d.fillOval(0, 0, 60, 60);
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        g2d.drawLine(10, 32, 25, 45);
+        g2d.drawLine(25, 45, 45, 15);
+        return new ImageIcon(imageCorrect);
+    }
     private ImageIcon initializeIconPreviousMove()
     {
         BufferedImage imagePreviousMove = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
@@ -881,6 +935,7 @@ public class GUI
                         0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
+                buttonOnlineMultiplayer.addActionListener(e->showFrameConnectToServer());
 
                 //Button Back.
                 buttonBackGameMode = new JButton(text.getBack());
@@ -926,6 +981,143 @@ public class GUI
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                         new Insets(0, 0, 0, 0), 0, 0);
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    private void initializeFrameConnectToServer() //TODO disconnect button, when connect show dialog warning
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                //Label IP.
+                labelIp = new JLabel(text.getIpAddress());
+                labelIp.setPreferredSize(new Dimension(155, 100));
+                labelIp.setFont(fontChinese.deriveFont(Font.BOLD, 35.f));
+                constraintsForLabelIp = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 570), 0, 0);
+
+                //Text Field IP.
+                PlainDocument documentForTextFieldIp = new PlainDocument();
+                DocumentFilterForTextFieldIp documentFilterForTextFieldIp =
+                        new DocumentFilterForTextFieldIp();
+                documentForTextFieldIp.setDocumentFilter(documentFilterForTextFieldIp);
+                DocumentListenerForTextFieldIp documentListenerForTextFieldIp =
+                        new DocumentListenerForTextFieldIp(this);
+                documentForTextFieldIp.addDocumentListener(documentListenerForTextFieldIp);
+
+                textFieldIp = new JTextField(documentForTextFieldIp, "255.255.255.255", 10);
+                textFieldIp.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
+                        new EmptyBorder(15, 5, 15, 5)));
+                textFieldIp.setFont(fontChinese.deriveFont(Font.BOLD, 35.f));
+                constraintsForTextFieldIp = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 180), 0, 0);
+
+                //Label IP Correctness Icon.
+                labelIpCorrectnessIcon = new JLabel(iconCorrect);
+                constraintsForLabelIpCorrectnessIcon = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 120, 0, 0), 0, 0);
+
+                //Text Area IP Tip.
+                textAreaIpTip = new JTextArea(2, 10);
+                textAreaIpTip.setPreferredSize(new Dimension(250, 140));
+                textAreaIpTip.setOpaque(false);
+                textAreaIpTip.setEnabled(false);
+                textAreaIpTip.setDisabledTextColor(Color.BLACK);
+                textAreaIpTip.setLineWrap(true);
+                textAreaIpTip.setWrapStyleWord(true);
+                textAreaIpTip.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
+                textAreaIpTip.setCaretPosition(0);
+                constraintsForTextAreaIpTip = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 480, 0, 0), 0, 0);
+
+                //Label Port.
+                labelPort = new JLabel(text.getPort());
+                labelPort.setPreferredSize(new Dimension(100, 100));
+                labelPort.setFont(fontChinese.deriveFont(Font.BOLD, 35.f));
+                constraintsForLabelPort = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 0, 540), 0, 0);
+
+                //Text Field Port.
+                PlainDocument documentForTextFieldPort = new PlainDocument();
+                DocumentFilterForTextFieldPort documentFilterForTextFieldPort =
+                        new DocumentFilterForTextFieldPort();
+                documentForTextFieldPort.setDocumentFilter(documentFilterForTextFieldPort);
+                DocumentListenerForTextFieldPort documentListenerForTextFieldPort =
+                        new DocumentListenerForTextFieldPort(this);
+                documentForTextFieldPort.addDocumentListener(documentListenerForTextFieldPort);
+
+                textFieldPort = new JTextField(documentForTextFieldPort, "4242", 5);
+                textFieldPort.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
+                        new EmptyBorder(15, 5, 15, 5)));
+                textFieldPort.setFont(fontChinese.deriveFont(Font.BOLD, 35.f));
+                constraintsForTextFieldPort = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 0, 275), 0, 0);
+
+                //Label Port Correctness Icon.
+                labelPortCorrectnessIcon = new JLabel(iconCorrect);
+                constraintsForLabelPortCorrectnessIcon = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 120, 0, 0), 0, 0);
+
+                //Text Area Port Tip.
+                textAreaPortTip = new JTextArea(2, 10);
+                textAreaPortTip.setPreferredSize(new Dimension(250, 80));
+                textAreaPortTip.setOpaque(false);
+                textAreaPortTip.setEnabled(false);
+                textAreaPortTip.setDisabledTextColor(Color.BLACK);
+                textAreaPortTip.setLineWrap(true);
+                textAreaPortTip.setWrapStyleWord(true);
+                textAreaPortTip.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
+                textAreaPortTip.setCaretPosition(0);
+                constraintsForTextAreaPortTip = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 480, 0, 0), 0, 0);
+
+                //Button Connect.
+                buttonConnect = new JButton(text.getConnect());
+                buttonConnect.setPreferredSize(new Dimension(250, 100));
+                buttonConnect.setBackground(Color.WHITE);
+                buttonConnect.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonConnect.setFont(fontChinese.deriveFont(Font.BOLD, 36.f));
+                constraintsForButtonConnect = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(80, 0, 0, 400), 0, 0);
+//                buttonConnect.addActionListener(e->startServer()); //TODO
+
+                //Button Back.
+                buttonBackConnectToServer = new JButton(text.getBack());
+                buttonBackConnectToServer.setPreferredSize(new Dimension(200, 100));
+                buttonBackConnectToServer.setBackground(Color.WHITE);
+                buttonBackConnectToServer.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackConnectToServer.setFont(fontChinese.deriveFont(Font.BOLD, 36.f));
+                constraintsForButtonBackConnectToServer = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(80, 400, 0, 0), 0, 0);
+                buttonBackConnectToServer.addActionListener(e->showPreviousFrame());
+
+                setIpCorrect();
+                setPortCorrect();
             });
         }
         catch (Exception e)
@@ -1355,6 +1547,25 @@ public class GUI
             repaint();
         });
     }
+    private void showFrameConnectToServer()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            addToPreviousFrames(FrameType.CONNECT_TO_SERVER);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(labelIp, constraintsForLabelIp);
+            frame.getContentPane().add(textFieldIp, constraintsForTextFieldIp);
+            frame.getContentPane().add(labelIpCorrectnessIcon, constraintsForLabelIpCorrectnessIcon);
+            frame.getContentPane().add(textAreaIpTip, constraintsForTextAreaIpTip);
+            frame.getContentPane().add(labelPort, constraintsForLabelPort);
+            frame.getContentPane().add(textFieldPort, constraintsForTextFieldPort);
+            frame.getContentPane().add(labelPortCorrectnessIcon, constraintsForLabelPortCorrectnessIcon);
+            frame.getContentPane().add(textAreaPortTip, constraintsForTextAreaPortTip);
+            frame.getContentPane().add(buttonConnect, constraintsForButtonConnect);
+            frame.getContentPane().add(buttonBackConnectToServer, constraintsForButtonBackConnectToServer);
+            repaint();
+        });
+    }
     private void showFrameReplay()
     {
         SwingUtilities.invokeLater(()->
@@ -1707,6 +1918,7 @@ public class GUI
                     case MAIN_MENU -> showFrameMainMenu();
                     case GAME_MODE -> showFrameGameMode();
                     case BOARD -> showFrameBoard();
+                    case CONNECT_TO_SERVER -> showFrameConnectToServer();
                     case REPLAY -> showFrameReplay();
                     case RULES -> showFrameRules();
                     case SETTINGS -> showFrameSettings();
@@ -1764,6 +1976,28 @@ public class GUI
             buttonOnlineMultiplayer.setText(text.getOnlineMultiplayer());
             buttonBackGameMode.setText(text.getBack());
 
+            //Frame Connect to Server.
+            labelIp.setText(text.getIpAddress());
+            if(ipCorrect)
+            {
+                textAreaIpTip.setText("");
+            }
+            else
+            {
+                textAreaIpTip.setText(text.getIpTip());
+            }
+            labelPort.setText(text.getPort());
+            if(portCorrect)
+            {
+                textAreaPortTip.setText("");
+            }
+            else
+            {
+                textAreaPortTip.setText(text.getPortTip());
+            }
+            buttonConnect.setText(text.getConnect());
+            buttonBackConnectToServer.setText(text.getBack());
+
             //Frame Rules.
             selectedIndex = comboBoxRules.getSelectedIndex();
             comboBoxRules.removeAllItems();
@@ -1814,6 +2048,52 @@ public class GUI
                 JOptionPane.showMessageDialog(frame,
                         message, text.getSinglePlayer(), JOptionPane.INFORMATION_MESSAGE)
         );
+    }
+    public void setIpIncorrect()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            ipCorrect = false;
+            labelIpCorrectnessIcon.setIcon(iconIncorrect);
+            textAreaIpTip.setText(text.getIpTip());
+            buttonConnect.setEnabled(false);
+        });
+    }
+    public void setIpCorrect()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            ipCorrect = true;
+            labelIpCorrectnessIcon.setIcon(iconCorrect);
+            textAreaIpTip.setText("");
+            if(portCorrect)
+            {
+                buttonConnect.setEnabled(true);
+            }
+        });
+    }
+    public void setPortIncorrect()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            portCorrect = false;
+            labelPortCorrectnessIcon.setIcon(iconIncorrect);
+            textAreaPortTip.setText(text.getPortTip());
+            buttonConnect.setEnabled(false);
+        });
+    }
+    public void setPortCorrect()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            portCorrect = true;
+            labelPortCorrectnessIcon.setIcon(iconCorrect);
+            textAreaPortTip.setText("");
+            if(ipCorrect)
+            {
+                buttonConnect.setEnabled(true);
+            }
+        });
     }
     public void setPanelBoardReplayGrid(HashMap<Location, Tile> grid)
     {

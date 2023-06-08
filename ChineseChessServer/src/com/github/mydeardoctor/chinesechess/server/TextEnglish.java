@@ -72,7 +72,7 @@ public class TextEnglish extends Text
         return "Port";
     }
     @Override
-    public String getPortMustBeBetween()
+    public String getPortTip()
     {
         return String.format("Must be between\n%17s", "1024 and 65535");
     }

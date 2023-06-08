@@ -200,6 +200,33 @@ class TextRussian extends Text
         return "Назад";
     }
 
+    //Frame Connect to Server.
+    @Override
+    public String getIpAddress()
+    {
+        return "IP адрес";
+    }
+    @Override
+    public String getIpTip()
+    {
+        return "Формат:\nXXX.XXX.XXX.XXX\nКаждый байт\nот 0 до 255";
+    }
+    @Override
+    public String getPort()
+    {
+        return "Порт";
+    }
+    @Override
+    public String getPortTip()
+    {
+        return String.format("%13s\nот 1024 до 65535", "Должен быть");
+    }
+    @Override
+    public String getConnect()
+    {
+        return "Подключиться";
+    }
+
     //Frame Rules.
     @Override
     public String getGoal()

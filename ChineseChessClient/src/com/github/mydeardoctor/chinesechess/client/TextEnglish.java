@@ -200,6 +200,33 @@ public class TextEnglish extends Text
         return "Back";
     }
 
+    //Frame Connect to Server.
+    @Override
+    public String getIpAddress()
+    {
+        return "IP address";
+    }
+    @Override
+    public String getIpTip()
+    {
+        return "Must be in format XXX.XXX.XXX.XXX\nEach byte must be between 0 and 255";
+    }
+    @Override
+    public String getPort()
+    {
+        return "Port";
+    }
+    @Override
+    public String getPortTip()
+    {
+        return String.format("Must be between\n%17s", "1024 and 65535");
+    }
+    @Override
+    public String getConnect()
+    {
+        return "Connect";
+    }
+
     //Frame Rules.
     @Override
     public String getGoal()

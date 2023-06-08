@@ -14,9 +14,6 @@ public class ChineseChessClient
 {
     public static void main(String[] args)
     {
-        Client client = new Client();
-        client.connectToServer();
-
         GameSinglePlayer gameSinglePlayer = new GameSinglePlayer();
         GameLocalMultiplayer gameLocalMultiplayer = new GameLocalMultiplayer();
         Replay replay = new Replay();

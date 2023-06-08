@@ -314,7 +314,8 @@ public class GUI
 
                 //Text Field Port.
                 PlainDocument documentForTextFieldPort = new PlainDocument();
-                DocumentFilterForTextFieldPort documentFilterForTextFieldPort = new DocumentFilterForTextFieldPort();
+                DocumentFilterForTextFieldPort documentFilterForTextFieldPort =
+                        new DocumentFilterForTextFieldPort();
                 documentForTextFieldPort.setDocumentFilter(documentFilterForTextFieldPort);
                 DocumentListenerForTextFieldPort documentListenerForTextFieldPort =
                         new DocumentListenerForTextFieldPort(this);
@@ -673,7 +674,7 @@ public class GUI
             }
             else
             {
-                textAreaPortTip.setText(text.getPortMustBeBetween());
+                textAreaPortTip.setText(text.getPortTip());
             }
             textAreaPlayers.setText(text.getMaximumNumberOfPlayers());
             if(playersCorrect)
@@ -707,7 +708,7 @@ public class GUI
         {
             portCorrect = false;
             labelPortCorrectnessIcon.setIcon(iconIncorrect);
-            textAreaPortTip.setText(text.getPortMustBeBetween());
+            textAreaPortTip.setText(text.getPortTip());
             buttonStartServer.setEnabled(false);
         });
     }

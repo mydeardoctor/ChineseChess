@@ -72,7 +72,7 @@ class TextRussian extends Text
         return "Порт";
     }
     @Override
-    public String getPortMustBeBetween()
+    public String getPortTip()
     {
         return String.format("%13s\nот 1024 до 65535", "Должен быть");
     }

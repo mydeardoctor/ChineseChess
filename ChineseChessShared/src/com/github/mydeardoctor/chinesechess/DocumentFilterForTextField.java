@@ -1,7 +1,7 @@
-package com.github.mydeardoctor.chinesechess.server;
+package com.github.mydeardoctor.chinesechess;
 
-import javax.swing.text.DocumentFilter;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 public abstract class DocumentFilterForTextField extends DocumentFilter
 {
@@ -9,7 +9,7 @@ public abstract class DocumentFilterForTextField extends DocumentFilter
     {
         super();
     }
-    protected String getFinalStringWhenInserted(DocumentFilter.FilterBypass fb, int offset, String string)
+    protected String getFinalStringWhenInserted(FilterBypass fb, int offset, String string)
             throws BadLocationException
     {
         int originalLength = fb.getDocument().getLength();
@@ -18,7 +18,7 @@ public abstract class DocumentFilterForTextField extends DocumentFilter
         String rightPart = getRightPart(originalString, originalLength, offset);
         return leftPart + string + rightPart;
     }
-    protected String getFinalStringWhenReplaced(DocumentFilter.FilterBypass fb, int offset, int length, String text)
+    protected String getFinalStringWhenReplaced(FilterBypass fb, int offset, int length, String text)
             throws BadLocationException
     {
         int originalLength = fb.getDocument().getLength();
