@@ -226,6 +226,16 @@ public class TextEnglish extends Text
     {
         return "Connect";
     }
+    @Override
+    public String getClientError()
+    {
+        return "Client error";
+    }
+    @Override
+    public String getCouldNotConnectToServer()
+    {
+        return "Could not connect to server!";
+    }
 
     //Frame Rules.
     @Override
@@ -351,12 +361,6 @@ public class TextEnglish extends Text
     public String getSfx()
     {
         return "Sound effects";
-    }
-
-    @Override
-    public String getApply()
-    {
-        return "Apply";
     }
 
     //Music player.

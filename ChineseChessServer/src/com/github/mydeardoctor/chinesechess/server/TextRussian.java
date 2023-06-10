@@ -25,7 +25,7 @@ class TextRussian extends Text
     @Override
     public String getServerIsOff()
     {
-        return "Сервер выключен.";
+        return "Сервер остановлен.";
     }
     @Override
     public String getServerIsOn()
@@ -82,9 +82,34 @@ class TextRussian extends Text
         return String.format("Макс. кол-во\n%10s", "игроков");
     }
     @Override
-    public String getPlayersMustBeBetween()
+    public String getPlayersTip()
     {
-        return String.format("Должно быть\n%12s", "от 1 до 100");
+        return String.format("Должно быть\n%12s", "от 2 до 100");
+    }
+    @Override
+    public String getStop()
+    {
+        return "Остановить";
+    }
+    @Override
+    public String getServerStop()
+    {
+        return "Остановка сервера";
+    }
+    @Override
+    public String getAreYouSure()
+    {
+        return "Все соединения будут разорваны!\nВы уверены?";
+    }
+    @Override
+    public String getYes()
+    {
+        return "Да";
+    }
+    @Override
+    public String getNo()
+    {
+        return "Нет";
     }
     @Override
     public String getServerError()
@@ -97,6 +122,11 @@ class TextRussian extends Text
         return "Не удалось запустить сервер!";
     }
     @Override
+    public String getCouldNotStopServer()
+    {
+        return "Не удалось остановить сервер!";
+    }
+    @Override
     public String getBack()
     {
         return "Назад";
@@ -107,10 +137,5 @@ class TextRussian extends Text
     public String getLanguage()
     {
         return "Язык";
-    }
-    @Override
-    public String getApply()
-    {
-        return "Применить";
     }
 }

@@ -16,6 +16,7 @@ public class ChineseChessClient
     {
         GameSinglePlayer gameSinglePlayer = new GameSinglePlayer();
         GameLocalMultiplayer gameLocalMultiplayer = new GameLocalMultiplayer();
+        Client client = new Client();
         Replay replay = new Replay();
         Rules rules = new Rules();
         GUI gui = new GUI();
@@ -30,6 +31,7 @@ public class ChineseChessClient
         replay.setGui(gui);
         gui.setGameSinglePlayer(gameSinglePlayer);
         gui.setGameLocalMultiplayer(gameLocalMultiplayer);
+        gui.setClient(client);
         gui.setReplay(replay);
         gui.setRules(rules);
         gui.setMusicPlayer(musicPlayer);

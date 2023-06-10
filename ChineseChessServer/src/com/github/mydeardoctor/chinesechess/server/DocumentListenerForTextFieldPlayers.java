@@ -16,7 +16,7 @@ public class DocumentListenerForTextFieldPlayers implements DocumentListener
 
         String regExForPlayersRange =
             "^"+
-            "[1-9]|" +
+            "[2-9]|" +
             "[1-9][0-9]|" +
             "100"+
             "$";
@@ -53,7 +53,7 @@ public class DocumentListenerForTextFieldPlayers implements DocumentListener
                 int playersNumber = Integer.parseInt(playersText);
 
                 //Check range with math.
-                if((playersNumber >= 1) && (playersNumber <= 100))
+                if((playersNumber >= 2) && (playersNumber <= 100))
                 {
                     gui.setPlayersCorrect();
                 }

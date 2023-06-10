@@ -14,7 +14,7 @@ public class DocumentFilterForTextFieldPlayers extends DocumentFilterForTextFiel
         super();
         String regExForThreeNumbers =
                 "^" +
-                "[1-9]|" +
+                "[0-9]|" +
                 "[1-9][0-9]|" +
                 "[1-9][0-9][0-9]" +
                 "$";

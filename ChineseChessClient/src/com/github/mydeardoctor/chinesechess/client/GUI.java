@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GUI
 {
@@ -166,7 +168,6 @@ public class GUI
     private JLabel labelSfx;
     private JToggleButton buttonMuteSfx;
     private JSlider sliderGainSfx;
-    private JButton buttonApply;
     private JButton buttonBackSettings;
     private GridBagConstraints constraintsForLabelLanguage;
     private GridBagConstraints constraintsForComboBoxLanguage;
@@ -176,12 +177,14 @@ public class GUI
     private GridBagConstraints constraintsForLabelSfx;
     private GridBagConstraints constraintsForButtonMuteSfx;
     private GridBagConstraints constraintsForSliderGainSfx;
-    private GridBagConstraints constraintsForButtonApply;
     private GridBagConstraints constraintsForButtonBackSettings;
 
     //Game.
     private GameSinglePlayer gameSinglePlayer;
     private GameLocalMultiplayer gameLocalMultiplayer;
+
+    //Client.
+    private Client client;
 
     //Replay.
     private Replay replay;
@@ -945,7 +948,7 @@ public class GUI
                 buttonBackGameMode.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForButtonBackGameMode = new GridBagConstraints(
                         0, 3, 1, 1, 0, 0,
-                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
                 buttonBackGameMode.addActionListener(e->showFrameMainMenu());
             });
@@ -1012,7 +1015,7 @@ public class GUI
                         new DocumentListenerForTextFieldIp(this);
                 documentForTextFieldIp.addDocumentListener(documentListenerForTextFieldIp);
 
-                textFieldIp = new JTextField(documentForTextFieldIp, "255.255.255.255", 10);
+                textFieldIp = new JTextField(documentForTextFieldIp, "", 10);
                 textFieldIp.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
                         new EmptyBorder(15, 5, 15, 5)));
                 textFieldIp.setFont(fontChinese.deriveFont(Font.BOLD, 35.f));
@@ -1102,7 +1105,7 @@ public class GUI
                         0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 0, 0, 400), 0, 0);
-//                buttonConnect.addActionListener(e->startServer()); //TODO
+                buttonConnect.addActionListener(e->connectToServer()); //TODO
 
                 //Button Back.
                 buttonBackConnectToServer = new JButton(text.getBack());
@@ -1116,7 +1119,7 @@ public class GUI
                         new Insets(80, 400, 0, 0), 0, 0);
                 buttonBackConnectToServer.addActionListener(e->showPreviousFrame());
 
-                setIpCorrect();
+                setIpIncorrect();
                 setPortCorrect();
             });
         }
@@ -1389,19 +1392,6 @@ public class GUI
                         new Insets(0, 0, 0, 30), 0, 0);
                 sliderGainSfx.addChangeListener(this::changeGainSfx);
 
-                //Button Apply.
-                buttonApply = new JButton(text.getApply());
-                buttonApply.setPreferredSize(new Dimension(230, 100));
-                buttonApply.setBackground(Color.WHITE);
-                buttonApply.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonApply.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
-                constraintsForButtonApply = new GridBagConstraints(
-                        0, 3, 1, 1, 0, 0,
-                        GridBagConstraints.WEST, GridBagConstraints.NONE,
-                        new Insets(80, 30, 0, 30), 0, 0);
-                //TODO: Implement. Возможно, кнопка понадобится для сервера.
-                //buttonApply.addActionListener(e->);
-
                 //Button Back.
                 buttonBackSettings = new JButton(text.getBack());
                 buttonBackSettings.setPreferredSize(new Dimension(200, 100));
@@ -1409,8 +1399,8 @@ public class GUI
                 buttonBackSettings.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonBackSettings.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForButtonBackSettings = new GridBagConstraints(
-                        2, 3, 1, 1, 0, 0,
-                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        0, 3, 3, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 30, 0, 30), 0, 0);
                 buttonBackSettings.addActionListener(e->showPreviousFrame());
             });
@@ -1427,6 +1417,10 @@ public class GUI
     public void setGameLocalMultiplayer(GameLocalMultiplayer gameLocalMultiplayer)
     {
         this.gameLocalMultiplayer = gameLocalMultiplayer;
+    }
+    public void setClient(Client client)
+    {
+        this.client = client;
     }
     public void setReplay(Replay replay)
     {
@@ -1609,7 +1603,6 @@ public class GUI
             frame.getContentPane().add(labelSfx, constraintsForLabelSfx);
             frame.getContentPane().add(buttonMuteSfx, constraintsForButtonMuteSfx);
             frame.getContentPane().add(sliderGainSfx, constraintsForSliderGainSfx);
-            frame.getContentPane().add(buttonApply, constraintsForButtonApply);
             frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
             repaint();
         });
@@ -1726,6 +1719,51 @@ public class GUI
             gameLocalMultiplayer.start();
             showFrameBoard();
         });
+    }
+    private void connectToServer()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            try
+            {
+                //Get IP address.
+                String ipAddressWithLeadingZeros = textFieldIp.getText();
+                //Remove leading zeros.
+                Pattern patternForIp = Pattern.compile(DocumentListenerForTextFieldIp.REGEX_FOR_IP);
+                Matcher matcherForIp = patternForIp.matcher(ipAddressWithLeadingZeros);
+                matcherForIp.matches();
+                String byte1 = matcherForIp.group(1);
+                String byte2 = matcherForIp.group(2);
+                String byte3 = matcherForIp.group(3);
+                String byte4 = matcherForIp.group(4);
+                int[] ipAddressArray = new int[4];
+                ipAddressArray[0] = Integer.parseInt(byte1);
+                ipAddressArray[1] = Integer.parseInt(byte2);
+                ipAddressArray[2] = Integer.parseInt(byte3);
+                ipAddressArray[3] = Integer.parseInt(byte4);
+                String ipAddress =  ipAddressArray[0] + "." +
+                                    ipAddressArray[1] + "." +
+                                    ipAddressArray[2] + "." +
+                                    ipAddressArray[3];
+                System.out.println(ipAddress);
+
+                //Get Port number.
+                int portNumber = Integer.parseInt(textFieldPort.getText());
+                System.out.println(portNumber);
+                client.connectToServer(ipAddress, portNumber);
+            }
+            catch (Exception e)
+            {
+                showDialogCouldNotConnectToServer();
+            }
+        });
+    }
+    private void showDialogCouldNotConnectToServer()
+    {
+        SwingUtilities.invokeLater(()->
+                JOptionPane.showMessageDialog(frame,
+                        text.getCouldNotConnectToServer(), text.getClientError(), JOptionPane.ERROR_MESSAGE)
+        );
     }
     private void replaySlower()
     {
@@ -2018,7 +2056,6 @@ public class GUI
             labelLanguage.setText(text.getLanguage());
             labelMusic.setText(text.getMusic());
             labelSfx.setText(text.getSfx());
-            buttonApply.setText(text.getApply());
             buttonBackSettings.setText(text.getBack());
 
             //Game.

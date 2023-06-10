@@ -58,6 +58,8 @@ public abstract class Text
     public abstract String getPort();
     public abstract String getPortTip();
     public abstract String getConnect();
+    public abstract String getClientError();
+    public abstract String getCouldNotConnectToServer();
 
     //Frame Rules.
     public abstract String getGoal();
@@ -85,7 +87,6 @@ public abstract class Text
     public abstract String getLanguage();
     public abstract String getMusic();
     public abstract String getSfx();
-    public abstract String getApply();
 
     //Music player.
 

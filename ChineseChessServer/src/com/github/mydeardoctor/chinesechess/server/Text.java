@@ -25,12 +25,17 @@ public abstract class Text
     public abstract String getPort();
     public abstract String getPortTip();
     public abstract String getMaximumNumberOfPlayers();
-    public abstract String getPlayersMustBeBetween();
+    public abstract String getPlayersTip();
+    public abstract String getStop();
+    public abstract String getServerStop();
+    public abstract String getAreYouSure();
+    public abstract String getYes();
+    public abstract String getNo();
     public abstract String getServerError();
     public abstract String getCouldNotStartServer();
+    public abstract String getCouldNotStopServer();
     public abstract String getBack();
 
     //Frame Settings.
     public abstract String getLanguage();
-    public abstract String getApply();
 }

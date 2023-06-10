@@ -58,6 +58,7 @@ public class GUI
     private JLabel labelPlayersCorrectnessIcon;
     private JTextArea textAreaPlayersTip;
     private JButton buttonStartServer;
+    private JButton buttonStopServer;
     private JButton buttonBackStartServer;
     private GridBagConstraints constraintsForLabelPort;
     private GridBagConstraints constraintsForTextFieldPort;
@@ -68,16 +69,15 @@ public class GUI
     private GridBagConstraints constraintsForLabelPlayersCorrectnessIcon;
     private GridBagConstraints constraintsForTextAreaPlayersTip;
     private GridBagConstraints constraintsForButtonStartServer;
+    private GridBagConstraints constraintsForButtonStopServer;
     private GridBagConstraints constraintsForButtonBackStartServer;
 
     //Frame Settings.
     private JLabel labelLanguage;
     private JComboBox<String> comboBoxLanguage;
-    private JButton buttonApply;
     private JButton buttonBackSettings;
     private GridBagConstraints constraintsForLabelLanguage;
     private GridBagConstraints constraintsForComboBoxLanguage;
-    private GridBagConstraints constraintsForButtonApply;
     private GridBagConstraints constraintsForButtonBackSettings;
 
     //Server attributes.
@@ -188,7 +188,7 @@ public class GUI
     }
     private void initializeCommonFrameFeatures()
     {
-        try //TODO status bar следить за выключением
+        try //TODO status bar следить за включением и выключением
         {
             SwingUtilities.invokeAndWait(()->
             {
@@ -297,7 +297,7 @@ public class GUI
             e.printStackTrace();
         }
     }
-    private void initializeFrameStartServer() //TODO stop button, when start show dialog warning
+    private void initializeFrameStartServer()
     {
         try
         {
@@ -377,7 +377,7 @@ public class GUI
                         new DocumentListenerForTextFieldPlayers(this);
                 documentForTextFieldPlayers.addDocumentListener(documentListenerForTextFieldPlayers);
 
-                textFieldPlayers = new JTextField(documentForTextFieldPlayers, "6", 5);
+                textFieldPlayers = new JTextField(documentForTextFieldPlayers, "2", 5);
                 textFieldPlayers.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
                         new EmptyBorder(15, 5, 15, 5)));
                 textFieldPlayers.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
@@ -410,26 +410,40 @@ public class GUI
 
                 //Button Start.
                 buttonStartServer = new JButton(text.getStart());
-                buttonStartServer.setPreferredSize(new Dimension(250, 100));
+                buttonStartServer.setPreferredSize(new Dimension(220, 100));
                 buttonStartServer.setBackground(Color.WHITE);
                 buttonStartServer.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonStartServer.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                buttonStartServer.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
+                buttonStartServer.setEnabled(true);
                 constraintsForButtonStartServer = new GridBagConstraints(
                         0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(80, 0, 0, 400), 0, 0);
-                buttonStartServer.addActionListener(e->startServer());
+                        new Insets(80, 0, 0, 450), 0, 0);
+                buttonStartServer.addActionListener(e->restartServer());
+
+                //Button Stop.
+                buttonStopServer = new JButton(text.getStop());
+                buttonStopServer.setPreferredSize(new Dimension(220, 100));
+                buttonStopServer.setBackground(Color.WHITE);
+                buttonStopServer.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonStopServer.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
+                buttonStopServer.setEnabled(false);
+                constraintsForButtonStopServer = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(80, 50, 0, 0), 0, 0);
+                buttonStopServer.addActionListener(e->showDialogStopServer());
 
                 //Button Back.
                 buttonBackStartServer = new JButton(text.getBack());
-                buttonBackStartServer.setPreferredSize(new Dimension(200, 100));
+                buttonBackStartServer.setPreferredSize(new Dimension(150, 100));
                 buttonBackStartServer.setBackground(Color.WHITE);
                 buttonBackStartServer.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonBackStartServer.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                buttonBackStartServer.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
                 constraintsForButtonBackStartServer = new GridBagConstraints(
                         0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(80, 400, 0, 0), 0, 0);
+                        new Insets(80, 480, 0, 0), 0, 0);
                 buttonBackStartServer.addActionListener(e->showPreviousFrame());
 
                 setPortCorrect();
@@ -468,19 +482,6 @@ public class GUI
                         new Insets(0, 30, 10, 30), 0, 0);
                 comboBoxLanguage.addActionListener(e->refreshText());
 
-                //Button Apply.
-                buttonApply = new JButton(text.getApply());
-                buttonApply.setPreferredSize(new Dimension(230, 100));
-                buttonApply.setBackground(Color.WHITE);
-                buttonApply.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonApply.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
-                constraintsForButtonApply = new GridBagConstraints(
-                        0, 3, 1, 1, 0, 0,
-                        GridBagConstraints.WEST, GridBagConstraints.NONE,
-                        new Insets(80, 30, 0, 30), 0, 0);
-                //TODO: Implement. Возможно, кнопка понадобится для сервера.
-                //buttonApply.addActionListener(e->);
-
                 //Button Back.
                 buttonBackSettings = new JButton(text.getBack());
                 buttonBackSettings.setPreferredSize(new Dimension(200, 100));
@@ -488,8 +489,8 @@ public class GUI
                 buttonBackSettings.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonBackSettings.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForButtonBackSettings = new GridBagConstraints(
-                        2, 3, 1, 1, 0, 0,
-                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        0, 3, 3, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 30, 0, 30), 0, 0);
                 buttonBackSettings.addActionListener(e->showPreviousFrame());
             });
@@ -553,6 +554,7 @@ public class GUI
             panelTransparent.add(labelPlayersCorrectnessIcon, constraintsForLabelPlayersCorrectnessIcon);
             panelTransparent.add(textAreaPlayersTip, constraintsForTextAreaPlayersTip);
             panelTransparent.add(buttonStartServer, constraintsForButtonStartServer);
+            panelTransparent.add(buttonStopServer, constraintsForButtonStopServer);
             panelTransparent.add(buttonBackStartServer, constraintsForButtonBackStartServer);
             repaint();
         });
@@ -565,7 +567,6 @@ public class GUI
             panelTransparent.removeAll();
             panelTransparent.add(labelLanguage, constraintsForLabelLanguage);
             panelTransparent.add(comboBoxLanguage, constraintsForComboBoxLanguage);
-            panelTransparent.add(buttonApply, constraintsForButtonApply);
             panelTransparent.add(buttonBackSettings, constraintsForButtonBackSettings);
             repaint();
         });
@@ -577,7 +578,7 @@ public class GUI
                         text.getAboutVerbose(), text.getAbout(), JOptionPane.INFORMATION_MESSAGE)
         );
     }
-    private void startServer()
+    private void restartServer()
     {
         SwingUtilities.invokeLater(()->
         {
@@ -585,7 +586,7 @@ public class GUI
             {
                 int portNumber = Integer.parseInt(textFieldPort.getText());
                 int maximumNumberOfPlayers = Integer.parseInt(textFieldPlayers.getText());
-                server.start(portNumber, maximumNumberOfPlayers);
+                server.restart(portNumber, maximumNumberOfPlayers);
             }
             catch (Exception e)
             {
@@ -593,12 +594,19 @@ public class GUI
             }
         });
     }
-    private void showDialogCouldNotStartServer()
+    private void showDialogStopServer()
     {
         SwingUtilities.invokeLater(()->
-                JOptionPane.showMessageDialog(frame,
-                        text.getCouldNotStartServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE)
-        );
+        {
+            int selectedOption = JOptionPane.showOptionDialog(frame,
+                    text.getAreYouSure(), text.getServerStop(),
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                    new String[] {text.getYes(), text.getNo()}, text.getNo());
+            if(selectedOption == JOptionPane.YES_OPTION)
+            {
+               server.stop();
+            }
+        });
     }
     private void showPreviousFrame()
     {
@@ -683,14 +691,14 @@ public class GUI
             }
             else
             {
-                textAreaPlayersTip.setText(text.getPlayersMustBeBetween());
+                textAreaPlayersTip.setText(text.getPlayersTip());
             }
             buttonStartServer.setText(text.getStart());
+            buttonStopServer.setText(text.getStop());
             buttonBackStartServer.setText(text.getBack());
 
             //Frame Settings.
             labelLanguage.setText(text.getLanguage());
-            buttonApply.setText(text.getApply());
             buttonBackSettings.setText(text.getBack());
         });
     }
@@ -731,7 +739,7 @@ public class GUI
         {
             playersCorrect = false;
             labelPlayersCorrectnessIcon.setIcon(iconIncorrect);
-            textAreaPlayersTip.setText(text.getPlayersMustBeBetween());
+            textAreaPlayersTip.setText(text.getPlayersTip());
             buttonStartServer.setEnabled(false);
         });
     }
@@ -747,6 +755,36 @@ public class GUI
                 buttonStartServer.setEnabled(true);
             }
         });
+    }
+    public void disableButtonStartServer()
+    {
+        SwingUtilities.invokeLater(()->buttonStartServer.setEnabled(false));
+    }
+    public void enableButtonStartServer()
+    {
+        SwingUtilities.invokeLater(()->buttonStartServer.setEnabled(true));
+    }
+    public void disableButtonStopServer()
+    {
+        SwingUtilities.invokeLater(()->buttonStopServer.setEnabled(false));
+    }
+    public void enableButtonStopServer()
+    {
+        SwingUtilities.invokeLater(()->buttonStopServer.setEnabled(true));
+    }
+    public void showDialogCouldNotStartServer()
+    {
+        SwingUtilities.invokeLater(()->
+                JOptionPane.showMessageDialog(frame,
+                        text.getCouldNotStartServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE)
+        );
+    }
+    public void showDialogCouldNotStopServer()
+    {
+        SwingUtilities.invokeLater(()->
+                JOptionPane.showMessageDialog(frame,
+                        text.getCouldNotStopServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE)
+        );
     }
     public Text getText()
     {

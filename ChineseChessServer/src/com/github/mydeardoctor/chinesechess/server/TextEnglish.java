@@ -25,12 +25,12 @@ public class TextEnglish extends Text
     @Override
     public String getServerIsOff()
     {
-        return "Server is off.";
+        return "Server is stopped.";
     }
     @Override
     public String getServerIsOn()
     {
-        return "Server is on.";
+        return "Server is running.";
     }
     @Override
     public String getHelp()
@@ -82,9 +82,34 @@ public class TextEnglish extends Text
         return "Max number\nof players";
     }
     @Override
-    public String getPlayersMustBeBetween()
+    public String getPlayersTip()
     {
-        return String.format("Must be between\n%15s", "1 and 100");
+        return String.format("Must be between\n%15s", "2 and 100");
+    }
+    @Override
+    public String getStop()
+    {
+        return "Stop";
+    }
+    @Override
+    public String getServerStop()
+    {
+        return "Server Stop";
+    }
+    @Override
+    public String getAreYouSure()
+    {
+        return "All connections will be lost!\nAre you sure?";
+    }
+    @Override
+    public String getYes()
+    {
+        return "Yes";
+    }
+    @Override
+    public String getNo()
+    {
+        return "No";
     }
     @Override
     public String getServerError()
@@ -97,6 +122,11 @@ public class TextEnglish extends Text
         return "Could not start server!";
     }
     @Override
+    public String getCouldNotStopServer()
+    {
+        return "Could not stop server!";
+    }
+    @Override
     public String getBack()
     {
         return "Back";
@@ -107,10 +137,5 @@ public class TextEnglish extends Text
     public String getLanguage()
     {
         return "Language";
-    }
-    @Override
-    public String getApply()
-    {
-        return "Apply";
     }
 }

@@ -226,6 +226,16 @@ class TextRussian extends Text
     {
         return "Подключиться";
     }
+    @Override
+    public String getClientError()
+    {
+        return "Ошибка Client";
+    }
+    @Override
+    public String getCouldNotConnectToServer()
+    {
+        return "Не удалось подключиться к серверу!";
+    }
 
     //Frame Rules.
     @Override
@@ -351,12 +361,6 @@ class TextRussian extends Text
     public String getSfx()
     {
         return "Звуковые эффекты";
-    }
-
-    @Override
-    public String getApply()
-    {
-        return "Применить";
     }
 
     //Music player.

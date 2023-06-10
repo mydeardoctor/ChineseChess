@@ -8,11 +8,12 @@ import java.net.Socket;
 public class Client //TODO перенести в Server
 {
     private final Socket clientSocket;
+    //TODO input stream, outputstream
     public Client(Socket clientSocket)
     {
         this.clientSocket = clientSocket;
     }
-    public void communicate()
+    public void run()
     {
         try
         {
