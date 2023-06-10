@@ -779,7 +779,7 @@ public class GUI
                         text.getCouldNotStartServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE)
         );
     }
-    public void showDialogCouldNotStopServer()
+    public void showDialogCouldNotStopServer() //TODO no usages
     {
         SwingUtilities.invokeLater(()->
                 JOptionPane.showMessageDialog(frame,

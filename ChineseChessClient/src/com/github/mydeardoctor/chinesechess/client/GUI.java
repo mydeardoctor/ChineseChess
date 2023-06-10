@@ -1745,11 +1745,9 @@ public class GUI
                                     ipAddressArray[1] + "." +
                                     ipAddressArray[2] + "." +
                                     ipAddressArray[3];
-                System.out.println(ipAddress);
 
                 //Get Port number.
                 int portNumber = Integer.parseInt(textFieldPort.getText());
-                System.out.println(portNumber);
                 client.connectToServer(ipAddress, portNumber);
             }
             catch (Exception e)

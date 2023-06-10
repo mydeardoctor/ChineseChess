@@ -1,5 +1,6 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
@@ -11,7 +12,7 @@ public class Client //TODO
 {
     private Socket clientSocket;
     private ThreadPoolExecutor threadPoolExecutor;
-    private PrintWriter printWriter;
+    private ObjectOutputStream objectOutputStream;
 
     public Client()
     {
@@ -22,14 +23,11 @@ public class Client //TODO
     {
         try
         {
-            System.out.println("trying to connect to server");
             InetSocketAddress inetSocketAddress = new InetSocketAddress(ipAddress, portNumber);
             clientSocket.connect(inetSocketAddress, 3000); //TODO. maybe make a new thread to try
 
-            System.out.println("Connected to server");
-
             OutputStream outputStream = clientSocket.getOutputStream();
-            printWriter = new PrintWriter(outputStream);
+            objectOutputStream = new ObjectOutputStream(outputStream);
 
 //            threadPoolExecutor.shutdownNow(); //TODO
             threadPoolExecutor.execute(this::run);
@@ -45,10 +43,8 @@ public class Client //TODO
         {
             try
             {
-                String message = "I send a message";
-                printWriter.println(message);
-                printWriter.flush();
-                System.out.println("I send a message");
+                String message = "message from client";
+                objectOutputStream.writeObject(message);
                 Thread.sleep(1000);
             }
             catch (Exception e)

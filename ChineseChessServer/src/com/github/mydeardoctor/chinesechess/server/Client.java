@@ -1,36 +1,83 @@
 package com.github.mydeardoctor.chinesechess.server;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 
-public class Client //TODO перенести в Server
+public class Client
 {
-    private final Socket clientSocket;
-    //TODO input stream, outputstream
+    private Socket clientSocket;
+    private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
+
     public Client(Socket clientSocket)
     {
         this.clientSocket = clientSocket;
     }
-    public void run()
+    public boolean tryToOpenStreams()
     {
+        boolean result;
+
         try
         {
-            InputStream inputStream = clientSocket.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            System.out.println("input stream started");
-            String message;
-            while((message = bufferedReader.readLine())!=null)
-            {
-                System.out.println("from client: "+ message);
-            }
-            System.out.println("input stream ended");
+            objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
+            objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            result = true;
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             e.printStackTrace();
+
+            closeResources();
+            result = false;
         }
+
+        return result;
+    }
+    public void run()
+    {
+        while(true)
+        {
+            try
+            {
+                String message = (String)(objectInputStream.readObject());
+                System.out.println(message); //TODO
+            }
+            catch (Exception e)
+            {
+                closeResources();
+                System.out.println("Client Socket closed.");
+                break;
+            }
+        }
+        System.out.println("Client Thread stopped.");
+    }
+    private void closeResources()
+    {
+        if(objectInputStream != null)
+        {
+            try
+            {
+                objectInputStream.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        if(objectOutputStream != null)
+        {
+            try
+            {
+                objectOutputStream.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+    public Socket getClientSocket()
+    {
+        return clientSocket;
     }
 }

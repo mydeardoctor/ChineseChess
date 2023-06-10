@@ -1,10 +1,12 @@
 package com.github.mydeardoctor.chinesechess.server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 public class Server
 {
@@ -14,7 +16,6 @@ public class Server
     private ThreadPoolExecutor clientThreadPool;
     private ServerSocket serverSocket;
     private final ArrayList<Client> clients;
-    private int maximumNumberOfPlayers;
 
     //GUI attributes.
     private GUI gui;
@@ -23,7 +24,6 @@ public class Server
     {
         serverIsOn = false;
         clients = new ArrayList<>();
-        maximumNumberOfPlayers = 2;
     }
     public void setGui(GUI gui)
     {
@@ -36,60 +36,75 @@ public class Server
     }
     public void stop()
     {
-        try
+        //Close Server Socket. Causes an Exception in Server Thread. Server Thread begins to stop.
+        if(serverSocket != null)
         {
-            //Stop Server Thread.
-            if(serverThreadPool != null)
-            {
-                serverThreadPool.shutdownNow();
-            }
-            serverThreadPool = null;
-
-            //Close Server Socket.
-            if(serverSocket != null)
+            try
             {
                 serverSocket.close();
             }
-            serverSocket = null;
-
-            //Stop Client Threads.
-            if(clientThreadPool != null)
+            catch (IOException e)
             {
-                clientThreadPool.shutdownNow();
+                e.printStackTrace();
             }
-            clientThreadPool = null;
-
-            //Close Client Resources and Sockets.
-            for(Client client : clients)
-            {
-                //close resources //TODO
-                //delete resources
-                //close sockets
-                client = null; //delete sockets
-            }
-
-            //Clear ArrayList of Clients.
-            clients.clear();
-
-            serverIsOn = false;
-            gui.setStatusBarText(gui.getText().getServerIsOff());
-            gui.enableButtonStartServer();
-            gui.disableButtonStopServer();
         }
-        catch (Exception e)
+
+        //Wait for Server Thread to stop.
+        if(serverThreadPool != null)
         {
-            e.printStackTrace();
-
-            gui.showDialogCouldNotStopServer();
+            serverThreadPool.shutdown();
+            try
+            {
+                serverThreadPool.awaitTermination(10, TimeUnit.SECONDS);
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
         }
+
+        //Close Client Sockets. Causes an Exception in Client Threads. Client Threads begin to stop.
+        for(Client client : clients)
+        {
+            try
+            {
+                client.getClientSocket().close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        //Wait for Client Threads to stop.
+        if(clientThreadPool != null)
+        {
+            clientThreadPool.shutdown();
+            try
+            {
+                clientThreadPool.awaitTermination(10, TimeUnit.SECONDS);
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        //Clear ArrayList of Clients.
+        clients.clear();
+
+        //Refresh GUI.
+        serverIsOn = false;
+        gui.setStatusBarText(gui.getText().getServerIsOff());
+        gui.enableButtonStartServer();
+        gui.disableButtonStopServer();
     }
     private void start(int portNumber, int maximumNumberOfPlayers)
     {
         try
         {
-            serverThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
             serverSocket = new ServerSocket(portNumber);
-            this.maximumNumberOfPlayers = maximumNumberOfPlayers;
+            serverThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
             clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(maximumNumberOfPlayers);
 
             serverIsOn = true;
@@ -114,36 +129,23 @@ public class Server
     {
         while (true)
         {
-            if((serverSocket == null) || (clientThreadPool == null))
+            try
             {
-                break;
-            }
-
-            if(clientThreadPool.getPoolSize() >= maximumNumberOfPlayers)
-            {
-                try
+                Socket clientSocket = serverSocket.accept();
+                if(clientThreadPool.getActiveCount() < clientThreadPool.getCorePoolSize())
                 {
-                    Thread.sleep(100); //TODO заменить на нотифай
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-            else
-            {
-                try
-                {
-                    Socket clientSocket = serverSocket.accept();
                     Client client = new Client(clientSocket);
-                    clients.add(client);
-                    clientThreadPool.execute(client::run);
+                    if(client.tryToOpenStreams())
+                    {
+                        clients.add(client);
+                        clientThreadPool.execute(client::run);
+                    }
                 }
-                catch (Exception e)
-                {
-                    System.out.println("Server Socket closed.");
-                    break;
-                }
+            }
+            catch (Exception e)
+            {
+                System.out.println("Server Socket closed.");
+                break;
             }
         }
         System.out.println("Server Thread stopped.");
