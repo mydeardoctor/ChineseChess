@@ -241,6 +241,16 @@ public class TextEnglish extends Text
     {
         return "Could not connect to server!";
     }
+    @Override
+    public String getDisconnectFromServer()
+    {
+        return "Disconnect from server";
+    }
+    @Override
+    public String getConnectionWillBeLost()
+    {
+        return "Connection will be lost!\nAre you sure?";
+    }
 
     //Frame Rules.
     @Override

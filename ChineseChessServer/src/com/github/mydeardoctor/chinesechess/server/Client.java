@@ -3,7 +3,7 @@ package com.github.mydeardoctor.chinesechess.server;
 import java.io.*;
 import java.net.Socket;
 
-public class Client //TODO rename
+public class Client
 {
     private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
@@ -41,7 +41,7 @@ public class Client //TODO rename
             try
             {
                 String message = (String)(objectInputStream.readObject());
-                System.out.println(message); //TODO Protocol
+                System.out.println(message);
             }
             catch (Exception e)
             {

@@ -91,10 +91,13 @@ public class DocumentListenerForTextFieldIp implements DocumentListener
                         ipAddress[3];
 
                 //Check range with math.
-                return ((ipAddress[0] >= 0) && (ipAddress[0] <= 255) &&
+                result =
+                        (
+                        (ipAddress[0] >= 0) && (ipAddress[0] <= 255) &&
                         (ipAddress[1] >= 0) && (ipAddress[1] <= 255) &&
                         (ipAddress[2] >= 0) && (ipAddress[2] <= 255) &&
-                        (ipAddress[3] >= 0) && (ipAddress[3] <= 255));
+                        (ipAddress[3] >= 0) && (ipAddress[3] <= 255)
+                        );
             }
             else
             {

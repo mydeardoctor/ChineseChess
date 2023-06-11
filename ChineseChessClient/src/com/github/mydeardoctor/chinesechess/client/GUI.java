@@ -17,8 +17,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class GUI
 {
@@ -989,7 +987,7 @@ public class GUI
             e.printStackTrace();
         }
     }
-    private void initializeFrameConnectToServer() //TODO disconnect button, when connect show dialog warning
+    private void initializeFrameConnectToServer()
     {
         try
         {
@@ -1130,7 +1128,7 @@ public class GUI
                         1, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 20, 20, 20), 0, 0);
-                buttonDisconnect.addActionListener(e->disconnectFromServer());
+                buttonDisconnect.addActionListener(e->showDialogDisconnectFromServer());
                 panelTransparentConnectToServer.add(buttonDisconnect, constraintsForButtonDisconnect);
 
                 //Button Back.
@@ -1779,9 +1777,19 @@ public class GUI
             }
         });
     }
-    private void disconnectFromServer() //TODO
+    private void showDialogDisconnectFromServer()
     {
-
+        SwingUtilities.invokeLater(()->
+        {
+            int selectedOption = JOptionPane.showOptionDialog(frame,
+                    text.getConnectionWillBeLost(), text.getDisconnectFromServer(),
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                    new String[] {text.getYes(), text.getNo()}, text.getNo());
+            if(selectedOption == JOptionPane.YES_OPTION)
+            {
+                client.disconnect();
+            }
+        });
     }
     private void replaySlower()
     {
@@ -2150,6 +2158,16 @@ public class GUI
                 buttonConnect.setEnabled(true);
             }
         });
+    }
+    public void setConnectionOff()
+    {
+        buttonConnect.setEnabled(ipCorrect && portCorrect);
+        buttonDisconnect.setEnabled(false);
+    }
+    public void setConnectionOn()
+    {
+        buttonConnect.setEnabled(false);
+        buttonDisconnect.setEnabled(true);
     }
     public void showDialogCouldNotConnectToServer()
     {

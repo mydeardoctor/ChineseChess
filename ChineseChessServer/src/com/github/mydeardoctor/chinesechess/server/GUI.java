@@ -190,7 +190,7 @@ public class GUI
     }
     private void initializeCommonFrameFeatures()
     {
-        try //TODO status bar следить за включением и выключением
+        try
         {
             SwingUtilities.invokeAndWait(()->
             {
@@ -282,7 +282,7 @@ public class GUI
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
-                //buttonLobby.addActionListener(e->); //TODO Button Lobby Action Listener
+                //buttonLobby.addActionListener(e->); //TODO Lobby
 
                 //Button Settings.
                 buttonSettings = new JButton(text.getSettings());

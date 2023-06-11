@@ -1,15 +1,5 @@
 package com.github.mydeardoctor.chinesechess.client;
 
-//TODO
-/*
-    Поля классов. Сверху общие, снизу частные.
-    Final.
-    Поля внутри класса использовать напрямую, геттеры и сеттеры в таком случае лишние.
-    Equals вместо ==.
-    Лямбды выносить в отдельные функции.
-
-    Game Online Multiplayer.
- */
 public class ChineseChessClient
 {
     public static void main(String[] args)

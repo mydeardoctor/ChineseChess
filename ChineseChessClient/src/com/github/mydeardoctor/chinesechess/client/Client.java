@@ -1,15 +1,15 @@
 package com.github.mydeardoctor.chinesechess.client;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-public class Client //TODO
+public class Client
 {
     //Client attributes.
     private Socket clientSocket;
@@ -32,20 +32,50 @@ public class Client //TODO
     {
         try
         {
-            clientSocket = new Socket(ipAddress, portNumber);
+            clientSocket = new Socket();
+            clientSocket.connect(new InetSocketAddress(ipAddress, portNumber), 3000);
+
+            if(tryToOpenStreams())
+            {
+                gui.setConnectionOn();
+
+                clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+                clientThreadPool.execute(this::run);
+            }
+            else
+            {
+                gui.setConnectionOff();
+                gui.showDialogCouldNotConnectToServer();
+            }
+        }
+        catch (Exception e)
+        {
+//            e.printStackTrace(); //TODO commented out code
+
+            gui.setConnectionOff();
+            gui.showDialogCouldNotConnectToServer();
+        }
+    }
+    private boolean tryToOpenStreams()
+    {
+        boolean result;
+
+        try
+        {
             objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
             objectOutputStream.flush();
             objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
-            clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-            clientThreadPool.execute(this::run);
+            result = true;
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             e.printStackTrace();
 
             closeResources();
-            gui.showDialogCouldNotConnectToServer(); //TODO кнопки
+            result = false;
         }
+
+        return result;
     }
     private void run()
     {
@@ -53,15 +83,51 @@ public class Client //TODO
         {
             try
             {
-                String message = "message from client";
+                String message = this.toString();
                 objectOutputStream.writeObject(message);
                 Thread.sleep(1000);
             }
             catch (Exception e)
             {
+                closeResources();
+                gui.setConnectionOff();
+                System.out.println("Client Socket closed.");
+                break;
+            }
+        }
+        System.out.println("Client Thread stopped.");
+    }
+    public void disconnect()
+    {
+        //Close Client Socket. Causes an Exception in Client Thread. Client Thread begins to stop.
+        if(clientSocket != null)
+        {
+            try
+            {
+                clientSocket.close();
+            }
+            catch (IOException e)
+            {
                 e.printStackTrace();
             }
         }
+
+        //Wait for Client Thread to stop.
+        if(clientThreadPool != null)
+        {
+            clientThreadPool.shutdown();
+            try
+            {
+                clientThreadPool.awaitTermination(10, TimeUnit.SECONDS);
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        //Refresh GUI.
+        gui.setConnectionOff();
     }
     private void closeResources()
     {
@@ -73,7 +139,7 @@ public class Client //TODO
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+//                e.printStackTrace(); //TODO commented out code
             }
         }
         if(objectInputStream != null)
@@ -84,7 +150,7 @@ public class Client //TODO
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+//                e.printStackTrace(); //TODO commented out code
             }
         }
     }

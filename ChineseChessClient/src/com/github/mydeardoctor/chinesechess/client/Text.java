@@ -61,6 +61,8 @@ public abstract class Text
     public abstract String getDisconnect();
     public abstract String getClientError();
     public abstract String getCouldNotConnectToServer();
+    public abstract String getDisconnectFromServer();
+    public abstract String getConnectionWillBeLost();
 
     //Frame Rules.
     public abstract String getGoal();

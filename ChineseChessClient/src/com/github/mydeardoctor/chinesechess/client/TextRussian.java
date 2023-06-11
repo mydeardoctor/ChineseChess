@@ -241,6 +241,16 @@ class TextRussian extends Text
     {
         return "Не удалось подключиться к серверу!";
     }
+    @Override
+    public String getDisconnectFromServer()
+    {
+        return "Отключение от сервера";
+    }
+    @Override
+    public String getConnectionWillBeLost()
+    {
+        return "Соединение будет разорвано!\nВы уверены?";
+    }
 
     //Frame Rules.
     @Override

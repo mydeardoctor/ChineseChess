@@ -49,6 +49,33 @@ public class Server
             gui.showDialogCouldNotStartServer();
         }
     }
+    private void run()
+    {
+        while (true)
+        {
+            try
+            {
+                Socket clientSocket = serverSocket.accept();
+                if(clientThreadPool.getActiveCount() < clientThreadPool.getCorePoolSize())
+                {
+                    Client client = new Client(clientSocket);
+                    if(client.tryToOpenStreams())
+                    {
+                        clients.add(client);
+                        clientThreadPool.execute(client::run);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                serverIsOn = false;
+                gui.setServerOff();
+                System.out.println("Server Socket closed.");
+                break;
+            }
+        }
+        System.out.println("Server Thread stopped.");
+    }
     public void stop()
     {
         //Close Server Socket. Causes an Exception in Server Thread. Server Thread begins to stop.
@@ -111,31 +138,6 @@ public class Server
         //Refresh GUI.
         serverIsOn = false;
         gui.setServerOff();
-    }
-    private void run()
-    {
-        while (true)
-        {
-            try
-            {
-                Socket clientSocket = serverSocket.accept();
-                if(clientThreadPool.getActiveCount() < clientThreadPool.getCorePoolSize())
-                {
-                    Client client = new Client(clientSocket);
-                    if(client.tryToOpenStreams())
-                    {
-                        clients.add(client);
-                        clientThreadPool.execute(client::run);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                System.out.println("Server Socket closed.");
-                break;
-            }
-        }
-        System.out.println("Server Thread stopped.");
     }
     public boolean getIsServerOn()
     {
