@@ -32,6 +32,7 @@ public class GUI
     //Common frame features.
     private JFrame frame;
     private JPanel panelTransparent;
+    private GridBagLayout gridBagLayout;
     private JTextField statusBar;
     private JMenuBar menuBar;
     private JMenu menuHelp;
@@ -57,6 +58,7 @@ public class GUI
     private JTextField textFieldPlayers;
     private JLabel labelPlayersCorrectnessIcon;
     private JTextArea textAreaPlayersTip;
+    private JPanel panelTransparentStartServer;
     private JButton buttonStartServer;
     private JButton buttonStopServer;
     private JButton buttonBackStartServer;
@@ -68,9 +70,7 @@ public class GUI
     private GridBagConstraints constraintsForTextFieldPlayers;
     private GridBagConstraints constraintsForLabelPlayersCorrectnessIcon;
     private GridBagConstraints constraintsForTextAreaPlayersTip;
-    private GridBagConstraints constraintsForButtonStartServer;
-    private GridBagConstraints constraintsForButtonStopServer;
-    private GridBagConstraints constraintsForButtonBackStartServer;
+    private GridBagConstraints constraintsForPanelTransparentStartServer;
 
     //Frame Settings.
     private JLabel labelLanguage;
@@ -203,15 +203,18 @@ public class GUI
                 frame.setIconImage(iconFrame);
                 frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+                //GridBag layout manager.
+                gridBagLayout = new GridBagLayout();
+
                 //Panel Background.
                 PanelBackground panelBackground = new PanelBackground(background);
-                panelBackground.setLayout(new GridBagLayout());
+                panelBackground.setLayout(gridBagLayout);
                 frame.setContentPane(panelBackground);
 
                 //Panel Transparent.
                 panelTransparent = new JPanel();
                 panelTransparent.setOpaque(false);
-                panelTransparent.setLayout(new GridBagLayout());
+                panelTransparent.setLayout(gridBagLayout);
                 GridBagConstraints constraintsForPanelEmpty = new GridBagConstraints(
                         0, 0, 1, 1, 1, 1,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -313,7 +316,7 @@ public class GUI
                 constraintsForLabelPort = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 530), 0, 0);
+                        new Insets(0, 10, 0, 10), 0, 0);
 
                 //Text Field Port.
                 PlainDocument documentForTextFieldPort = new PlainDocument();
@@ -329,16 +332,16 @@ public class GUI
                         new EmptyBorder(15, 5, 15, 5)));
                 textFieldPort.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForTextFieldPort = new GridBagConstraints(
-                        0, 0, 1, 1, 0, 0,
+                        1, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 180), 0, 0);
+                        new Insets(0, 10, 0, 10), 0, 0);
 
                 //Label Port Correctness Icon.
                 labelPortCorrectnessIcon = new JLabel(iconCorrect);
                 constraintsForLabelPortCorrectnessIcon = new GridBagConstraints(
-                        0, 0, 1, 1, 0, 0,
+                        2, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 70, 0, 0), 0, 0);
+                        new Insets(0, 10, 0, 10), 0, 0);
 
                 //Text Area Port Tip.
                 textAreaPortTip = new JTextArea(2, 10);
@@ -352,9 +355,9 @@ public class GUI
                 textAreaPortTip.setCaretPosition(0);
                 textAreaPortTip.setText("");
                 constraintsForTextAreaPortTip = new GridBagConstraints(
-                        0, 0, 1, 1, 0, 0,
+                        3, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 440, 0, 0), 0, 0);
+                        new Insets(0, 20, 0, 10), 0, 0);
 
                 //Text Area Players.
                 textAreaPlayers = new JTextArea(2, 10);
@@ -370,7 +373,7 @@ public class GUI
                 constraintsForTextAreaPlayers = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 530), 0, 0);
+                        new Insets(30, 10, 0, 10), 0, 0);
 
                 //Text Field Players.
                 PlainDocument documentForTextFieldPlayers = new PlainDocument();
@@ -386,16 +389,16 @@ public class GUI
                         new EmptyBorder(15, 5, 15, 5)));
                 textFieldPlayers.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForTextFieldPlayers = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                        1, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 180), 0, 0);
+                        new Insets(30, 10, 0, 10), 0, 0);
 
                 //Label Players Correctness Icon.
                 labelPlayersCorrectnessIcon = new JLabel(iconCorrect);
                 constraintsForLabelPlayersCorrectnessIcon = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                        2, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 70, 0, 0), 0, 0);
+                        new Insets(30, 10, 0, 10), 0, 0);
 
                 //Text Area Players Tip.
                 textAreaPlayersTip = new JTextArea(2, 10);
@@ -409,9 +412,18 @@ public class GUI
                 textAreaPlayersTip.setCaretPosition(0);
                 textAreaPlayersTip.setText("");
                 constraintsForTextAreaPlayersTip = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                        3, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 440, 0, 0), 0, 0);
+                        new Insets(30, 20, 0, 10), 0, 0);
+
+                //Panel Transparent.
+                panelTransparentStartServer = new JPanel();
+                panelTransparentStartServer.setOpaque(false);
+                panelTransparentStartServer.setLayout(gridBagLayout);
+                constraintsForPanelTransparentStartServer = new GridBagConstraints(
+                        0, 2, 4, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 0), 0, 0);
 
                 //Button Start.
                 buttonStartServer = new JButton(text.getStart());
@@ -420,11 +432,12 @@ public class GUI
                 buttonStartServer.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonStartServer.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
                 buttonStartServer.setEnabled(true);
-                constraintsForButtonStartServer = new GridBagConstraints(
-                        0, 2, 1, 1, 0, 0,
+                GridBagConstraints constraintsForButtonStartServer = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(80, 0, 0, 450), 0, 0);
+                        new Insets(80, 20, 0, 20), 0, 0);
                 buttonStartServer.addActionListener(e->startServer());
+                panelTransparentStartServer.add(buttonStartServer, constraintsForButtonStartServer);
 
                 //Button Stop.
                 buttonStopServer = new JButton(text.getStop());
@@ -433,11 +446,12 @@ public class GUI
                 buttonStopServer.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonStopServer.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
                 buttonStopServer.setEnabled(false);
-                constraintsForButtonStopServer = new GridBagConstraints(
-                        0, 2, 1, 1, 0, 0,
+                GridBagConstraints constraintsForButtonStopServer = new GridBagConstraints(
+                        1, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(80, 50, 0, 0), 0, 0);
+                        new Insets(80, 20, 0, 20), 0, 0);
                 buttonStopServer.addActionListener(e->showDialogStopServer());
+                panelTransparentStartServer.add(buttonStopServer, constraintsForButtonStopServer);
 
                 //Button Back.
                 buttonBackStartServer = new JButton(text.getBack());
@@ -445,11 +459,12 @@ public class GUI
                 buttonBackStartServer.setBackground(Color.WHITE);
                 buttonBackStartServer.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonBackStartServer.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
-                constraintsForButtonBackStartServer = new GridBagConstraints(
-                        0, 2, 1, 1, 0, 0,
+                GridBagConstraints constraintsForButtonBackStartServer = new GridBagConstraints(
+                        2, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(80, 480, 0, 0), 0, 0);
+                        new Insets(80, 20, 0, 20), 0, 0);
                 buttonBackStartServer.addActionListener(e->showPreviousFrame());
+                panelTransparentStartServer.add(buttonBackStartServer, constraintsForButtonBackStartServer);
             });
         }
         catch (Exception e)
@@ -465,22 +480,22 @@ public class GUI
             {
                 //Label Language.
                 labelLanguage = new JLabel(text.getLanguage());
-                labelLanguage.setPreferredSize(new Dimension(300, 100));
+                labelLanguage.setPreferredSize(new Dimension(200, 100));
                 labelLanguage.setFont(fontChinese.deriveFont(Font.BOLD, 37.f));
                 constraintsForLabelLanguage = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
-                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 30, 0, 30), 0, 0);
 
                 //ComboBox Language.
                 comboBoxLanguage = new JComboBox<>();
-                comboBoxLanguage.setPreferredSize(new Dimension(300, 80));
+                comboBoxLanguage.setPreferredSize(new Dimension(250, 80));
                 comboBoxLanguage.setFont(fontChinese.deriveFont(Font.BOLD, 37.f));
                 comboBoxLanguage.addItem("English");
                 comboBoxLanguage.addItem("Русский");
                 constraintsForComboBoxLanguage = new GridBagConstraints(
-                        1, 0, 2, 1, 0, 0,
-                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        1, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 30, 10, 30), 0, 0);
                 comboBoxLanguage.addActionListener(e->refreshText());
 
@@ -491,7 +506,7 @@ public class GUI
                 buttonBackSettings.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonBackSettings.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
                 constraintsForButtonBackSettings = new GridBagConstraints(
-                        0, 3, 3, 1, 0, 0,
+                        0, 1, 2, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 30, 0, 30), 0, 0);
                 buttonBackSettings.addActionListener(e->showPreviousFrame());
@@ -555,9 +570,7 @@ public class GUI
             panelTransparent.add(textFieldPlayers, constraintsForTextFieldPlayers);
             panelTransparent.add(labelPlayersCorrectnessIcon, constraintsForLabelPlayersCorrectnessIcon);
             panelTransparent.add(textAreaPlayersTip, constraintsForTextAreaPlayersTip);
-            panelTransparent.add(buttonStartServer, constraintsForButtonStartServer);
-            panelTransparent.add(buttonStopServer, constraintsForButtonStopServer);
-            panelTransparent.add(buttonBackStartServer, constraintsForButtonBackStartServer);
+            panelTransparent.add(panelTransparentStartServer, constraintsForPanelTransparentStartServer);
             repaint();
         });
     }

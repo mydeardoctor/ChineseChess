@@ -118,6 +118,7 @@ public class GUI
     private JTextField textFieldPort;
     private JLabel labelPortCorrectnessIcon;
     private JTextArea textAreaPortTip;
+    private JPanel panelTransparentConnectToServer;
     private JButton buttonConnect;
     private JButton buttonDisconnect;
     private JButton buttonBackConnectToServer;
@@ -129,36 +130,29 @@ public class GUI
     private GridBagConstraints constraintsForTextFieldPort;
     private GridBagConstraints constraintsForLabelPortCorrectnessIcon;
     private GridBagConstraints constraintsForTextAreaPortTip;
-    private GridBagConstraints constraintsForButtonConnect;
-    private GridBagConstraints constraintsForButtonDisconnect;
-    private GridBagConstraints constraintsForButtonBackConnectToServer;
+    private GridBagConstraints constraintsForPanelTransparentConnectToServer;
 
     //Frame Replay.
     private PanelBoard panelBoardReplay;
+    private JPanel panelTransparentReplay;
     private JButton buttonPreviousMove;
     private JButton buttonSlower;
     private JToggleButton buttonPlayPause;
-    private JButton buttonStop;
     private JButton buttonFaster;
     private JButton buttonNextMove;
     private GridBagConstraints constraintsForPanelBoardReplay;
-    private GridBagConstraints constraintsForButtonPreviousMove;
-    private GridBagConstraints constraintsForButtonSlower;
-    private GridBagConstraints constraintsForButtonPlayPause;
-    private GridBagConstraints constraintsForButtonStop;
-    private GridBagConstraints constraintsForButtonFaster;
-    private GridBagConstraints constraintsForButtonNextMove;
+    private GridBagConstraints constraintsForPanelTransparentReplay;
     private Timer timer;
 
     //Frame Rules.
     private PanelBoardRules panelBoardRules;
+    private JPanel panelTransparentRules;
     private JComboBox<String> comboBoxRules;
     private JButton buttonBackRules;
     private JTextArea textAreaRules;
     private JScrollPane scrollPaneRules;
     private GridBagConstraints constraintsForPanelBoardRules;
-    private GridBagConstraints constraintsForComboBoxRules;
-    private GridBagConstraints constraintsForButtonBackRules;
+    private GridBagConstraints constraintsForPanelTransparentRules;
     private GridBagConstraints constraintsForScrollPaneRules;
 
     //Frame Settings.
@@ -776,13 +770,13 @@ public class GUI
                 frame.setIconImage(iconFrame);
                 frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-                //Panel Background.
-                panelBackground = new PanelBackground(background);
-                frame.setContentPane(panelBackground);
-
                 //GridBag layout manager.
                 gridBagLayout = new GridBagLayout();
-                frame.getContentPane().setLayout(gridBagLayout);
+
+                //Panel Background.
+                panelBackground = new PanelBackground(background);
+                panelBackground.setLayout(gridBagLayout);
+                frame.setContentPane(panelBackground);
 
                 //File Chooser.
                 fileChooser = new JFileChooser();
@@ -999,6 +993,9 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
+                ipCorrect = false;
+                portCorrect = true;
+
                 //Label IP.
                 labelIp = new JLabel(text.getIpAddress());
                 labelIp.setPreferredSize(new Dimension(155, 100));
@@ -1006,7 +1003,7 @@ public class GUI
                 constraintsForLabelIp = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 570), 0, 0);
+                        new Insets(0, 10, 0, 10), 0, 0);
 
                 //Text Field IP.
                 PlainDocument documentForTextFieldIp = new PlainDocument();
@@ -1022,16 +1019,16 @@ public class GUI
                         new EmptyBorder(15, 5, 15, 5)));
                 textFieldIp.setFont(fontChinese.deriveFont(Font.BOLD, 35.f));
                 constraintsForTextFieldIp = new GridBagConstraints(
-                        0, 0, 1, 1, 0, 0,
-                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 180), 0, 0);
+                        1, 0, 1, 1, 0, 0,
+                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(0, 10, 0, 10), 0, 0);
 
                 //Label IP Correctness Icon.
-                labelIpCorrectnessIcon = new JLabel(iconCorrect);
+                labelIpCorrectnessIcon = new JLabel(iconIncorrect);
                 constraintsForLabelIpCorrectnessIcon = new GridBagConstraints(
-                        0, 0, 1, 1, 0, 0,
+                        2, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 120, 0, 0), 0, 0);
+                        new Insets(0, 10, 0, 10), 0, 0);
 
                 //Text Area IP Tip.
                 textAreaIpTip = new JTextArea(2, 10);
@@ -1043,10 +1040,11 @@ public class GUI
                 textAreaIpTip.setWrapStyleWord(true);
                 textAreaIpTip.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
                 textAreaIpTip.setCaretPosition(0);
+                textAreaIpTip.setText(text.getIpTip());
                 constraintsForTextAreaIpTip = new GridBagConstraints(
-                        0, 0, 1, 1, 0, 0,
+                        3, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 480, 0, 0), 0, 0);
+                        new Insets(0, 20, 0, 10), 0, 0);
 
                 //Label Port.
                 labelPort = new JLabel(text.getPort());
@@ -1055,7 +1053,7 @@ public class GUI
                 constraintsForLabelPort = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(30, 0, 0, 540), 0, 0);
+                        new Insets(30, 10, 0, 10), 0, 0);
 
                 //Text Field Port.
                 PlainDocument documentForTextFieldPort = new PlainDocument();
@@ -1071,16 +1069,16 @@ public class GUI
                         new EmptyBorder(15, 5, 15, 5)));
                 textFieldPort.setFont(fontChinese.deriveFont(Font.BOLD, 35.f));
                 constraintsForTextFieldPort = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
-                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(30, 0, 0, 275), 0, 0);
+                        1, 1, 1, 1, 0, 0,
+                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(30, 10, 0, 10), 0, 0);
 
                 //Label Port Correctness Icon.
                 labelPortCorrectnessIcon = new JLabel(iconCorrect);
                 constraintsForLabelPortCorrectnessIcon = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                        2, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(30, 120, 0, 0), 0, 0);
+                        new Insets(30, 10, 0, 10), 0, 0);
 
                 //Text Area Port Tip.
                 textAreaPortTip = new JTextArea(2, 10);
@@ -1092,49 +1090,61 @@ public class GUI
                 textAreaPortTip.setWrapStyleWord(true);
                 textAreaPortTip.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
                 textAreaPortTip.setCaretPosition(0);
+                textAreaPortTip.setText("");
                 constraintsForTextAreaPortTip = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                        3, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(30, 480, 0, 0), 0, 0);
+                        new Insets(30, 20, 0, 10), 0, 0);
+
+                //Panel Transparent.
+                panelTransparentConnectToServer = new JPanel();
+                panelTransparentConnectToServer.setOpaque(false);
+                panelTransparentConnectToServer.setLayout(gridBagLayout);
+                constraintsForPanelTransparentConnectToServer = new GridBagConstraints(
+                        0, 2, 4, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 0), 0, 0);
 
                 //Button Connect.
                 buttonConnect = new JButton(text.getConnect());
-                buttonConnect.setPreferredSize(new Dimension(250, 100));
+                buttonConnect.setPreferredSize(new Dimension(230, 100));
+                buttonConnect.setEnabled(false);
                 buttonConnect.setBackground(Color.WHITE);
                 buttonConnect.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonConnect.setFont(fontChinese.deriveFont(Font.BOLD, 36.f));
-                constraintsForButtonConnect = new GridBagConstraints(
-                        0, 2, 1, 1, 0, 0,
+                buttonConnect.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
+                GridBagConstraints constraintsForButtonConnect = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(80, 0, 0, 400), 0, 0);
+                        new Insets(80, 20, 20, 20), 0, 0);
                 buttonConnect.addActionListener(e->connectToServer()); //TODO
+                panelTransparentConnectToServer.add(buttonConnect, constraintsForButtonConnect);
 
-                //Button Disconnect. //TODO
+                //Button Disconnect. //TODO Disconnect
                 buttonDisconnect = new JButton(text.getConnect());
-                buttonDisconnect.setPreferredSize(new Dimension(250, 100));
+                buttonDisconnect.setPreferredSize(new Dimension(230, 100));
+                buttonDisconnect.setEnabled(false);
                 buttonDisconnect.setBackground(Color.WHITE);
                 buttonDisconnect.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonDisconnect.setFont(fontChinese.deriveFont(Font.BOLD, 36.f));
-                constraintsForButtonDisconnect = new GridBagConstraints(
-                        0, 2, 1, 1, 0, 0,
+                buttonDisconnect.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
+                GridBagConstraints constraintsForButtonDisconnect = new GridBagConstraints(
+                        1, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(80, 0, 0, 0), 0, 0);
-                buttonDisconnect.addActionListener(e->connectToServer()); //TODO
+                        new Insets(80, 20, 20, 20), 0, 0);
+//                buttonDisconnect.addActionListener(e->connectToServer()); //TODO
+                panelTransparentConnectToServer.add(buttonDisconnect, constraintsForButtonDisconnect);
 
                 //Button Back.
                 buttonBackConnectToServer = new JButton(text.getBack());
-                buttonBackConnectToServer.setPreferredSize(new Dimension(200, 100));
+                buttonBackConnectToServer.setPreferredSize(new Dimension(180, 100));
                 buttonBackConnectToServer.setBackground(Color.WHITE);
                 buttonBackConnectToServer.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonBackConnectToServer.setFont(fontChinese.deriveFont(Font.BOLD, 36.f));
-                constraintsForButtonBackConnectToServer = new GridBagConstraints(
-                        0, 2, 1, 1, 0, 0,
+                buttonBackConnectToServer.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
+                GridBagConstraints constraintsForButtonBackConnectToServer = new GridBagConstraints(
+                        2, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(80, 400, 0, 0), 0, 0);
+                        new Insets(80, 20, 20, 20), 0, 0);
                 buttonBackConnectToServer.addActionListener(e->showPreviousFrame());
-
-                setIpIncorrect();
-                setPortCorrect();
+                panelTransparentConnectToServer.add(buttonBackConnectToServer, constraintsForButtonBackConnectToServer);
             });
         }
         catch (Exception e)
@@ -1156,17 +1166,27 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0);
 
+                //Panel Transparent.
+                panelTransparentReplay = new JPanel();
+                panelTransparentReplay.setOpaque(false);
+                panelTransparentReplay.setLayout(gridBagLayout);
+                constraintsForPanelTransparentReplay = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 0), 0, 0);
+
                 //Button Previous Move.
                 buttonPreviousMove = new JButton(iconPreviousMove);
                 buttonPreviousMove.setPreferredSize(new Dimension(60, 60));
                 buttonPreviousMove.setOpaque(false);
                 buttonPreviousMove.setBackground(Color.WHITE);
                 buttonPreviousMove.setBorder(new LineBorder(Color.BLACK, 2));
-                constraintsForButtonPreviousMove = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                GridBagConstraints constraintsForButtonPreviousMove = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 0, 10, 450), 0, 0);
+                        new Insets(10, 10, 10, 10), 0, 0);
                 buttonPreviousMove.addActionListener(e->replay.previousMove());
+                panelTransparentReplay.add(buttonPreviousMove, constraintsForButtonPreviousMove);
 
                 //Button Slower.
                 buttonSlower = new JButton(iconSlower);
@@ -1174,11 +1194,12 @@ public class GUI
                 buttonSlower.setOpaque(false);
                 buttonSlower.setBackground(Color.WHITE);
                 buttonSlower.setBorder(new LineBorder(Color.BLACK, 2));
-                constraintsForButtonSlower = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                GridBagConstraints constraintsForButtonSlower = new GridBagConstraints(
+                        1, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 0, 10, 270), 0, 0);
+                        new Insets(10, 10, 10, 10), 0, 0);
                 buttonSlower.addActionListener(e-> replaySlower());
+                panelTransparentReplay.add(buttonSlower, constraintsForButtonSlower);
 
                 //Button Play Pause.
                 buttonPlayPause = new JToggleButton(iconPlay, false);
@@ -1187,23 +1208,25 @@ public class GUI
                 buttonPlayPause.setBackground(Color.WHITE);
                 buttonPlayPause.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonPlayPause.setSelectedIcon(iconPause);
-                constraintsForButtonPlayPause = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                GridBagConstraints constraintsForButtonPlayPause = new GridBagConstraints(
+                        2, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 0, 10, 90), 0, 0);
+                        new Insets(10, 10, 10, 10), 0, 0);
                 buttonPlayPause.addActionListener(this::replayPlayPause);
+                panelTransparentReplay.add(buttonPlayPause, constraintsForButtonPlayPause);
 
                 //Button Stop.
-                buttonStop = new JButton(iconStop);
+                JButton buttonStop = new JButton(iconStop);
                 buttonStop.setPreferredSize(new Dimension(60, 60));
                 buttonStop.setOpaque(false);
                 buttonStop.setBackground(Color.WHITE);
                 buttonStop.setBorder(new LineBorder(Color.BLACK, 2));
-                constraintsForButtonStop = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                GridBagConstraints constraintsForButtonStop = new GridBagConstraints(
+                        3, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 90, 10, 0), 0, 0);
+                        new Insets(10, 10, 10, 10), 0, 0);
                 buttonStop.addActionListener(e->replayStop());
+                panelTransparentReplay.add(buttonStop, constraintsForButtonStop);
 
                 //Button Faster.
                 buttonFaster = new JButton(iconFaster);
@@ -1211,11 +1234,12 @@ public class GUI
                 buttonFaster.setOpaque(false);
                 buttonFaster.setBackground(Color.WHITE);
                 buttonFaster.setBorder(new LineBorder(Color.BLACK, 2));
-                constraintsForButtonFaster = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                GridBagConstraints constraintsForButtonFaster = new GridBagConstraints(
+                        4, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 270, 10, 0), 0, 0);
+                        new Insets(10, 10, 10, 10), 0, 0);
                 buttonFaster.addActionListener(e-> replayFaster());
+                panelTransparentReplay.add(buttonFaster, constraintsForButtonFaster);
 
                 //Button Next Move.
                 buttonNextMove = new JButton(iconNextMove);
@@ -1223,11 +1247,12 @@ public class GUI
                 buttonNextMove.setOpaque(false);
                 buttonNextMove.setBackground(Color.WHITE);
                 buttonNextMove.setBorder(new LineBorder(Color.BLACK, 2));
-                constraintsForButtonNextMove = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                GridBagConstraints constraintsForButtonNextMove = new GridBagConstraints(
+                        5, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 450, 10, 0), 0, 0);
+                        new Insets(10, 10, 10, 10), 0, 0);
                 buttonNextMove.addActionListener(e->replay.nextMove());
+                panelTransparentReplay.add(buttonNextMove, constraintsForButtonNextMove);
 
                 //Timer.
                 timer = new Timer(500, e->replay.nextMove());
@@ -1253,6 +1278,15 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0);
 
+                //Panel Transparent.
+                panelTransparentRules = new JPanel();
+                panelTransparentRules.setOpaque(false);
+                panelTransparentRules.setLayout(gridBagLayout);
+                constraintsForPanelTransparentRules = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 0), 0, 0);
+
                 //Combo Box.
                 comboBoxRules = new JComboBox<>();
                 comboBoxRules.setPreferredSize(new Dimension(135, 40));
@@ -1267,11 +1301,12 @@ public class GUI
                 comboBoxRules.addItem(text.getChariot());
                 comboBoxRules.addItem(text.getCannon());
                 comboBoxRules.addItem(text.getSoldier());
-                constraintsForComboBoxRules = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                GridBagConstraints constraintsForComboBoxRules = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 0, 10, 160), 0, 0);
+                        new Insets(10, 10, 10, 10), 0, 0);
                 comboBoxRules.addActionListener(e->changeDisplayedRule());
+                panelTransparentRules.add(comboBoxRules, constraintsForComboBoxRules);
 
                 //Button Back.
                 buttonBackRules = new JButton(text.getBack());
@@ -1279,11 +1314,12 @@ public class GUI
                 buttonBackRules.setBackground(Color.WHITE);
                 buttonBackRules.setBorder(new LineBorder(Color.BLACK, 1));
                 buttonBackRules.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
-                constraintsForButtonBackRules = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
+                GridBagConstraints constraintsForButtonBackRules = new GridBagConstraints(
+                        1, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 120, 10, 0), 0, 0);
+                        new Insets(10, 10, 10, 10), 0, 0);
                 buttonBackRules.addActionListener(e->showPreviousFrame());
+                panelTransparentRules.add(buttonBackRules, constraintsForButtonBackRules);
 
                 //Text Area.
                 textAreaRules = new JTextArea(2, 1);
@@ -1306,8 +1342,6 @@ public class GUI
                         0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                         new Insets(0, 0, 0, 0), 0, 0);
-
-
             });
         }
         catch (Exception e)
@@ -1370,7 +1404,7 @@ public class GUI
                 sliderGainMusic.setOpaque(false);
                 constraintsForSliderGainMusic = new GridBagConstraints(
                         2, 1, 1, 1, 0, 0,
-                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 30), 0, 0);
                 sliderGainMusic.addChangeListener(this::changeGainMusic);
 
@@ -1402,7 +1436,7 @@ public class GUI
                 sliderGainSfx.setOpaque(false);
                 constraintsForSliderGainSfx = new GridBagConstraints(
                         2, 2, 1, 1, 0, 0,
-                        GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 30), 0, 0);
                 sliderGainSfx.addChangeListener(this::changeGainSfx);
 
@@ -1569,9 +1603,7 @@ public class GUI
             frame.getContentPane().add(textFieldPort, constraintsForTextFieldPort);
             frame.getContentPane().add(labelPortCorrectnessIcon, constraintsForLabelPortCorrectnessIcon);
             frame.getContentPane().add(textAreaPortTip, constraintsForTextAreaPortTip);
-            frame.getContentPane().add(buttonConnect, constraintsForButtonConnect);
-            frame.getContentPane().add(buttonDisconnect, constraintsForButtonDisconnect);
-            frame.getContentPane().add(buttonBackConnectToServer, constraintsForButtonBackConnectToServer);
+            frame.getContentPane().add(panelTransparentConnectToServer, constraintsForPanelTransparentConnectToServer);
             repaint();
         });
     }
@@ -1582,12 +1614,7 @@ public class GUI
             addToPreviousFrames(FrameType.REPLAY);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(panelBoardReplay, constraintsForPanelBoardReplay);
-            frame.getContentPane().add(buttonPreviousMove, constraintsForButtonPreviousMove);
-            frame.getContentPane().add(buttonSlower, constraintsForButtonSlower);
-            frame.getContentPane().add(buttonPlayPause, constraintsForButtonPlayPause);
-            frame.getContentPane().add(buttonStop, constraintsForButtonStop);
-            frame.getContentPane().add(buttonFaster, constraintsForButtonFaster);
-            frame.getContentPane().add(buttonNextMove, constraintsForButtonNextMove);
+            frame.getContentPane().add(panelTransparentReplay, constraintsForPanelTransparentReplay);
             repaint();
         });
     }
@@ -1598,8 +1625,7 @@ public class GUI
             addToPreviousFrames(FrameType.RULES);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(panelBoardRules, constraintsForPanelBoardRules);
-            frame.getContentPane().add(comboBoxRules, constraintsForComboBoxRules);
-            frame.getContentPane().add(buttonBackRules, constraintsForButtonBackRules);
+            frame.getContentPane().add(panelTransparentRules, constraintsForPanelTransparentRules);
             frame.getContentPane().add(scrollPaneRules, constraintsForScrollPaneRules);
             repaint();
         });

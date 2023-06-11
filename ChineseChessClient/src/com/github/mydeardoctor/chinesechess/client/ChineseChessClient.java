@@ -8,8 +8,6 @@ package com.github.mydeardoctor.chinesechess.client;
     Equals вместо ==.
     Лямбды выносить в отдельные функции.
 
-    GUI GridBag нормально, а не вручную
-
     Game Online Multiplayer.
  */
 public class ChineseChessClient
