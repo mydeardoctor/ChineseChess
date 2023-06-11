@@ -29,10 +29,27 @@ public class Server
     {
         this.gui = gui;
     }
-    public void restart(int portNumber, int maximumNumberOfPlayers)
+    public void start(int portNumber, int maximumNumberOfPlayers)
     {
-        stop();
-        start(portNumber, maximumNumberOfPlayers);
+        try
+        {
+            serverSocket = new ServerSocket(portNumber);
+            serverThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+            clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(maximumNumberOfPlayers);
+
+            serverIsOn = true;
+            gui.setServerOn();
+
+            serverThreadPool.execute(this::run);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+
+            serverIsOn = false;
+            gui.setServerOff();
+            gui.showDialogCouldNotStartServer();
+        }
     }
     public void stop()
     {
@@ -95,35 +112,7 @@ public class Server
 
         //Refresh GUI.
         serverIsOn = false;
-        gui.setStatusBarText(gui.getText().getServerIsOff());
-        gui.enableButtonStartServer();
-        gui.disableButtonStopServer();
-    }
-    private void start(int portNumber, int maximumNumberOfPlayers)
-    {
-        try
-        {
-            serverSocket = new ServerSocket(portNumber);
-            serverThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-            clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(maximumNumberOfPlayers);
-
-            serverIsOn = true;
-            gui.setStatusBarText(gui.getText().getServerIsOn());
-            gui.disableButtonStartServer();
-            gui.enableButtonStopServer();
-
-            serverThreadPool.execute(this::run);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-
-            serverIsOn = false;
-            gui.setStatusBarText(gui.getText().getServerIsOff());
-            gui.enableButtonStartServer();
-            gui.disableButtonStopServer();
-            gui.showDialogCouldNotStartServer();
-        }
+        gui.setServerOff();
     }
     private void run()
     {

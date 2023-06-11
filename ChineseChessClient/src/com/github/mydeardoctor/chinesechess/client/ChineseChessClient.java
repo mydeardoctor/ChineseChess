@@ -8,6 +8,8 @@ package com.github.mydeardoctor.chinesechess.client;
     Equals вместо ==.
     Лямбды выносить в отдельные функции.
 
+    GUI GridBag нормально, а не вручную
+
     Game Online Multiplayer.
  */
 public class ChineseChessClient
@@ -28,6 +30,7 @@ public class ChineseChessClient
         gameLocalMultiplayer.setReplay(replay);
         gameLocalMultiplayer.setGui(gui);
         gameLocalMultiplayer.setMusicPlayer(musicPlayer);
+        client.setGui(gui);
         replay.setGui(gui);
         gui.setGameSinglePlayer(gameSinglePlayer);
         gui.setGameLocalMultiplayer(gameLocalMultiplayer);

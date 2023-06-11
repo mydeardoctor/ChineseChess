@@ -119,6 +119,7 @@ public class GUI
     private JLabel labelPortCorrectnessIcon;
     private JTextArea textAreaPortTip;
     private JButton buttonConnect;
+    private JButton buttonDisconnect;
     private JButton buttonBackConnectToServer;
     private GridBagConstraints constraintsForLabelIp;
     private GridBagConstraints constraintsForTextFieldIp;
@@ -129,6 +130,7 @@ public class GUI
     private GridBagConstraints constraintsForLabelPortCorrectnessIcon;
     private GridBagConstraints constraintsForTextAreaPortTip;
     private GridBagConstraints constraintsForButtonConnect;
+    private GridBagConstraints constraintsForButtonDisconnect;
     private GridBagConstraints constraintsForButtonBackConnectToServer;
 
     //Frame Replay.
@@ -1107,6 +1109,18 @@ public class GUI
                         new Insets(80, 0, 0, 400), 0, 0);
                 buttonConnect.addActionListener(e->connectToServer()); //TODO
 
+                //Button Disconnect. //TODO
+                buttonDisconnect = new JButton(text.getConnect());
+                buttonDisconnect.setPreferredSize(new Dimension(250, 100));
+                buttonDisconnect.setBackground(Color.WHITE);
+                buttonDisconnect.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonDisconnect.setFont(fontChinese.deriveFont(Font.BOLD, 36.f));
+                constraintsForButtonDisconnect = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(80, 0, 0, 0), 0, 0);
+                buttonDisconnect.addActionListener(e->connectToServer()); //TODO
+
                 //Button Back.
                 buttonBackConnectToServer = new JButton(text.getBack());
                 buttonBackConnectToServer.setPreferredSize(new Dimension(200, 100));
@@ -1556,6 +1570,7 @@ public class GUI
             frame.getContentPane().add(labelPortCorrectnessIcon, constraintsForLabelPortCorrectnessIcon);
             frame.getContentPane().add(textAreaPortTip, constraintsForTextAreaPortTip);
             frame.getContentPane().add(buttonConnect, constraintsForButtonConnect);
+            frame.getContentPane().add(buttonDisconnect, constraintsForButtonDisconnect);
             frame.getContentPane().add(buttonBackConnectToServer, constraintsForButtonBackConnectToServer);
             repaint();
         });
@@ -1748,20 +1763,14 @@ public class GUI
 
                 //Get Port number.
                 int portNumber = Integer.parseInt(textFieldPort.getText());
-                client.connectToServer(ipAddress, portNumber);
+
+                client.reconnect(ipAddress, portNumber);
             }
             catch (Exception e)
             {
                 showDialogCouldNotConnectToServer();
             }
         });
-    }
-    private void showDialogCouldNotConnectToServer()
-    {
-        SwingUtilities.invokeLater(()->
-                JOptionPane.showMessageDialog(frame,
-                        text.getCouldNotConnectToServer(), text.getClientError(), JOptionPane.ERROR_MESSAGE)
-        );
     }
     private void replaySlower()
     {
@@ -2129,6 +2138,13 @@ public class GUI
                 buttonConnect.setEnabled(true);
             }
         });
+    }
+    public void showDialogCouldNotConnectToServer()
+    {
+        SwingUtilities.invokeLater(()->
+                JOptionPane.showMessageDialog(frame,
+                        text.getCouldNotConnectToServer(), text.getClientError(), JOptionPane.ERROR_MESSAGE)
+        );
     }
     public void setPanelBoardReplayGrid(HashMap<Location, Tile> grid)
     {

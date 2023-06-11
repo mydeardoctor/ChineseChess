@@ -122,11 +122,6 @@ public class TextEnglish extends Text
         return "Could not start server!";
     }
     @Override
-    public String getCouldNotStopServer()
-    {
-        return "Could not stop server!";
-    }
-    @Override
     public String getBack()
     {
         return "Back";

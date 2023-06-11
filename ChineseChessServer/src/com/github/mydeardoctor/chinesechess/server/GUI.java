@@ -303,6 +303,9 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
+                portCorrect = true;
+                playersCorrect = true;
+
                 //Label Port.
                 labelPort = new JLabel(text.getPort());
                 labelPort.setPreferredSize(new Dimension(100, 100));
@@ -347,6 +350,7 @@ public class GUI
                 textAreaPortTip.setWrapStyleWord(true);
                 textAreaPortTip.setFont(fontChinese.deriveFont(Font.BOLD, 33.f));
                 textAreaPortTip.setCaretPosition(0);
+                textAreaPortTip.setText("");
                 constraintsForTextAreaPortTip = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
@@ -403,6 +407,7 @@ public class GUI
                 textAreaPlayersTip.setWrapStyleWord(true);
                 textAreaPlayersTip.setFont(fontChinese.deriveFont(Font.BOLD, 33.f));
                 textAreaPlayersTip.setCaretPosition(0);
+                textAreaPlayersTip.setText("");
                 constraintsForTextAreaPlayersTip = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
@@ -419,7 +424,7 @@ public class GUI
                         0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 0, 0, 450), 0, 0);
-                buttonStartServer.addActionListener(e->restartServer());
+                buttonStartServer.addActionListener(e->startServer());
 
                 //Button Stop.
                 buttonStopServer = new JButton(text.getStop());
@@ -445,9 +450,6 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 480, 0, 0), 0, 0);
                 buttonBackStartServer.addActionListener(e->showPreviousFrame());
-
-                setPortCorrect();
-                setPlayersCorrect();
             });
         }
         catch (Exception e)
@@ -578,7 +580,7 @@ public class GUI
                         text.getAboutVerbose(), text.getAbout(), JOptionPane.INFORMATION_MESSAGE)
         );
     }
-    private void restartServer()
+    private void startServer()
     {
         SwingUtilities.invokeLater(()->
         {
@@ -586,7 +588,7 @@ public class GUI
             {
                 int portNumber = Integer.parseInt(textFieldPort.getText());
                 int maximumNumberOfPlayers = Integer.parseInt(textFieldPlayers.getText());
-                server.restart(portNumber, maximumNumberOfPlayers);
+                server.start(portNumber, maximumNumberOfPlayers);
             }
             catch (Exception e)
             {
@@ -710,6 +712,14 @@ public class GUI
             frame.repaint();
         });
     }
+    public Text getText()
+    {
+        return text;
+    }
+    public void setStatusBarText(String message)
+    {
+        SwingUtilities.invokeLater(()->statusBar.setText(message));
+    }
     public void setPortIncorrect()
     {
         SwingUtilities.invokeLater(()->
@@ -756,21 +766,24 @@ public class GUI
             }
         });
     }
-    public void disableButtonStartServer()
+    public void setServerOff()
     {
-        SwingUtilities.invokeLater(()->buttonStartServer.setEnabled(false));
+        setStatusBarText(text.getServerIsOff());
+        if(portCorrect && playersCorrect)
+        {
+            buttonStartServer.setEnabled(true);
+        }
+        else
+        {
+            buttonStartServer.setEnabled(false);
+        }
+        buttonStopServer.setEnabled(false);
     }
-    public void enableButtonStartServer()
+    public void setServerOn()
     {
-        SwingUtilities.invokeLater(()->buttonStartServer.setEnabled(true));
-    }
-    public void disableButtonStopServer()
-    {
-        SwingUtilities.invokeLater(()->buttonStopServer.setEnabled(false));
-    }
-    public void enableButtonStopServer()
-    {
-        SwingUtilities.invokeLater(()->buttonStopServer.setEnabled(true));
+        setStatusBarText(text.getServerIsOn());
+        buttonStartServer.setEnabled(false);
+        buttonStopServer.setEnabled(true);
     }
     public void showDialogCouldNotStartServer()
     {
@@ -778,20 +791,5 @@ public class GUI
                 JOptionPane.showMessageDialog(frame,
                         text.getCouldNotStartServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE)
         );
-    }
-    public void showDialogCouldNotStopServer() //TODO no usages
-    {
-        SwingUtilities.invokeLater(()->
-                JOptionPane.showMessageDialog(frame,
-                        text.getCouldNotStopServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE)
-        );
-    }
-    public Text getText()
-    {
-        return text;
-    }
-    public void setStatusBarText(String message)
-    {
-        SwingUtilities.invokeLater(()->statusBar.setText(message));
     }
 }

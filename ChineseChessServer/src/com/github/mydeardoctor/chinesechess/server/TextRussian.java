@@ -122,11 +122,6 @@ class TextRussian extends Text
         return "Не удалось запустить сервер!";
     }
     @Override
-    public String getCouldNotStopServer()
-    {
-        return "Не удалось остановить сервер!";
-    }
-    @Override
     public String getBack()
     {
         return "Назад";

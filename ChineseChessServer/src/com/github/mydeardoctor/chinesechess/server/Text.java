@@ -33,7 +33,6 @@ public abstract class Text
     public abstract String getNo();
     public abstract String getServerError();
     public abstract String getCouldNotStartServer();
-    public abstract String getCouldNotStopServer();
     public abstract String getBack();
 
     //Frame Settings.
