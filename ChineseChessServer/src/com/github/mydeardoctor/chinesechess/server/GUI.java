@@ -51,10 +51,12 @@ public class GUI
     private boolean portCorrect;
     private boolean playersCorrect;
     private JLabel labelPort;
+    private DocumentListenerForTextFieldPort documentListenerForTextFieldPort;
     private JTextField textFieldPort;
     private JLabel labelPortCorrectnessIcon;
     private JTextArea textAreaPortTip;
     private JTextArea textAreaPlayers;
+    private DocumentListenerForTextFieldPlayers documentListenerForTextFieldPlayers;
     private JTextField textFieldPlayers;
     private JLabel labelPlayersCorrectnessIcon;
     private JTextArea textAreaPlayersTip;
@@ -323,8 +325,7 @@ public class GUI
                 DocumentFilterForTextFieldPort documentFilterForTextFieldPort =
                         new DocumentFilterForTextFieldPort();
                 documentForTextFieldPort.setDocumentFilter(documentFilterForTextFieldPort);
-                DocumentListenerForTextFieldPort documentListenerForTextFieldPort =
-                        new DocumentListenerForTextFieldPort(this);
+                documentListenerForTextFieldPort = new DocumentListenerForTextFieldPort(this);
                 documentForTextFieldPort.addDocumentListener(documentListenerForTextFieldPort);
 
                 textFieldPort = new JTextField(documentForTextFieldPort, "4242", 5);
@@ -380,8 +381,7 @@ public class GUI
                 DocumentFilterForTextFieldPlayers documentFilterForTextFieldPlayers =
                         new DocumentFilterForTextFieldPlayers();
                 documentForTextFieldPlayers.setDocumentFilter(documentFilterForTextFieldPlayers);
-                DocumentListenerForTextFieldPlayers documentListenerForTextFieldPlayers =
-                        new DocumentListenerForTextFieldPlayers(this);
+                documentListenerForTextFieldPlayers = new DocumentListenerForTextFieldPlayers(this);
                 documentForTextFieldPlayers.addDocumentListener(documentListenerForTextFieldPlayers);
 
                 textFieldPlayers = new JTextField(documentForTextFieldPlayers, "2", 5);
@@ -597,13 +597,15 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            try
+            boolean resultPort = documentListenerForTextFieldPort.checkPort(textFieldPort.getText());
+            boolean resultPlayers = documentListenerForTextFieldPlayers.checkPlayers(textFieldPlayers.getText());
+            if(resultPort && resultPlayers)
             {
                 int portNumber = Integer.parseInt(textFieldPort.getText());
                 int maximumNumberOfPlayers = Integer.parseInt(textFieldPlayers.getText());
                 server.start(portNumber, maximumNumberOfPlayers);
             }
-            catch (Exception e)
+            else
             {
                 showDialogCouldNotStartServer();
             }
@@ -725,10 +727,6 @@ public class GUI
             frame.repaint();
         });
     }
-    public Text getText()
-    {
-        return text;
-    }
     public void setStatusBarText(String message)
     {
         SwingUtilities.invokeLater(()->statusBar.setText(message));
@@ -782,14 +780,7 @@ public class GUI
     public void setServerOff()
     {
         setStatusBarText(text.getServerIsOff());
-        if(portCorrect && playersCorrect)
-        {
-            buttonStartServer.setEnabled(true);
-        }
-        else
-        {
-            buttonStartServer.setEnabled(false);
-        }
+        buttonStartServer.setEnabled(portCorrect && playersCorrect);
         buttonStopServer.setEnabled(false);
     }
     public void setServerOn()

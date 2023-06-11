@@ -227,6 +227,11 @@ public class TextEnglish extends Text
         return "Connect";
     }
     @Override
+    public String getDisconnect()
+    {
+        return "Disconnect";
+    }
+    @Override
     public String getClientError()
     {
         return "Client error";

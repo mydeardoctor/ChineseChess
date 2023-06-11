@@ -27,24 +27,44 @@ public class DocumentListenerForTextFieldPlayers implements DocumentListener
     @Override
     public void insertUpdate(DocumentEvent e)
     {
-        checkPlayers(e);
+        changeGUI(e);
     }
     @Override
     public void removeUpdate(DocumentEvent e)
     {
-        checkPlayers(e);
+        changeGUI(e);
     }
     @Override
     public void changedUpdate(DocumentEvent e)
     {
-        checkPlayers(e);
+        changeGUI(e);
     }
-    private void checkPlayers(DocumentEvent e)
+    private void changeGUI(DocumentEvent e)
     {
         try
         {
             String playersText = e.getDocument().getText(0, e.getDocument().getLength());
+            boolean result = checkPlayers(playersText);
+            if(result)
+            {
+                gui.setPlayersCorrect();
+            }
+            else
+            {
+                gui.setPlayersIncorrect();
+            }
+        }
+        catch(Exception ex)
+        {
+            gui.setPlayersIncorrect();
+        }
+    }
+    public boolean checkPlayers(String playersText)
+    {
+        boolean result;
 
+        try
+        {
             //Check range with regEx.
             Matcher matcherForPlayersRange = patternForPlayersRange.matcher(playersText);
             if(matcherForPlayersRange.matches())
@@ -53,23 +73,18 @@ public class DocumentListenerForTextFieldPlayers implements DocumentListener
                 int playersNumber = Integer.parseInt(playersText);
 
                 //Check range with math.
-                if((playersNumber >= 2) && (playersNumber <= 100))
-                {
-                    gui.setPlayersCorrect();
-                }
-                else
-                {
-                    gui.setPlayersIncorrect();
-                }
+                result = (playersNumber >= 2) && (playersNumber <= 100);
             }
             else
             {
-                gui.setPlayersIncorrect();
+                result = false;
             }
         }
-        catch(Exception exception)
+        catch(Exception e)
         {
-            gui.setPlayersIncorrect();
+            result = false;
         }
+
+        return result;
     }
 }

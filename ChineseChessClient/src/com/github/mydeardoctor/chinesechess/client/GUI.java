@@ -111,10 +111,12 @@ public class GUI
     private boolean ipCorrect;
     private boolean portCorrect;
     private JLabel labelIp;
+    private DocumentListenerForTextFieldIp documentListenerForTextFieldIp;
     private JTextField textFieldIp;
     private JLabel labelIpCorrectnessIcon;
     private JTextArea textAreaIpTip;
     private JLabel labelPort;
+    private DocumentListenerForTextFieldPort documentListenerForTextFieldPort;
     private JTextField textFieldPort;
     private JLabel labelPortCorrectnessIcon;
     private JTextArea textAreaPortTip;
@@ -1010,8 +1012,7 @@ public class GUI
                 DocumentFilterForTextFieldIp documentFilterForTextFieldIp =
                         new DocumentFilterForTextFieldIp();
                 documentForTextFieldIp.setDocumentFilter(documentFilterForTextFieldIp);
-                DocumentListenerForTextFieldIp documentListenerForTextFieldIp =
-                        new DocumentListenerForTextFieldIp(this);
+                documentListenerForTextFieldIp = new DocumentListenerForTextFieldIp(this);
                 documentForTextFieldIp.addDocumentListener(documentListenerForTextFieldIp);
 
                 textFieldIp = new JTextField(documentForTextFieldIp, "", 10);
@@ -1060,8 +1061,7 @@ public class GUI
                 DocumentFilterForTextFieldPort documentFilterForTextFieldPort =
                         new DocumentFilterForTextFieldPort();
                 documentForTextFieldPort.setDocumentFilter(documentFilterForTextFieldPort);
-                DocumentListenerForTextFieldPort documentListenerForTextFieldPort =
-                        new DocumentListenerForTextFieldPort(this);
+                documentListenerForTextFieldPort = new DocumentListenerForTextFieldPort(this);
                 documentForTextFieldPort.addDocumentListener(documentListenerForTextFieldPort);
 
                 textFieldPort = new JTextField(documentForTextFieldPort, "4242", 5);
@@ -1116,11 +1116,11 @@ public class GUI
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 20, 20, 20), 0, 0);
-                buttonConnect.addActionListener(e->connectToServer()); //TODO
+                buttonConnect.addActionListener(e->connectToServer());
                 panelTransparentConnectToServer.add(buttonConnect, constraintsForButtonConnect);
 
-                //Button Disconnect. //TODO Disconnect
-                buttonDisconnect = new JButton(text.getConnect());
+                //Button Disconnect.
+                buttonDisconnect = new JButton(text.getDisconnect());
                 buttonDisconnect.setPreferredSize(new Dimension(230, 100));
                 buttonDisconnect.setEnabled(false);
                 buttonDisconnect.setBackground(Color.WHITE);
@@ -1130,7 +1130,7 @@ public class GUI
                         1, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 20, 20, 20), 0, 0);
-//                buttonDisconnect.addActionListener(e->connectToServer()); //TODO
+                buttonDisconnect.addActionListener(e->disconnectFromServer());
                 panelTransparentConnectToServer.add(buttonDisconnect, constraintsForButtonDisconnect);
 
                 //Button Back.
@@ -1765,38 +1765,23 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            try
+            boolean resultIp = documentListenerForTextFieldIp.checkIp(textFieldIp.getText());
+            boolean resultPort = documentListenerForTextFieldPort.checkPort(textFieldPort.getText());
+            if(resultIp && resultPort)
             {
-                //Get IP address.
-                String ipAddressWithLeadingZeros = textFieldIp.getText();
-                //Remove leading zeros.
-                Pattern patternForIp = Pattern.compile(DocumentListenerForTextFieldIp.REGEX_FOR_IP);
-                Matcher matcherForIp = patternForIp.matcher(ipAddressWithLeadingZeros);
-                matcherForIp.matches();
-                String byte1 = matcherForIp.group(1);
-                String byte2 = matcherForIp.group(2);
-                String byte3 = matcherForIp.group(3);
-                String byte4 = matcherForIp.group(4);
-                int[] ipAddressArray = new int[4];
-                ipAddressArray[0] = Integer.parseInt(byte1);
-                ipAddressArray[1] = Integer.parseInt(byte2);
-                ipAddressArray[2] = Integer.parseInt(byte3);
-                ipAddressArray[3] = Integer.parseInt(byte4);
-                String ipAddress =  ipAddressArray[0] + "." +
-                                    ipAddressArray[1] + "." +
-                                    ipAddressArray[2] + "." +
-                                    ipAddressArray[3];
-
-                //Get Port number.
+                String ipAddress = documentListenerForTextFieldIp.getIpAddressWithoutLeadingZeros();
                 int portNumber = Integer.parseInt(textFieldPort.getText());
-
-                client.reconnect(ipAddress, portNumber);
+                client.connect(ipAddress, portNumber);
             }
-            catch (Exception e)
+            else
             {
                 showDialogCouldNotConnectToServer();
             }
         });
+    }
+    private void disconnectFromServer() //TODO
+    {
+
     }
     private void replaySlower()
     {
@@ -2067,6 +2052,7 @@ public class GUI
                 textAreaPortTip.setText(text.getPortTip());
             }
             buttonConnect.setText(text.getConnect());
+            buttonDisconnect.setText(text.getDisconnect());
             buttonBackConnectToServer.setText(text.getBack());
 
             //Frame Rules.

@@ -33,24 +33,44 @@ public class DocumentListenerForTextFieldPort implements DocumentListener
     @Override
     public void insertUpdate(DocumentEvent e)
     {
-        checkPort(e);
+        changeGUI(e);
     }
     @Override
     public void removeUpdate(DocumentEvent e)
     {
-        checkPort(e);
+        changeGUI(e);
     }
     @Override
     public void changedUpdate(DocumentEvent e)
     {
-        checkPort(e);
+        changeGUI(e);
     }
-    private void checkPort(DocumentEvent e)
+    private void changeGUI(DocumentEvent e)
     {
         try
         {
             String portText = e.getDocument().getText(0, e.getDocument().getLength());
+            boolean result = checkPort(portText);
+            if(result)
+            {
+                gui.setPortCorrect();
+            }
+            else
+            {
+                gui.setPortIncorrect();
+            }
+        }
+        catch(Exception ex)
+        {
+            gui.setPortIncorrect();
+        }
+    }
+    public boolean checkPort(String portText)
+    {
+        boolean result;
 
+        try
+        {
             //Check range with regEx.
             Matcher matcherForPortRange = patternForPortRange.matcher(portText);
             if(matcherForPortRange.matches())
@@ -59,23 +79,18 @@ public class DocumentListenerForTextFieldPort implements DocumentListener
                 int portNumber = Integer.parseInt(portText);
 
                 //Check range with math.
-                if((portNumber >= 1024) && (portNumber <= 65535))
-                {
-                    gui.setPortCorrect();
-                }
-                else
-                {
-                    gui.setPortIncorrect();
-                }
+                result = (portNumber >= 1024) && (portNumber <= 65535);
             }
             else
             {
-                gui.setPortIncorrect();
+                result = false;
             }
         }
-        catch(Exception exception)
+        catch(Exception e)
         {
-            gui.setPortIncorrect();
+            result = false;
         }
+
+        return result;
     }
 }

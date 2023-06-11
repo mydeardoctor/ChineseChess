@@ -58,6 +58,7 @@ public abstract class Text
     public abstract String getPort();
     public abstract String getPortTip();
     public abstract String getConnect();
+    public abstract String getDisconnect();
     public abstract String getClientError();
     public abstract String getCouldNotConnectToServer();
 

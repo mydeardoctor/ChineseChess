@@ -227,6 +227,11 @@ class TextRussian extends Text
         return "Подключиться";
     }
     @Override
+    public String getDisconnect()
+    {
+        return "Отключиться";
+    }
+    @Override
     public String getClientError()
     {
         return "Ошибка Client";

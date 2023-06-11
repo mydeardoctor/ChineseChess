@@ -3,11 +3,11 @@ package com.github.mydeardoctor.chinesechess.server;
 import java.io.*;
 import java.net.Socket;
 
-public class Client
+public class Client //TODO rename
 {
-    private Socket clientSocket;
-    private ObjectInputStream objectInputStream;
+    private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
     public Client(Socket clientSocket)
     {
@@ -19,8 +19,9 @@ public class Client
 
         try
         {
-            objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
             objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            objectOutputStream.flush();
+            objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
             result = true;
         }
         catch (IOException e)
@@ -40,7 +41,7 @@ public class Client
             try
             {
                 String message = (String)(objectInputStream.readObject());
-                System.out.println(message); //TODO
+                System.out.println(message); //TODO Protocol
             }
             catch (Exception e)
             {
@@ -53,22 +54,22 @@ public class Client
     }
     private void closeResources()
     {
-        if(objectInputStream != null)
+        if(objectOutputStream != null)
         {
             try
             {
-                objectInputStream.close();
+                objectOutputStream.close();
             }
             catch (IOException e)
             {
                 e.printStackTrace();
             }
         }
-        if(objectOutputStream != null)
+        if(objectInputStream != null)
         {
             try
             {
-                objectOutputStream.close();
+                objectInputStream.close();
             }
             catch (IOException e)
             {

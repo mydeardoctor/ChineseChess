@@ -15,6 +15,7 @@ public class DocumentListenerForTextFieldIp implements DocumentListener
         "([0-9]|[0-9][0-9]|[0-1][0-9][0-9]|2[0-4][0-9]|25[0-5])" +
         "$";
     private final Pattern patternForIp;
+    private String ipAddressWithoutLeadingZeros;
     private final GUI gui;
 
     public DocumentListenerForTextFieldIp(GUI gui)
@@ -28,24 +29,44 @@ public class DocumentListenerForTextFieldIp implements DocumentListener
     @Override
     public void insertUpdate(DocumentEvent e)
     {
-        checkIp(e);
+        changeGUI(e);
     }
     @Override
     public void removeUpdate(DocumentEvent e)
     {
-        checkIp(e);
+        changeGUI(e);
     }
     @Override
     public void changedUpdate(DocumentEvent e)
     {
-        checkIp(e);
+        changeGUI(e);
     }
-    private void checkIp(DocumentEvent e)
+    private void changeGUI(DocumentEvent e)
     {
         try
         {
             String ipText = e.getDocument().getText(0, e.getDocument().getLength());
+            boolean result = checkIp(ipText);
+            if(result)
+            {
+                gui.setIpCorrect();
+            }
+            else
+            {
+                gui.setIpIncorrect();
+            }
+        }
+        catch(Exception ex)
+        {
+            gui.setIpIncorrect();
+        }
+    }
+    public boolean checkIp(String ipText)
+    {
+        boolean result;
 
+        try
+        {
             //Check with regEx.
             Matcher matcherForIp = patternForIp.matcher(ipText);
 
@@ -63,28 +84,32 @@ public class DocumentListenerForTextFieldIp implements DocumentListener
                 ipAddress[1] = Integer.parseInt(byte2);
                 ipAddress[2] = Integer.parseInt(byte3);
                 ipAddress[3] = Integer.parseInt(byte4);
+                ipAddressWithoutLeadingZeros =
+                        ipAddress[0] + "." +
+                        ipAddress[1] + "." +
+                        ipAddress[2] + "." +
+                        ipAddress[3];
 
                 //Check range with math.
-                if( (ipAddress[0] >= 0) && (ipAddress[0] <= 255) &&
-                    (ipAddress[1] >= 0) && (ipAddress[1] <= 255) &&
-                    (ipAddress[2] >= 0) && (ipAddress[2] <= 255) &&
-                    (ipAddress[3] >= 0) && (ipAddress[3] <= 255) )
-                {
-                    gui.setIpCorrect();
-                }
-                else
-                {
-                    gui.setIpIncorrect();
-                }
+                return ((ipAddress[0] >= 0) && (ipAddress[0] <= 255) &&
+                        (ipAddress[1] >= 0) && (ipAddress[1] <= 255) &&
+                        (ipAddress[2] >= 0) && (ipAddress[2] <= 255) &&
+                        (ipAddress[3] >= 0) && (ipAddress[3] <= 255));
             }
             else
             {
-                gui.setIpIncorrect();
+                result = false;
             }
         }
-        catch(Exception exception)
+        catch(Exception e)
         {
-            gui.setIpIncorrect();
+            result = false;
         }
+
+        return result;
+    }
+    public String getIpAddressWithoutLeadingZeros()
+    {
+        return ipAddressWithoutLeadingZeros;
     }
 }
