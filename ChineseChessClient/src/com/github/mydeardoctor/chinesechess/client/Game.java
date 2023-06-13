@@ -267,6 +267,7 @@ public abstract class Game
                             {
                                 unhighlightEverything();
                                 moveFigure(previouslySelectedLocation, selectedLocation);
+                                musicPlayer.playSfx();
                                 replay.addToReplayOutput(grid);
                                 nextTurn();
                             }
@@ -329,7 +330,6 @@ public abstract class Game
         grid.get(destination).setFigure(selectedFigure);        //...to a new location.
 
         gui.repaint();
-        musicPlayer.playSfx();
     }
     private void nextPhase()
     {
