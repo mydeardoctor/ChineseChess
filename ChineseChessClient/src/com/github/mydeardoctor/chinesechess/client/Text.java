@@ -52,6 +52,10 @@ public abstract class Text
     public abstract String getOnlineMultiplayer();
     public abstract String getBack();
 
+    //Frame Online.
+    public abstract String getConnectToServer();
+    public abstract String getLobby();
+
     //Frame Connect to Server.
     public abstract String getIpAddress();
     public abstract String getIpTip();

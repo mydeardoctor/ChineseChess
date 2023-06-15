@@ -1,9 +1,13 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import com.github.mydeardoctor.chinesechess.ParentLogger;
+
 public class ChineseChessClient
 {
     public static void main(String[] args)
     {
+        ParentLogger parentLogger = new ParentLogger();
+        parentLogger.initialize("ChineseChessClientLog.txt");
         GameSinglePlayer gameSinglePlayer = new GameSinglePlayer();
         GameLocalMultiplayer gameLocalMultiplayer = new GameLocalMultiplayer();
         Client client = new Client();

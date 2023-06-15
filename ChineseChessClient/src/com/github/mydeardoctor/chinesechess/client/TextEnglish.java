@@ -200,6 +200,18 @@ public class TextEnglish extends Text
         return "Back";
     }
 
+    //Frame Online.
+    @Override
+    public String getConnectToServer()
+    {
+        return "Connect to server";
+    }
+    @Override
+    public String getLobby()
+    {
+        return "Lobby";
+    }
+
     //Frame Connect to Server.
     @Override
     public String getIpAddress()

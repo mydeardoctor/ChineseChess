@@ -200,6 +200,18 @@ class TextRussian extends Text
         return "Назад";
     }
 
+    //Frame Online.
+    @Override
+    public String getConnectToServer()
+    {
+        return "Подключиться к серверу";
+    }
+    @Override
+    public String getLobby()
+    {
+        return "Лобби";
+    }
+
     //Frame Connect to Server.
     @Override
     public String getIpAddress()

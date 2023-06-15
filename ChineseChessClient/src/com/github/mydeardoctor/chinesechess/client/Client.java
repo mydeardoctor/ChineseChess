@@ -1,10 +1,12 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -30,23 +32,84 @@ public class Client
     }
     public void connect(String ipAddress, int portNumber)
     {
+        Client client = this;
         try
         {
             clientSocket = new Socket();
-            clientSocket.connect(new InetSocketAddress(ipAddress, portNumber), 3000);
-
-            if(tryToOpenStreams())
+//            clientSocket.connect(new InetSocketAddress(ipAddress, portNumber), 3000); //TODO new thread
+            //TODO block buttons
+            SwingWorker<Boolean, Void> sw = new SwingWorker<Boolean, Void>()
             {
-                gui.setConnectionOn();
+                @Override
+                protected Boolean doInBackground() throws Exception
+                {
+                    boolean result;
+                    try
+                    {
+                        clientSocket.connect(new InetSocketAddress(ipAddress, portNumber), 5000);
+                        result = true;
+                    }
+                    catch (Exception e)
+                    {
+                        result = false;
+                    }
 
-                clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-                clientThreadPool.execute(this::run);
-            }
-            else
-            {
-                gui.setConnectionOff();
-                gui.showDialogCouldNotConnectToServer();
-            }
+                    return result;
+                }
+
+                @Override
+                protected void done()
+                {
+                    try
+                    {
+                        boolean result = get();
+
+                        if(result)
+                        {
+                            if(tryToOpenStreams())
+                            {
+                                gui.setConnectionOn();
+
+                                clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+                                clientThreadPool.execute(client::run);
+                            }
+                            else
+                            {
+                                gui.setConnectionOff();
+                                gui.showDialogCouldNotConnectToServer();
+                            }
+                        }
+                        else
+                        {
+                            gui.setConnectionOff();
+                            gui.showDialogCouldNotConnectToServer();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+
+                        gui.setConnectionOff();
+                        gui.showDialogCouldNotConnectToServer();
+                    }
+
+
+                }
+            };
+            sw.execute();
+//
+//            if(tryToOpenStreams())
+//            {
+//                gui.setConnectionOn();
+//
+//                clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+//                clientThreadPool.execute(this::run);
+//            }
+//            else
+//            {
+//                gui.setConnectionOff();
+//                gui.showDialogCouldNotConnectToServer();
+//            }
         }
         catch (Exception e)
         {

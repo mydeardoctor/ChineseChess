@@ -10,6 +10,8 @@ import javax.swing.text.PlainDocument;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GUI
 {
@@ -84,6 +86,8 @@ public class GUI
 
     //Server attributes.
     private Server server;
+
+    private static Logger logger = Logger.getLogger(GUI.class.getName()); //TODO logger
 
     public GUI()
     {

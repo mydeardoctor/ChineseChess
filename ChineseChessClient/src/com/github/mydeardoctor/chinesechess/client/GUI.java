@@ -17,6 +17,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ResourceBundle;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GUI
 {
@@ -105,6 +109,18 @@ public class GUI
     private GridBagConstraints constraintsForPanelBoardInteractive;
     private GridBagConstraints constraintsForStatusBar;
 
+    //Frame Online.
+    private JButton buttonConnectToServer;
+    private JButton buttonLobby;
+    private JButton buttonBackOnFrameOnline;
+    private GridBagConstraints constraintsForButtonConnectToServer;
+    private GridBagConstraints constraintsForButtonLobby;
+    private GridBagConstraints constraintsForButtonBackOnFrameOnline;
+
+    //Frame Lobby.
+    private JButton buttonBackOnFrameLobby;
+    private GridBagConstraints constraintsForButtonBackOnFrameLobby;
+
     //Frame Connect to Server.
     private boolean ipCorrect;
     private boolean portCorrect;
@@ -191,6 +207,8 @@ public class GUI
     //Music player.
     private MusicPlayer musicPlayer;
 
+    private static Logger logger = Logger.getLogger(GUI.class.getName()); //TODO logger
+
     public GUI()
     {
         //Text
@@ -239,7 +257,9 @@ public class GUI
         initializeFrameMainMenu();
         initializeFrameGameMode();
         initializeFrameBoard();
+        initializeFrameOnline();
         initializeFrameConnectToServer();
+        initializeFrameLobby();
         initializeFrameReplay();
         initializeFrameRules();
         initializeFrameSettings();
@@ -934,7 +954,7 @@ public class GUI
                         0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
-                buttonOnlineMultiplayer.addActionListener(e->showFrameConnectToServer());
+                buttonOnlineMultiplayer.addActionListener(e->showFrameOnline());
 
                 //Button Back.
                 buttonBackGameMode = new JButton(text.getBack());
@@ -980,6 +1000,54 @@ public class GUI
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                         new Insets(0, 0, 0, 0), 0, 0);
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    private void initializeFrameOnline() //TODO сделать status bar
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                //Button Connect.
+                buttonConnectToServer = new JButton(text.getConnectToServer());
+                buttonConnectToServer.setPreferredSize(new Dimension(500, 100));
+                buttonConnectToServer.setBackground(Color.WHITE);
+                buttonConnectToServer.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonConnectToServer.setFont(fontChinese.deriveFont(Font.BOLD, 43.f));
+                constraintsForButtonConnectToServer = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
+                buttonConnectToServer.addActionListener(e->showFrameConnectToServer());
+
+                //Button Lobby.
+                buttonLobby = new JButton(text.getLobby());
+                buttonLobby.setPreferredSize(new Dimension(500, 100));
+                buttonLobby.setBackground(Color.WHITE);
+                buttonLobby.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonLobby.setFont(fontChinese.deriveFont(Font.BOLD, 43.f));
+                constraintsForButtonLobby = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
+                buttonLobby.addActionListener(e->showFrameLobby());
+
+                //Button Back.
+                buttonBackOnFrameOnline = new JButton(text.getBack());
+                buttonBackOnFrameOnline.setPreferredSize(new Dimension(200, 100));
+                buttonBackOnFrameOnline.setBackground(Color.WHITE);
+                buttonBackOnFrameOnline.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackOnFrameOnline.setFont(fontChinese.deriveFont(Font.BOLD, 43.f));
+                constraintsForButtonBackOnFrameOnline = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
+                buttonBackOnFrameOnline.addActionListener(e->showPreviousFrame());
             });
         }
         catch (Exception e)
@@ -1143,6 +1211,30 @@ public class GUI
                         new Insets(80, 20, 20, 20), 0, 0);
                 buttonBackConnectToServer.addActionListener(e->showPreviousFrame());
                 panelTransparentConnectToServer.add(buttonBackConnectToServer, constraintsForButtonBackConnectToServer);
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    private void initializeFrameLobby()
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                //Button Back.
+                buttonBackOnFrameLobby = new JButton(text.getBack());
+                buttonBackOnFrameLobby.setPreferredSize(new Dimension(200, 100));
+                buttonBackOnFrameLobby.setBackground(Color.WHITE);
+                buttonBackOnFrameLobby.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackOnFrameLobby.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonBackOnFrameLobby= new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 30, 0), 0, 0);
+                buttonBackOnFrameLobby.addActionListener(e->showPreviousFrame());
             });
         }
         catch (Exception e)
@@ -1587,11 +1679,23 @@ public class GUI
             repaint();
         });
     }
+    private void showFrameOnline()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            addToPreviousFrames(FrameType.ONLINE);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(buttonConnectToServer, constraintsForButtonConnectToServer);
+            frame.getContentPane().add(buttonLobby, constraintsForButtonLobby);
+            frame.getContentPane().add(buttonBackOnFrameOnline, constraintsForButtonBackOnFrameOnline);
+            repaint();
+        });
+    }
     private void showFrameConnectToServer()
     {
         SwingUtilities.invokeLater(()->
         {
-            addToPreviousFrames(FrameType.CONNECT_TO_SERVER);
+            addToPreviousFrames(FrameType.CONNECT);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(labelIp, constraintsForLabelIp);
             frame.getContentPane().add(textFieldIp, constraintsForTextFieldIp);
@@ -1602,6 +1706,16 @@ public class GUI
             frame.getContentPane().add(labelPortCorrectnessIcon, constraintsForLabelPortCorrectnessIcon);
             frame.getContentPane().add(textAreaPortTip, constraintsForTextAreaPortTip);
             frame.getContentPane().add(panelTransparentConnectToServer, constraintsForPanelTransparentConnectToServer);
+            repaint();
+        });
+    }
+    private void showFrameLobby()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            addToPreviousFrames(FrameType.LOBBY);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(buttonBackOnFrameLobby, constraintsForButtonBackOnFrameLobby);
             repaint();
         });
     }
@@ -1982,7 +2096,9 @@ public class GUI
                     case MAIN_MENU -> showFrameMainMenu();
                     case GAME_MODE -> showFrameGameMode();
                     case BOARD -> showFrameBoard();
-                    case CONNECT_TO_SERVER -> showFrameConnectToServer();
+                    case ONLINE -> showFrameOnline();
+                    case CONNECT -> showFrameConnectToServer();
+                    case LOBBY -> showFrameLobby();
                     case REPLAY -> showFrameReplay();
                     case RULES -> showFrameRules();
                     case SETTINGS -> showFrameSettings();
@@ -2040,6 +2156,11 @@ public class GUI
             buttonOnlineMultiplayer.setText(text.getOnlineMultiplayer());
             buttonBackGameMode.setText(text.getBack());
 
+            //Frame Online.
+            buttonConnectToServer.setText(text.getConnectToServer());
+            buttonLobby.setText(text.getLobby());
+            buttonBackOnFrameOnline.setText(text.getBack());
+
             //Frame Connect to Server.
             labelIp.setText(text.getIpAddress());
             if(ipCorrect)
@@ -2062,6 +2183,9 @@ public class GUI
             buttonConnect.setText(text.getConnect());
             buttonDisconnect.setText(text.getDisconnect());
             buttonBackConnectToServer.setText(text.getBack());
+
+            //Frame Lobby.
+            buttonBackOnFrameLobby.setText(text.getBack());
 
             //Frame Rules.
             selectedIndex = comboBoxRules.getSelectedIndex();
