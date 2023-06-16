@@ -13,12 +13,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.ResourceBundle;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,7 +33,7 @@ public class GUI
     boolean resourcesMissing;
     private final Font fontChinese;
     private final BufferedImage iconFrame;
-    private final BufferedImage background;
+    private final BufferedImage backgroundImage;
     private final BufferedImage generalRedImage;
     private final BufferedImage advisorRedImage;
     private final BufferedImage elephantRedImage;
@@ -48,9 +48,9 @@ public class GUI
     private final BufferedImage chariotBlackImage;
     private final BufferedImage cannonBlackImage;
     private final BufferedImage soldierBlackImage;
-    private final BufferedImage selection;
-    private final BufferedImage selectionPalace;
-    private final BufferedImage selectionRiver;
+    private final BufferedImage selectionImage;
+    private final BufferedImage selectionPalaceImage;
+    private final BufferedImage selectionRiverImage;
     private final ImageIcon iconIncorrect;
     private final ImageIcon iconCorrect;
     private final ImageIcon iconPreviousMove;
@@ -97,11 +97,11 @@ public class GUI
     private JButton buttonSinglePlayer;
     private JButton buttonLocalMultiplayer;
     private JButton buttonOnlineMultiplayer;
-    private JButton buttonBackGameMode;
+    private JButton buttonBackOnFrameGameMode;
     private GridBagConstraints constraintsForButtonSinglePlayer;
     private GridBagConstraints constraintsForButtonLocalMultiplayer;
     private GridBagConstraints constraintsForButtonOnlineMultiplayer;
-    private GridBagConstraints constraintsForButtonBackGameMode;
+    private GridBagConstraints constraintsForButtonBackOnFrameGameMode;
 
     //Frame Board.
     private PanelBoardInteractive panelBoardInteractive;
@@ -109,66 +109,64 @@ public class GUI
     private GridBagConstraints constraintsForPanelBoardInteractive;
     private GridBagConstraints constraintsForStatusBar;
 
-    //Frame Online.
+    //Frame Online Multiplayer.
     private JButton buttonConnectToServer;
     private JButton buttonLobby;
-    private JButton buttonBackOnFrameOnline;
+    private JButton buttonBackOnFrameOnlineMultiplayer;
     private GridBagConstraints constraintsForButtonConnectToServer;
     private GridBagConstraints constraintsForButtonLobby;
-    private GridBagConstraints constraintsForButtonBackOnFrameOnline;
+    private GridBagConstraints constraintsForButtonBackOnFrameOnlineMultiplayer;
+
+    //Frame Connect to Server.
+    private JLabel labelIp;
+    private DocumentListenerForTextFieldIp documentListenerForTextFieldIp;
+    private JTextField textFieldIp;
+    private JLabel labelWithIpIcon;
+    private JTextArea textAreaIpTip;
+    private JLabel labelPort;
+    private DocumentListenerForTextFieldPort documentListenerForTextFieldPort;
+    private JTextField textFieldPort;
+    private JLabel labelWithPortIcon;
+    private JTextArea textAreaPortTip;
+    private JPanel panelTransparentOnFrameConnectToServer;
+    private JButton buttonConnect;
+    private JButton buttonDisconnect;
+    private JButton buttonBackOnFrameConnectToServer;
+    private GridBagConstraints constraintsForLabelIp;
+    private GridBagConstraints constraintsForTextFieldIp;
+    private GridBagConstraints constraintsForLabelWithIpIcon;
+    private GridBagConstraints constraintsForTextAreaIpTip;
+    private GridBagConstraints constraintsForLabelPort;
+    private GridBagConstraints constraintsForTextFieldPort;
+    private GridBagConstraints constraintsForLabelWithPortIcon;
+    private GridBagConstraints constraintsForTextAreaPortTip;
+    private GridBagConstraints constraintsForPanelTransparentOnFrameConnectToServer;
 
     //Frame Lobby.
     private JButton buttonBackOnFrameLobby;
     private GridBagConstraints constraintsForButtonBackOnFrameLobby;
 
-    //Frame Connect to Server.
-    private boolean ipCorrect;
-    private boolean portCorrect;
-    private JLabel labelIp;
-    private DocumentListenerForTextFieldIp documentListenerForTextFieldIp;
-    private JTextField textFieldIp;
-    private JLabel labelIpCorrectnessIcon;
-    private JTextArea textAreaIpTip;
-    private JLabel labelPort;
-    private DocumentListenerForTextFieldPort documentListenerForTextFieldPort;
-    private JTextField textFieldPort;
-    private JLabel labelPortCorrectnessIcon;
-    private JTextArea textAreaPortTip;
-    private JPanel panelTransparentConnectToServer;
-    private JButton buttonConnect;
-    private JButton buttonDisconnect;
-    private JButton buttonBackConnectToServer;
-    private GridBagConstraints constraintsForLabelIp;
-    private GridBagConstraints constraintsForTextFieldIp;
-    private GridBagConstraints constraintsForLabelIpCorrectnessIcon;
-    private GridBagConstraints constraintsForTextAreaIpTip;
-    private GridBagConstraints constraintsForLabelPort;
-    private GridBagConstraints constraintsForTextFieldPort;
-    private GridBagConstraints constraintsForLabelPortCorrectnessIcon;
-    private GridBagConstraints constraintsForTextAreaPortTip;
-    private GridBagConstraints constraintsForPanelTransparentConnectToServer;
-
     //Frame Replay.
-    private PanelBoard panelBoardReplay;
-    private JPanel panelTransparentReplay;
+    private PanelBoard panelBoardOnFrameReplay;
+    private JPanel panelTransparentOnFrameReplay;
     private JButton buttonPreviousMove;
     private JButton buttonSlower;
     private JToggleButton buttonPlayPause;
     private JButton buttonFaster;
     private JButton buttonNextMove;
-    private GridBagConstraints constraintsForPanelBoardReplay;
-    private GridBagConstraints constraintsForPanelTransparentReplay;
-    private Timer timer;
+    private GridBagConstraints constraintsForPanelBoardOnFrameReplay;
+    private GridBagConstraints constraintsForPanelTransparentOnFrameReplay;
+    private Timer timerForReplay;
 
     //Frame Rules.
-    private PanelBoardRules panelBoardRules;
-    private JPanel panelTransparentRules;
+    private PanelBoardRules panelBoardOnFrameRules;
+    private JPanel panelTransparentOnFrameRules;
     private JComboBox<String> comboBoxRules;
-    private JButton buttonBackRules;
+    private JButton buttonBackOnFrameRules;
     private JTextArea textAreaRules;
     private JScrollPane scrollPaneRules;
-    private GridBagConstraints constraintsForPanelBoardRules;
-    private GridBagConstraints constraintsForPanelTransparentRules;
+    private GridBagConstraints constraintsForPanelBoardOnFrameRules;
+    private GridBagConstraints constraintsForPanelTransparentOnFrameRules;
     private GridBagConstraints constraintsForScrollPaneRules;
 
     //Frame Settings.
@@ -180,7 +178,7 @@ public class GUI
     private JLabel labelSfx;
     private JToggleButton buttonMuteSfx;
     private JSlider sliderGainSfx;
-    private JButton buttonBackSettings;
+    private JButton buttonBackOnFrameSettings;
     private GridBagConstraints constraintsForLabelLanguage;
     private GridBagConstraints constraintsForComboBoxLanguage;
     private GridBagConstraints constraintsForLabelMusic;
@@ -189,7 +187,7 @@ public class GUI
     private GridBagConstraints constraintsForLabelSfx;
     private GridBagConstraints constraintsForButtonMuteSfx;
     private GridBagConstraints constraintsForSliderGainSfx;
-    private GridBagConstraints constraintsForButtonBackSettings;
+    private GridBagConstraints constraintsForButtonBackOnFrameSettings;
 
     //Game.
     private GameSinglePlayer gameSinglePlayer;
@@ -207,20 +205,20 @@ public class GUI
     //Music player.
     private MusicPlayer musicPlayer;
 
-    private static Logger logger = Logger.getLogger(GUI.class.getName()); //TODO logger
+    private static final Logger logger = Logger.getLogger(GUI.class.getName()); //TODO logger
 
     public GUI()
     {
-        //Text
+        //Text.
         textEnglish = new TextEnglish();
         textRussian = new TextRussian();
         text = textEnglish;
 
-        //Resources
+        //Resources.
         resourcesMissing = false;
         fontChinese = initializeFontChinese();
         iconFrame = initializeIconFrame();
-        background = initializeBackground();
+        backgroundImage = initializeBackgroundImage();
         generalRedImage = initializeGeneralRedImage();
         advisorRedImage = initializeAdvisorRedImage();
         elephantRedImage = initializeElephantRedImage();
@@ -235,13 +233,13 @@ public class GUI
         chariotBlackImage = initializeChariotBlackImage();
         cannonBlackImage = initializeCannonBlackImage();
         soldierBlackImage = initializeSoldierBlackImage();
-        selection = initializeSelection();
-        selectionPalace = initializeSelectionPalace();
-        selectionRiver = initializeSelectionRiver();
+        selectionImage = initializeSelectionImage();
+        selectionPalaceImage = initializeSelectionPalaceImage();
+        selectionRiverImage = initializeSelectionRiverImage();
         iconIncorrect = initializeIconIncorrect();
         iconCorrect = initializeIconCorrect();
         iconPreviousMove = initializeIconPreviousMove();
-        iconSlower = initializeIconSLower();
+        iconSlower = initializeIconSlower();
         iconPlay = initializeIconPlay();
         iconPause = initializeIconPause();
         iconStop = initializeIconStop();
@@ -257,8 +255,8 @@ public class GUI
         initializeFrameMainMenu();
         initializeFrameGameMode();
         initializeFrameBoard();
-        initializeFrameOnline();
-        initializeFrameConnectToServer();
+        initializeFrameOnlineMultiplayer();
+        initializeFrameConnect();
         initializeFrameLobby();
         initializeFrameReplay();
         initializeFrameRules();
@@ -273,10 +271,13 @@ public class GUI
         {
             fontChinese = Font.createFont(Font.TRUETYPE_FONT, inputStream);
         }
-        catch (Exception e)
+        catch (NullPointerException | IOException | FontFormatException e)
         {
             resourcesMissing = true;
             fontChinese = new Font(Font.DIALOG, Font.PLAIN, 1);
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFontChinese",
+                    "Could not initialize fontChinese.", e);
         }
         return fontChinese;
     }
@@ -288,7 +289,8 @@ public class GUI
         {
             //noinspection DataFlowIssue
             iconFrame = ImageIO.read(url);
-        } catch (Exception e)
+        }
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             iconFrame = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
@@ -298,27 +300,33 @@ public class GUI
             g2d.setColor(Color.BLACK);
             g2d.setFont(new Font(Font.DIALOG, Font.BOLD, 42));
             g2d.drawString("象棋", 5, 65);
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeIconFrame",
+                    "Could not initialize iconFrame.", e);
         }
         return iconFrame;
     }
-    private BufferedImage initializeBackground()
+    private BufferedImage initializeBackgroundImage()
     {
-        BufferedImage background;
+        BufferedImage backgroundImage;
         URL url = getClass().getResource("/background.jpg");
         try
         {
             //noinspection DataFlowIssue
-            background = ImageIO.read(url);
+            backgroundImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
-            background = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            Graphics2D g2d = background.createGraphics();
+            backgroundImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = backgroundImage.createGraphics();
             g2d.setColor(new Color(196, 185, 165));
             g2d.fillRect(0,0,100,100);
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeBackgroundImage",
+                    "Could not initialize backgroundImage.", e);
         }
-        return background;
+        return backgroundImage;
     }
     private BufferedImage initializeGeneralRedImage()
     {
@@ -329,11 +337,14 @@ public class GUI
             //noinspection DataFlowIssue
             generalRedImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             generalRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(generalRedImage, Color.RED, "帥");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeGeneralRedImage",
+                    "Could not initialize generalRedImage.", e);
         }
         return generalRedImage;
     }
@@ -346,11 +357,14 @@ public class GUI
             //noinspection DataFlowIssue
             advisorRedImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             advisorRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(advisorRedImage, Color.RED, "仕");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeAdvisorRedImage",
+                    "Could not initialize advisorRedImage.", e);
         }
         return advisorRedImage;
     }
@@ -363,11 +377,14 @@ public class GUI
             //noinspection DataFlowIssue
             elephantRedImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             elephantRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(elephantRedImage, Color.RED, "相");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeElephantRedImage",
+                    "Could not initialize elephantRedImage.", e);
         }
         return elephantRedImage;
     }
@@ -380,11 +397,14 @@ public class GUI
             //noinspection DataFlowIssue
             horseRedImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             horseRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(horseRedImage, Color.RED, "傌");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeHorseRedImage",
+                    "Could not initialize horseRedImage.", e);
         }
         return horseRedImage;
     }
@@ -397,11 +417,14 @@ public class GUI
             //noinspection DataFlowIssue
             chariotRedImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             chariotRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(chariotRedImage, Color.RED, "俥");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeChariotRedImage",
+                    "Could not initialize chariotRedImage.", e);
         }
         return chariotRedImage;
     }
@@ -414,11 +437,14 @@ public class GUI
             //noinspection DataFlowIssue
             cannonRedImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             cannonRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(cannonRedImage, Color.RED, "炮");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeCannonRedImage",
+                    "Could not initialize cannonRedImage.", e);
         }
         return cannonRedImage;
     }
@@ -431,11 +457,14 @@ public class GUI
             //noinspection DataFlowIssue
             soldierRedImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             soldierRedImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(soldierRedImage, Color.RED, "兵");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeSoldierRedImage",
+                    "Could not initialize soldierRedImage.", e);
         }
         return soldierRedImage;
     }
@@ -448,11 +477,14 @@ public class GUI
             //noinspection DataFlowIssue
             generalBlackImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             generalBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(generalBlackImage, Color.BLACK, "將");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeGeneralBlackImage",
+                    "Could not initialize generalBlackImage.", e);
         }
         return generalBlackImage;
     }
@@ -465,11 +497,14 @@ public class GUI
             //noinspection DataFlowIssue
             advisorBlackImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             advisorBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(advisorBlackImage, Color.BLACK, "士");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeAdvisorBlackImage",
+                    "Could not initialize advisorBlackImage.", e);
         }
         return advisorBlackImage;
     }
@@ -482,11 +517,14 @@ public class GUI
             //noinspection DataFlowIssue
             elephantBlackImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             elephantBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(elephantBlackImage, Color.BLACK, "象");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeElephantBlackImage",
+                    "Could not initialize elephantBlackImage.", e);
         }
         return elephantBlackImage;
     }
@@ -499,11 +537,14 @@ public class GUI
             //noinspection DataFlowIssue
             horseBlackImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             horseBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(horseBlackImage, Color.BLACK, "馬");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeHorseBlackImage",
+                    "Could not initialize horseBlackImage.", e);
         }
         return horseBlackImage;
     }
@@ -516,11 +557,14 @@ public class GUI
             //noinspection DataFlowIssue
             chariotBlackImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             chariotBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(chariotBlackImage, Color.BLACK, "車");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeChariotBlackImage",
+                    "Could not initialize chariotBlackImage.", e);
         }
         return chariotBlackImage;
     }
@@ -533,11 +577,14 @@ public class GUI
             //noinspection DataFlowIssue
             cannonBlackImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             cannonBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(cannonBlackImage, Color.BLACK, "砲");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeCannonBlackImage",
+                    "Could not initialize cannonBlackImage.", e);
         }
         return cannonBlackImage;
     }
@@ -550,11 +597,14 @@ public class GUI
             //noinspection DataFlowIssue
             soldierBlackImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             soldierBlackImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
             initializeDefaultFigureImage(soldierBlackImage, Color.BLACK, "卒");
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeSoldierBlackImage",
+                    "Could not initialize soldierBlackImage.", e);
         }
         return soldierBlackImage;
     }
@@ -573,65 +623,74 @@ public class GUI
         g2d.setFont(new Font(Font.DIALOG, Font.BOLD, 60));
         g2d.drawString(label,20,70);
     }
-    private BufferedImage initializeSelection()
+    private BufferedImage initializeSelectionImage()
     {
-        BufferedImage selection;
+        BufferedImage selectionImage;
         URL url = getClass().getResource("/selection.png");
         try
         {
             //noinspection DataFlowIssue
-            selection = ImageIO.read(url);
+            selectionImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
-            selection = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            Graphics2D g2d = selection.createGraphics();
+            selectionImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = selectionImage.createGraphics();
             g2d.setColor(new Color(117, 240, 131));
             g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
             g2d.drawArc(5,5,90,90,0,360);
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeSelectionImage",
+                    "Could not initialize selectionImage.", e);
         }
-        return selection;
+        return selectionImage;
     }
-    private BufferedImage initializeSelectionPalace()
+    private BufferedImage initializeSelectionPalaceImage()
     {
-        BufferedImage selectionPalace;
+        BufferedImage selectionPalaceImage;
         URL url = getClass().getResource("/selectionPalace.png");
         try
         {
             //noinspection DataFlowIssue
-            selectionPalace = ImageIO.read(url);
+            selectionPalaceImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
-            selectionPalace = new BufferedImage(200,200,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            Graphics2D g2d = selectionPalace.createGraphics();
+            selectionPalaceImage = new BufferedImage(200,200,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = selectionPalaceImage.createGraphics();
             g2d.setColor(new Color(117, 240, 131));
             g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
             g2d.drawRect(5,5,190,190);
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeSelectionPalaceImage",
+                    "Could not initialize selectionPalaceImage.", e);
         }
-        return selectionPalace;
+        return selectionPalaceImage;
     }
-    private BufferedImage initializeSelectionRiver()
+    private BufferedImage initializeSelectionRiverImage()
     {
-        BufferedImage selectionRiver;
+        BufferedImage selectionRiverImage;
         URL url = getClass().getResource("/selectionRiver.png");
         try
         {
             //noinspection DataFlowIssue
-            selectionRiver = ImageIO.read(url);
+            selectionRiverImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
-            selectionRiver = new BufferedImage(800,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            Graphics2D g2d = selectionRiver.createGraphics();
+            selectionRiverImage = new BufferedImage(800,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = selectionRiverImage.createGraphics();
             g2d.setColor(new Color(117, 240, 131));
             g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
             g2d.drawRect(5,5,790,90);
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeSelectionRiverImage",
+                    "Could not initialize selectionRiverImage.", e);
         }
-        return selectionRiver;
+        return selectionRiverImage;
     }
     private ImageIcon initializeIconIncorrect()
     {
@@ -668,7 +727,7 @@ public class GUI
         g2d.drawLine(15, 50, 15, 10);
         return new ImageIcon(imagePreviousMove);
     }
-    private ImageIcon initializeIconSLower()
+    private ImageIcon initializeIconSlower()
     {
         BufferedImage imageSlower = new BufferedImage(60,60,BufferedImage.TYPE_4BYTE_ABGR_PRE);
         Graphics2D g2d = imageSlower.createGraphics();
@@ -779,7 +838,7 @@ public class GUI
             SwingUtilities.invokeAndWait(()->
             {
                 //Frame.
-                frame = new JFrame(text.getTitle());
+                frame = new JFrame(text.getChineseChessClient());
                 frame.setMinimumSize(new Dimension(800,800));
                 frame.setBounds((int)frame.getGraphicsConfiguration().getBounds().getCenterX() -
                                   (int)frame.getBounds().getCenterX(),
@@ -794,7 +853,7 @@ public class GUI
                 gridBagLayout = new GridBagLayout();
 
                 //Panel Background.
-                panelBackground = new PanelBackground(background);
+                panelBackground = new PanelBackground(backgroundImage);
                 panelBackground.setLayout(gridBagLayout);
                 frame.setContentPane(panelBackground);
 
@@ -849,9 +908,10 @@ public class GUI
                 frame.setJMenuBar(menuBar);
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeCommonFrameFeatures",
+                    "Could not initialize common frame features.", e);
         }
     }
     private void initializeFrameMainMenu()
@@ -909,9 +969,10 @@ public class GUI
                 buttonSettings.addActionListener(e->showFrameSettings());
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameMainMenu",
+                    "Could not initialize frame Main Menu.", e);
         }
     }
     private void initializeFrameGameMode()
@@ -957,21 +1018,22 @@ public class GUI
                 buttonOnlineMultiplayer.addActionListener(e->showFrameOnline());
 
                 //Button Back.
-                buttonBackGameMode = new JButton(text.getBack());
-                buttonBackGameMode.setPreferredSize(new Dimension(200, 100));
-                buttonBackGameMode.setBackground(Color.WHITE);
-                buttonBackGameMode.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonBackGameMode.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
-                constraintsForButtonBackGameMode = new GridBagConstraints(
+                buttonBackOnFrameGameMode = new JButton(text.getBack());
+                buttonBackOnFrameGameMode.setPreferredSize(new Dimension(200, 100));
+                buttonBackOnFrameGameMode.setBackground(Color.WHITE);
+                buttonBackOnFrameGameMode.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackOnFrameGameMode.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonBackOnFrameGameMode = new GridBagConstraints(
                         0, 3, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
-                buttonBackGameMode.addActionListener(e->showFrameMainMenu());
+                buttonBackOnFrameGameMode.addActionListener(e->showFrameMainMenu());
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameGameMode",
+                    "Could not initialize frame Game Mode.", e);
         }
     }
     private void initializeFrameBoard()
@@ -981,7 +1043,7 @@ public class GUI
             SwingUtilities.invokeAndWait(()->
             {
                 //Panel Board.
-                panelBoardInteractive = new PanelBoardInteractive(imagesOfFigures, selection);
+                panelBoardInteractive = new PanelBoardInteractive(imagesOfFigures, selectionImage);
                 panelBoardInteractive.setOpaque(false);
                 constraintsForPanelBoardInteractive = new GridBagConstraints(
                         0, 0, 1, 1, 1, 1,
@@ -1002,18 +1064,19 @@ public class GUI
                         new Insets(0, 0, 0, 0), 0, 0);
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameBoard",
+                    "Could not initialize frame Board.", e);
         }
     }
-    private void initializeFrameOnline() //TODO сделать status bar
+    private void initializeFrameOnlineMultiplayer() //TODO сделать status bar
     {
         try
         {
             SwingUtilities.invokeAndWait(()->
             {
-                //Button Connect.
+                //Button Connect to Server.
                 buttonConnectToServer = new JButton(text.getConnectToServer());
                 buttonConnectToServer.setPreferredSize(new Dimension(500, 100));
                 buttonConnectToServer.setBackground(Color.WHITE);
@@ -1038,32 +1101,30 @@ public class GUI
                 buttonLobby.addActionListener(e->showFrameLobby());
 
                 //Button Back.
-                buttonBackOnFrameOnline = new JButton(text.getBack());
-                buttonBackOnFrameOnline.setPreferredSize(new Dimension(200, 100));
-                buttonBackOnFrameOnline.setBackground(Color.WHITE);
-                buttonBackOnFrameOnline.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonBackOnFrameOnline.setFont(fontChinese.deriveFont(Font.BOLD, 43.f));
-                constraintsForButtonBackOnFrameOnline = new GridBagConstraints(
+                buttonBackOnFrameOnlineMultiplayer = new JButton(text.getBack());
+                buttonBackOnFrameOnlineMultiplayer.setPreferredSize(new Dimension(200, 100));
+                buttonBackOnFrameOnlineMultiplayer.setBackground(Color.WHITE);
+                buttonBackOnFrameOnlineMultiplayer.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackOnFrameOnlineMultiplayer.setFont(fontChinese.deriveFont(Font.BOLD, 43.f));
+                constraintsForButtonBackOnFrameOnlineMultiplayer = new GridBagConstraints(
                         0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
-                buttonBackOnFrameOnline.addActionListener(e->showPreviousFrame());
+                buttonBackOnFrameOnlineMultiplayer.addActionListener(e->showPreviousFrame());
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameOnlineMultiplayer",
+                    "Could not initialize frame Online Multiplayer.", e);
         }
     }
-    private void initializeFrameConnectToServer()
+    private void initializeFrameConnect()
     {
         try
         {
             SwingUtilities.invokeAndWait(()->
             {
-                ipCorrect = false;
-                portCorrect = true;
-
                 //Label IP.
                 labelIp = new JLabel(text.getIpAddress());
                 labelIp.setPreferredSize(new Dimension(155, 100));
@@ -1090,9 +1151,9 @@ public class GUI
                         GridBagConstraints.WEST, GridBagConstraints.NONE,
                         new Insets(0, 10, 0, 10), 0, 0);
 
-                //Label IP Correctness Icon.
-                labelIpCorrectnessIcon = new JLabel(iconIncorrect);
-                constraintsForLabelIpCorrectnessIcon = new GridBagConstraints(
+                //Label with IP Icon.
+                labelWithIpIcon = new JLabel(iconIncorrect);
+                constraintsForLabelWithIpIcon = new GridBagConstraints(
                         2, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 10, 0, 10), 0, 0);
@@ -1139,9 +1200,9 @@ public class GUI
                         GridBagConstraints.WEST, GridBagConstraints.NONE,
                         new Insets(30, 10, 0, 10), 0, 0);
 
-                //Label Port Correctness Icon.
-                labelPortCorrectnessIcon = new JLabel(iconCorrect);
-                constraintsForLabelPortCorrectnessIcon = new GridBagConstraints(
+                //Label with Port Icon.
+                labelWithPortIcon = new JLabel(iconCorrect);
+                constraintsForLabelWithPortIcon = new GridBagConstraints(
                         2, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 10, 0, 10), 0, 0);
@@ -1163,10 +1224,10 @@ public class GUI
                         new Insets(30, 20, 0, 10), 0, 0);
 
                 //Panel Transparent.
-                panelTransparentConnectToServer = new JPanel();
-                panelTransparentConnectToServer.setOpaque(false);
-                panelTransparentConnectToServer.setLayout(gridBagLayout);
-                constraintsForPanelTransparentConnectToServer = new GridBagConstraints(
+                panelTransparentOnFrameConnectToServer = new JPanel();
+                panelTransparentOnFrameConnectToServer.setOpaque(false);
+                panelTransparentOnFrameConnectToServer.setLayout(gridBagLayout);
+                constraintsForPanelTransparentOnFrameConnectToServer = new GridBagConstraints(
                         0, 2, 4, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 0), 0, 0);
@@ -1183,7 +1244,7 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 20, 20, 20), 0, 0);
                 buttonConnect.addActionListener(e->connectToServer());
-                panelTransparentConnectToServer.add(buttonConnect, constraintsForButtonConnect);
+                panelTransparentOnFrameConnectToServer.add(buttonConnect, constraintsForButtonConnect);
 
                 //Button Disconnect.
                 buttonDisconnect = new JButton(text.getDisconnect());
@@ -1197,25 +1258,27 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 20, 20, 20), 0, 0);
                 buttonDisconnect.addActionListener(e->showDialogDisconnectFromServer());
-                panelTransparentConnectToServer.add(buttonDisconnect, constraintsForButtonDisconnect);
+                panelTransparentOnFrameConnectToServer.add(buttonDisconnect, constraintsForButtonDisconnect);
 
                 //Button Back.
-                buttonBackConnectToServer = new JButton(text.getBack());
-                buttonBackConnectToServer.setPreferredSize(new Dimension(180, 100));
-                buttonBackConnectToServer.setBackground(Color.WHITE);
-                buttonBackConnectToServer.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonBackConnectToServer.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
+                buttonBackOnFrameConnectToServer = new JButton(text.getBack());
+                buttonBackOnFrameConnectToServer.setPreferredSize(new Dimension(180, 100));
+                buttonBackOnFrameConnectToServer.setBackground(Color.WHITE);
+                buttonBackOnFrameConnectToServer.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackOnFrameConnectToServer.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
                 GridBagConstraints constraintsForButtonBackConnectToServer = new GridBagConstraints(
                         2, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 20, 20, 20), 0, 0);
-                buttonBackConnectToServer.addActionListener(e->showPreviousFrame());
-                panelTransparentConnectToServer.add(buttonBackConnectToServer, constraintsForButtonBackConnectToServer);
+                buttonBackOnFrameConnectToServer.addActionListener(e->showPreviousFrame());
+                panelTransparentOnFrameConnectToServer.add(
+                        buttonBackOnFrameConnectToServer, constraintsForButtonBackConnectToServer);
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameConnect",
+                    "Could not initialize frame Connect.", e);
         }
     }
     private void initializeFrameLobby()
@@ -1237,9 +1300,10 @@ public class GUI
                 buttonBackOnFrameLobby.addActionListener(e->showPreviousFrame());
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameLobby",
+                    "Could not initialize frame Lobby.", e);
         }
     }
     private void initializeFrameReplay()
@@ -1249,18 +1313,18 @@ public class GUI
             SwingUtilities.invokeAndWait(()->
             {
                 //Panel Board.
-                panelBoardReplay = new PanelBoard(imagesOfFigures, selection);
-                panelBoardReplay.setOpaque(false);
-                constraintsForPanelBoardReplay = new GridBagConstraints(
+                panelBoardOnFrameReplay = new PanelBoard(imagesOfFigures, selectionImage);
+                panelBoardOnFrameReplay.setOpaque(false);
+                constraintsForPanelBoardOnFrameReplay = new GridBagConstraints(
                         0, 0, 1, 1, 1, 1,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0);
 
                 //Panel Transparent.
-                panelTransparentReplay = new JPanel();
-                panelTransparentReplay.setOpaque(false);
-                panelTransparentReplay.setLayout(gridBagLayout);
-                constraintsForPanelTransparentReplay = new GridBagConstraints(
+                panelTransparentOnFrameReplay = new JPanel();
+                panelTransparentOnFrameReplay.setOpaque(false);
+                panelTransparentOnFrameReplay.setLayout(gridBagLayout);
+                constraintsForPanelTransparentOnFrameReplay = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 0), 0, 0);
@@ -1276,7 +1340,7 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(10, 10, 10, 10), 0, 0);
                 buttonPreviousMove.addActionListener(e->replay.previousMove());
-                panelTransparentReplay.add(buttonPreviousMove, constraintsForButtonPreviousMove);
+                panelTransparentOnFrameReplay.add(buttonPreviousMove, constraintsForButtonPreviousMove);
 
                 //Button Slower.
                 buttonSlower = new JButton(iconSlower);
@@ -1289,7 +1353,7 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(10, 10, 10, 10), 0, 0);
                 buttonSlower.addActionListener(e-> replaySlower());
-                panelTransparentReplay.add(buttonSlower, constraintsForButtonSlower);
+                panelTransparentOnFrameReplay.add(buttonSlower, constraintsForButtonSlower);
 
                 //Button Play Pause.
                 buttonPlayPause = new JToggleButton(iconPlay, false);
@@ -1303,7 +1367,7 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(10, 10, 10, 10), 0, 0);
                 buttonPlayPause.addActionListener(this::replayPlayPause);
-                panelTransparentReplay.add(buttonPlayPause, constraintsForButtonPlayPause);
+                panelTransparentOnFrameReplay.add(buttonPlayPause, constraintsForButtonPlayPause);
 
                 //Button Stop.
                 JButton buttonStop = new JButton(iconStop);
@@ -1316,7 +1380,7 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(10, 10, 10, 10), 0, 0);
                 buttonStop.addActionListener(e->replayStop());
-                panelTransparentReplay.add(buttonStop, constraintsForButtonStop);
+                panelTransparentOnFrameReplay.add(buttonStop, constraintsForButtonStop);
 
                 //Button Faster.
                 buttonFaster = new JButton(iconFaster);
@@ -1329,7 +1393,7 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(10, 10, 10, 10), 0, 0);
                 buttonFaster.addActionListener(e-> replayFaster());
-                panelTransparentReplay.add(buttonFaster, constraintsForButtonFaster);
+                panelTransparentOnFrameReplay.add(buttonFaster, constraintsForButtonFaster);
 
                 //Button Next Move.
                 buttonNextMove = new JButton(iconNextMove);
@@ -1342,16 +1406,17 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(10, 10, 10, 10), 0, 0);
                 buttonNextMove.addActionListener(e->replay.nextMove());
-                panelTransparentReplay.add(buttonNextMove, constraintsForButtonNextMove);
+                panelTransparentOnFrameReplay.add(buttonNextMove, constraintsForButtonNextMove);
 
                 //Timer.
-                timer = new Timer(500, e->replay.nextMove());
-                timer.setInitialDelay(0);
+                timerForReplay = new Timer(500, e->replay.nextMove());
+                timerForReplay.setInitialDelay(0);
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameReplay",
+                    "Could not initialize frame Replay.", e);
         }
     }
     private void initializeFrameRules()
@@ -1361,18 +1426,19 @@ public class GUI
             SwingUtilities.invokeAndWait(()->
             {
                 //Panel Board.
-                panelBoardRules = new PanelBoardRules(imagesOfFigures, selection, selectionPalace, selectionRiver);
-                panelBoardRules.setOpaque(false);
-                constraintsForPanelBoardRules = new GridBagConstraints(
+                panelBoardOnFrameRules = new PanelBoardRules(
+                        imagesOfFigures, selectionImage, selectionPalaceImage, selectionRiverImage);
+                panelBoardOnFrameRules.setOpaque(false);
+                constraintsForPanelBoardOnFrameRules = new GridBagConstraints(
                         0, 0, 1, 1, 1, 1,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0);
 
                 //Panel Transparent.
-                panelTransparentRules = new JPanel();
-                panelTransparentRules.setOpaque(false);
-                panelTransparentRules.setLayout(gridBagLayout);
-                constraintsForPanelTransparentRules = new GridBagConstraints(
+                panelTransparentOnFrameRules = new JPanel();
+                panelTransparentOnFrameRules.setOpaque(false);
+                panelTransparentOnFrameRules.setLayout(gridBagLayout);
+                constraintsForPanelTransparentOnFrameRules = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 0), 0, 0);
@@ -1396,20 +1462,20 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(10, 10, 10, 10), 0, 0);
                 comboBoxRules.addActionListener(e->changeDisplayedRule());
-                panelTransparentRules.add(comboBoxRules, constraintsForComboBoxRules);
+                panelTransparentOnFrameRules.add(comboBoxRules, constraintsForComboBoxRules);
 
                 //Button Back.
-                buttonBackRules = new JButton(text.getBack());
-                buttonBackRules.setPreferredSize(new Dimension(80, 40));
-                buttonBackRules.setBackground(Color.WHITE);
-                buttonBackRules.setBorder(new LineBorder(Color.BLACK, 1));
-                buttonBackRules.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
+                buttonBackOnFrameRules = new JButton(text.getBack());
+                buttonBackOnFrameRules.setPreferredSize(new Dimension(80, 40));
+                buttonBackOnFrameRules.setBackground(Color.WHITE);
+                buttonBackOnFrameRules.setBorder(new LineBorder(Color.BLACK, 1));
+                buttonBackOnFrameRules.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
                 GridBagConstraints constraintsForButtonBackRules = new GridBagConstraints(
                         1, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(10, 10, 10, 10), 0, 0);
-                buttonBackRules.addActionListener(e->showPreviousFrame());
-                panelTransparentRules.add(buttonBackRules, constraintsForButtonBackRules);
+                buttonBackOnFrameRules.addActionListener(e->showPreviousFrame());
+                panelTransparentOnFrameRules.add(buttonBackOnFrameRules, constraintsForButtonBackRules);
 
                 //Text Area.
                 textAreaRules = new JTextArea(2, 1);
@@ -1434,9 +1500,10 @@ public class GUI
                         new Insets(0, 0, 0, 0), 0, 0);
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameRules",
+                    "Could not initialize frame Rules.", e);
         }
     }
     private void initializeFrameSettings()
@@ -1499,7 +1566,7 @@ public class GUI
                 sliderGainMusic.addChangeListener(this::changeGainMusic);
 
                 //Label SFX.
-                labelSfx = new JLabel(text.getSfx());
+                labelSfx = new JLabel(text.getSoundEffects());
                 labelSfx.setPreferredSize(new Dimension(300, 100));
                 labelSfx.setFont(fontChinese.deriveFont(Font.BOLD, 37.f));
                 constraintsForLabelSfx = new GridBagConstraints(
@@ -1531,21 +1598,23 @@ public class GUI
                 sliderGainSfx.addChangeListener(this::changeGainSfx);
 
                 //Button Back.
-                buttonBackSettings = new JButton(text.getBack());
-                buttonBackSettings.setPreferredSize(new Dimension(200, 100));
-                buttonBackSettings.setBackground(Color.WHITE);
-                buttonBackSettings.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonBackSettings.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
-                constraintsForButtonBackSettings = new GridBagConstraints(
+                buttonBackOnFrameSettings = new JButton(text.getBack());
+                buttonBackOnFrameSettings.setPreferredSize(new Dimension(200, 100));
+                buttonBackOnFrameSettings.setBackground(Color.WHITE);
+                buttonBackOnFrameSettings.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackOnFrameSettings.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                constraintsForButtonBackOnFrameSettings = new GridBagConstraints(
                         0, 3, 3, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 30, 0, 30), 0, 0);
-                buttonBackSettings.addActionListener(e->showPreviousFrame());
+                buttonBackOnFrameSettings.addActionListener(e->showPreviousFrame());
             });
+            throw new InterruptedException();
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameSettings",
+                    "Could not initialize frame Settings.", e);
         }
     }
     public void setGameSinglePlayer(GameSinglePlayer gameSinglePlayer)
@@ -1567,7 +1636,7 @@ public class GUI
     public void setRules(Rules rules)
     {
         this.rules = rules;
-        panelBoardRules.setRules(rules);
+        panelBoardOnFrameRules.setRules(rules);
 
         try
         {
@@ -1664,7 +1733,7 @@ public class GUI
             frame.getContentPane().add(buttonSinglePlayer, constraintsForButtonSinglePlayer);
             frame.getContentPane().add(buttonLocalMultiplayer, constraintsForButtonLocalMultiplayer);
             frame.getContentPane().add(buttonOnlineMultiplayer, constraintsForButtonOnlineMultiplayer);
-            frame.getContentPane().add(buttonBackGameMode, constraintsForButtonBackGameMode);
+            frame.getContentPane().add(buttonBackOnFrameGameMode, constraintsForButtonBackOnFrameGameMode);
             repaint();
         });
     }
@@ -1687,7 +1756,8 @@ public class GUI
             frame.getContentPane().removeAll();
             frame.getContentPane().add(buttonConnectToServer, constraintsForButtonConnectToServer);
             frame.getContentPane().add(buttonLobby, constraintsForButtonLobby);
-            frame.getContentPane().add(buttonBackOnFrameOnline, constraintsForButtonBackOnFrameOnline);
+            frame.getContentPane().add(
+                    buttonBackOnFrameOnlineMultiplayer, constraintsForButtonBackOnFrameOnlineMultiplayer);
             repaint();
         });
     }
@@ -1699,13 +1769,14 @@ public class GUI
             frame.getContentPane().removeAll();
             frame.getContentPane().add(labelIp, constraintsForLabelIp);
             frame.getContentPane().add(textFieldIp, constraintsForTextFieldIp);
-            frame.getContentPane().add(labelIpCorrectnessIcon, constraintsForLabelIpCorrectnessIcon);
+            frame.getContentPane().add(labelWithIpIcon, constraintsForLabelWithIpIcon);
             frame.getContentPane().add(textAreaIpTip, constraintsForTextAreaIpTip);
             frame.getContentPane().add(labelPort, constraintsForLabelPort);
             frame.getContentPane().add(textFieldPort, constraintsForTextFieldPort);
-            frame.getContentPane().add(labelPortCorrectnessIcon, constraintsForLabelPortCorrectnessIcon);
+            frame.getContentPane().add(labelWithPortIcon, constraintsForLabelWithPortIcon);
             frame.getContentPane().add(textAreaPortTip, constraintsForTextAreaPortTip);
-            frame.getContentPane().add(panelTransparentConnectToServer, constraintsForPanelTransparentConnectToServer);
+            frame.getContentPane().add(
+                    panelTransparentOnFrameConnectToServer, constraintsForPanelTransparentOnFrameConnectToServer);
             repaint();
         });
     }
@@ -1725,8 +1796,8 @@ public class GUI
         {
             addToPreviousFrames(FrameType.REPLAY);
             frame.getContentPane().removeAll();
-            frame.getContentPane().add(panelBoardReplay, constraintsForPanelBoardReplay);
-            frame.getContentPane().add(panelTransparentReplay, constraintsForPanelTransparentReplay);
+            frame.getContentPane().add(panelBoardOnFrameReplay, constraintsForPanelBoardOnFrameReplay);
+            frame.getContentPane().add(panelTransparentOnFrameReplay, constraintsForPanelTransparentOnFrameReplay);
             repaint();
         });
     }
@@ -1736,8 +1807,8 @@ public class GUI
         {
             addToPreviousFrames(FrameType.RULES);
             frame.getContentPane().removeAll();
-            frame.getContentPane().add(panelBoardRules, constraintsForPanelBoardRules);
-            frame.getContentPane().add(panelTransparentRules, constraintsForPanelTransparentRules);
+            frame.getContentPane().add(panelBoardOnFrameRules, constraintsForPanelBoardOnFrameRules);
+            frame.getContentPane().add(panelTransparentOnFrameRules, constraintsForPanelTransparentOnFrameRules);
             frame.getContentPane().add(scrollPaneRules, constraintsForScrollPaneRules);
             repaint();
         });
@@ -1756,7 +1827,7 @@ public class GUI
             frame.getContentPane().add(labelSfx, constraintsForLabelSfx);
             frame.getContentPane().add(buttonMuteSfx, constraintsForButtonMuteSfx);
             frame.getContentPane().add(sliderGainSfx, constraintsForSliderGainSfx);
-            frame.getContentPane().add(buttonBackSettings, constraintsForButtonBackSettings);
+            frame.getContentPane().add(buttonBackOnFrameSettings, constraintsForButtonBackOnFrameSettings);
             repaint();
         });
     }
@@ -1773,7 +1844,7 @@ public class GUI
             {
                 //Show warning.
                 int selectedOption = JOptionPane.showOptionDialog(frame,
-                        text.getAreYouSure(), text.getExitToMainMenu(),
+                        text.getAllProgressWillBeLost(), text.getExitToMainMenu(),
                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
                         new String[] {text.getYes(), text.getNo()}, text.getNo());
                 if(selectedOption == JOptionPane.YES_OPTION)
@@ -1877,9 +1948,9 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            boolean resultIp = documentListenerForTextFieldIp.checkIp(textFieldIp.getText());
-            boolean resultPort = documentListenerForTextFieldPort.checkPort(textFieldPort.getText());
-            if(resultIp && resultPort)
+            boolean ipCorrect = documentListenerForTextFieldIp.checkIp(textFieldIp.getText());
+            boolean portCorrect = documentListenerForTextFieldPort.checkPort(textFieldPort.getText());
+            if(ipCorrect && portCorrect)
             {
                 String ipAddress = documentListenerForTextFieldIp.getIpAddressWithoutLeadingZeros();
                 int portNumber = Integer.parseInt(textFieldPort.getText());
@@ -1909,10 +1980,10 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            int currentDelay = timer.getDelay();
+            int currentDelay = timerForReplay.getDelay();
             int delay = currentDelay + 100;
 
-            timer.setDelay(delay);
+            timerForReplay.setDelay(delay);
             if(delay == 1000)
             {
                 buttonSlower.setEnabled(false);
@@ -1929,11 +2000,11 @@ public class GUI
             boolean selected = buttonSource.isSelected();
             if(selected) //Play.
             {
-                timer.restart();
+                timerForReplay.restart();
             }
             else //Pause.
             {
-                timer.stop();
+                timerForReplay.stop();
             }
         });
     }
@@ -1941,7 +2012,7 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            timer.stop();
+            timerForReplay.stop();
             replay.start();
             buttonPlayPause.setSelected(false);
         });
@@ -1950,10 +2021,10 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            int currentDelay = timer.getDelay();
+            int currentDelay = timerForReplay.getDelay();
             int delay = currentDelay - 100;
 
-            timer.setDelay(delay);
+            timerForReplay.setDelay(delay);
             if(delay == 100)
             {
                 buttonFaster.setEnabled(false);
@@ -2134,7 +2205,7 @@ public class GUI
             }
 
             //Common frame features.
-            frame.setTitle(text.getTitle());
+            frame.setTitle(text.getChineseChessClient());
             menuNavigation.setText(text.getNavigation());
             menuItemMainMenu.setText(text.getMainMenu());
             menuReplay.setText(text.getReplay());
@@ -2154,16 +2225,16 @@ public class GUI
             buttonSinglePlayer.setText(text.getSinglePlayer());
             buttonLocalMultiplayer.setText(text.getLocalMultiplayer());
             buttonOnlineMultiplayer.setText(text.getOnlineMultiplayer());
-            buttonBackGameMode.setText(text.getBack());
+            buttonBackOnFrameGameMode.setText(text.getBack());
 
             //Frame Online.
             buttonConnectToServer.setText(text.getConnectToServer());
             buttonLobby.setText(text.getLobby());
-            buttonBackOnFrameOnline.setText(text.getBack());
+            buttonBackOnFrameOnlineMultiplayer.setText(text.getBack());
 
             //Frame Connect to Server.
             labelIp.setText(text.getIpAddress());
-            if(ipCorrect)
+            if(documentListenerForTextFieldIp.getIsIpCorrect())
             {
                 textAreaIpTip.setText("");
             }
@@ -2172,7 +2243,7 @@ public class GUI
                 textAreaIpTip.setText(text.getIpTip());
             }
             labelPort.setText(text.getPort());
-            if(portCorrect)
+            if(documentListenerForTextFieldPort.getIsPortCorrect())
             {
                 textAreaPortTip.setText("");
             }
@@ -2182,7 +2253,7 @@ public class GUI
             }
             buttonConnect.setText(text.getConnect());
             buttonDisconnect.setText(text.getDisconnect());
-            buttonBackConnectToServer.setText(text.getBack());
+            buttonBackOnFrameConnectToServer.setText(text.getBack());
 
             //Frame Lobby.
             buttonBackOnFrameLobby.setText(text.getBack());
@@ -2201,13 +2272,13 @@ public class GUI
             comboBoxRules.addItem(text.getCannon());
             comboBoxRules.addItem(text.getSoldier());
             comboBoxRules.setSelectedIndex(selectedIndex);
-            buttonBackRules.setText(text.getBack());
+            buttonBackOnFrameRules.setText(text.getBack());
 
             //Frame Settings.
             labelLanguage.setText(text.getLanguage());
             labelMusic.setText(text.getMusic());
-            labelSfx.setText(text.getSfx());
-            buttonBackSettings.setText(text.getBack());
+            labelSfx.setText(text.getSoundEffects());
+            buttonBackOnFrameSettings.setText(text.getBack());
 
             //Game.
             gameSinglePlayer.refreshText();
@@ -2241,8 +2312,7 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            ipCorrect = false;
-            labelIpCorrectnessIcon.setIcon(iconIncorrect);
+            labelWithIpIcon.setIcon(iconIncorrect);
             textAreaIpTip.setText(text.getIpTip());
             buttonConnect.setEnabled(false);
         });
@@ -2251,10 +2321,9 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            ipCorrect = true;
-            labelIpCorrectnessIcon.setIcon(iconCorrect);
+            labelWithIpIcon.setIcon(iconCorrect);
             textAreaIpTip.setText("");
-            if(portCorrect)
+            if(documentListenerForTextFieldPort.getIsPortCorrect())
             {
                 buttonConnect.setEnabled(true);
             }
@@ -2264,8 +2333,7 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            portCorrect = false;
-            labelPortCorrectnessIcon.setIcon(iconIncorrect);
+            labelWithPortIcon.setIcon(iconIncorrect);
             textAreaPortTip.setText(text.getPortTip());
             buttonConnect.setEnabled(false);
         });
@@ -2274,10 +2342,9 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            portCorrect = true;
-            labelPortCorrectnessIcon.setIcon(iconCorrect);
+            labelWithPortIcon.setIcon(iconCorrect);
             textAreaPortTip.setText("");
-            if(ipCorrect)
+            if(documentListenerForTextFieldIp.getIsIpCorrect())
             {
                 buttonConnect.setEnabled(true);
             }
@@ -2285,7 +2352,9 @@ public class GUI
     }
     public void setConnectionOff()
     {
-        buttonConnect.setEnabled(ipCorrect && portCorrect);
+        buttonConnect.setEnabled(
+                documentListenerForTextFieldIp.getIsIpCorrect() &&
+                documentListenerForTextFieldPort.getIsPortCorrect());
         buttonDisconnect.setEnabled(false);
     }
     public void setConnectionOn()
@@ -2302,7 +2371,7 @@ public class GUI
     }
     public void setPanelBoardReplayGrid(HashMap<Location, Tile> grid)
     {
-        panelBoardReplay.setGrid(grid);
+        panelBoardOnFrameReplay.setGrid(grid);
     }
     public void enableButtonPreviousMove()
     {
@@ -2334,6 +2403,6 @@ public class GUI
     }
     public void stopTimer()
     {
-        SwingUtilities.invokeLater(()->timer.stop());
+        SwingUtilities.invokeLater(()-> timerForReplay.stop());
     }
 }

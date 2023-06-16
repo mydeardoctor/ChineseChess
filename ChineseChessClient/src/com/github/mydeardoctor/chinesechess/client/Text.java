@@ -21,11 +21,11 @@ public abstract class Text
     public abstract String getSomeResourcesAreMissing();
 
     //Common frame features.
-    public abstract String getTitle();
+    public abstract String getChineseChessClient();
     public abstract String getNavigation();
     public abstract String getMainMenu();
     public abstract String getExitToMainMenu();
-    public abstract String getAreYouSure();
+    public abstract String getAllProgressWillBeLost();
     public abstract String getYes();
     public abstract String getNo();
     public abstract String getReplay();
@@ -52,11 +52,11 @@ public abstract class Text
     public abstract String getOnlineMultiplayer();
     public abstract String getBack();
 
-    //Frame Online.
+    //Frame Online Multiplayer.
     public abstract String getConnectToServer();
     public abstract String getLobby();
 
-    //Frame Connect to Server.
+    //Frame Connect.
     public abstract String getIpAddress();
     public abstract String getIpTip();
     public abstract String getPort();
@@ -93,7 +93,7 @@ public abstract class Text
     //Frame Settings.
     public abstract String getLanguage();
     public abstract String getMusic();
-    public abstract String getSfx();
+    public abstract String getSoundEffects();
 
     //Music player.
 

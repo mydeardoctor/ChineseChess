@@ -9,9 +9,9 @@ public abstract class Text
     public abstract String getSomeResourcesAreMissing();
 
     //Common frame features.
-    public abstract String getTitle();
-    public abstract String getServerIsOff();
-    public abstract String getServerIsOn();
+    public abstract String getChineseChessServer();
+    public abstract String getServerIsStopped();
+    public abstract String getServerIsRunning();
     public abstract String getHelp();
     public abstract String getAbout();
     public abstract String getAboutVerbose();
@@ -21,7 +21,7 @@ public abstract class Text
     public abstract String getLobby();
     public abstract String getSettings();
 
-    //Frame Start Server.
+    //Frame Start.
     public abstract String getPort();
     public abstract String getPortTip();
     public abstract String getMaximumNumberOfPlayers();

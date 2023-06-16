@@ -66,9 +66,9 @@ class TextRussian extends Text
 
     //Common frame features.
     @Override
-    public String getTitle()
+    public String getChineseChessClient()
     {
-        return "Китайские шахматы";
+        return "Китайские шахматы. Клиент";
     }
     @Override
     public String getNavigation()
@@ -86,7 +86,7 @@ class TextRussian extends Text
         return "Выход в главное меню";
     }
     @Override
-    public String getAreYouSure()
+    public String getAllProgressWillBeLost()
     {
         return "Весь прогресс будет потерян.\nВы уверены?";
     }
@@ -200,7 +200,7 @@ class TextRussian extends Text
         return "Назад";
     }
 
-    //Frame Online.
+    //Frame Online Multiplayer.
     @Override
     public String getConnectToServer()
     {
@@ -212,7 +212,7 @@ class TextRussian extends Text
         return "Лобби";
     }
 
-    //Frame Connect to Server.
+    //Frame Connect.
     @Override
     public String getIpAddress()
     {
@@ -385,7 +385,7 @@ class TextRussian extends Text
         return "Музыка";
     }
     @Override
-    public String getSfx()
+    public String getSoundEffects()
     {
         return "Звуковые эффекты";
     }
@@ -400,6 +400,6 @@ class TextRussian extends Text
     @Override
     public String getSomeFeaturesAreNotAvailable()
     {
-        return "Некоторые функции недоступны!";
+        return "Некоторые функции Music player недоступны!";
     }
 }

@@ -66,9 +66,9 @@ public class TextEnglish extends Text
 
     //Common frame features.
     @Override
-    public String getTitle()
+    public String getChineseChessClient()
     {
-        return "Chinese Chess";
+        return "Chinese Chess Client";
     }
     @Override
     public String getNavigation()
@@ -86,7 +86,7 @@ public class TextEnglish extends Text
         return "Exit to main menu";
     }
     @Override
-    public String getAreYouSure()
+    public String getAllProgressWillBeLost()
     {
         return "All progress will be lost!\nAre you sure?";
     }
@@ -200,7 +200,7 @@ public class TextEnglish extends Text
         return "Back";
     }
 
-    //Frame Online.
+    //Frame Online Multiplayer.
     @Override
     public String getConnectToServer()
     {
@@ -212,7 +212,7 @@ public class TextEnglish extends Text
         return "Lobby";
     }
 
-    //Frame Connect to Server.
+    //Frame Connect.
     @Override
     public String getIpAddress()
     {
@@ -385,7 +385,7 @@ public class TextEnglish extends Text
         return "Music";
     }
     @Override
-    public String getSfx()
+    public String getSoundEffects()
     {
         return "Sound effects";
     }
@@ -400,6 +400,6 @@ public class TextEnglish extends Text
     @Override
     public String getSomeFeaturesAreNotAvailable()
     {
-        return "Some features are not available!";
+        return "Some music player features are not available!";
     }
 }

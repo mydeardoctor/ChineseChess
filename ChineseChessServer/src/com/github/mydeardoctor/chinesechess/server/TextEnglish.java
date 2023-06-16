@@ -18,17 +18,17 @@ public class TextEnglish extends Text
 
     //Common frame features.
     @Override
-    public String getTitle()
+    public String getChineseChessServer()
     {
         return "Chinese Chess Server";
     }
     @Override
-    public String getServerIsOff()
+    public String getServerIsStopped()
     {
         return "Server is stopped.";
     }
     @Override
-    public String getServerIsOn()
+    public String getServerIsRunning()
     {
         return "Server is running.";
     }
@@ -65,7 +65,7 @@ public class TextEnglish extends Text
         return "Settings";
     }
 
-    //Frame Start Server.
+    //Frame Start.
     @Override
     public String getPort()
     {

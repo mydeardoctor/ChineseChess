@@ -18,17 +18,17 @@ class TextRussian extends Text
 
     //Common frame features.
     @Override
-    public String getTitle()
+    public String getChineseChessServer()
     {
         return "Китайские шахматы. Сервер";
     }
     @Override
-    public String getServerIsOff()
+    public String getServerIsStopped()
     {
         return "Сервер остановлен.";
     }
     @Override
-    public String getServerIsOn()
+    public String getServerIsRunning()
     {
         return "Сервер запущен.";
     }
@@ -65,7 +65,7 @@ class TextRussian extends Text
         return "Настройки";
     }
 
-    //Frame Start Server.
+    //Frame Start.
     @Override
     public String getPort()
     {

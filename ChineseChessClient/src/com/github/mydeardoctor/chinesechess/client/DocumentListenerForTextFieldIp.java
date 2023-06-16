@@ -7,13 +7,7 @@ import javax.swing.event.DocumentListener;
 
 public class DocumentListenerForTextFieldIp implements DocumentListener
 {
-    public static final String REGEX_FOR_IP =
-        "^" +
-        "([0-9]|[0-9][0-9]|[0-1][0-9][0-9]|2[0-4][0-9]|25[0-5])\\." +
-        "([0-9]|[0-9][0-9]|[0-1][0-9][0-9]|2[0-4][0-9]|25[0-5])\\." +
-        "([0-9]|[0-9][0-9]|[0-1][0-9][0-9]|2[0-4][0-9]|25[0-5])\\." +
-        "([0-9]|[0-9][0-9]|[0-1][0-9][0-9]|2[0-4][0-9]|25[0-5])" +
-        "$";
+    private boolean ipCorrect;
     private final Pattern patternForIp;
     private String ipAddressWithoutLeadingZeros;
     private final GUI gui;
@@ -22,7 +16,15 @@ public class DocumentListenerForTextFieldIp implements DocumentListener
     {
         super();
 
-        patternForIp = Pattern.compile(REGEX_FOR_IP);
+        ipCorrect = false;
+        String regExForIp =
+            "^" +
+            "([0-9]|[0-9][0-9]|[0-1][0-9][0-9]|2[0-4][0-9]|25[0-5])\\." +
+            "([0-9]|[0-9][0-9]|[0-1][0-9][0-9]|2[0-4][0-9]|25[0-5])\\." +
+            "([0-9]|[0-9][0-9]|[0-1][0-9][0-9]|2[0-4][0-9]|25[0-5])\\." +
+            "([0-9]|[0-9][0-9]|[0-1][0-9][0-9]|2[0-4][0-9]|25[0-5])" +
+            "$";
+        patternForIp = Pattern.compile(regExForIp);
 
         this.gui = gui;
     }
@@ -46,8 +48,8 @@ public class DocumentListenerForTextFieldIp implements DocumentListener
         try
         {
             String ipText = e.getDocument().getText(0, e.getDocument().getLength());
-            boolean result = checkIp(ipText);
-            if(result)
+            ipCorrect = checkIp(ipText);
+            if(ipCorrect)
             {
                 gui.setIpCorrect();
             }
@@ -110,6 +112,10 @@ public class DocumentListenerForTextFieldIp implements DocumentListener
         }
 
         return result;
+    }
+    public boolean getIsIpCorrect()
+    {
+        return ipCorrect;
     }
     public String getIpAddressWithoutLeadingZeros()
     {

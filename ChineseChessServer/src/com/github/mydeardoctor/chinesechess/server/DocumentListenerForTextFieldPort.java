@@ -7,6 +7,7 @@ import javax.swing.event.DocumentListener;
 
 public class DocumentListenerForTextFieldPort implements DocumentListener
 {
+    private boolean portCorrect;
     private final Pattern patternForPortRange;
     private final GUI gui;
 
@@ -14,6 +15,7 @@ public class DocumentListenerForTextFieldPort implements DocumentListener
     {
         super();
 
+        portCorrect = true;
         String regExForPortRange =
             "^"+
             "102[4-9]|" +
@@ -50,8 +52,8 @@ public class DocumentListenerForTextFieldPort implements DocumentListener
         try
         {
             String portText = e.getDocument().getText(0, e.getDocument().getLength());
-            boolean result = checkPort(portText);
-            if(result)
+            portCorrect = checkPort(portText);
+            if(portCorrect)
             {
                 gui.setPortCorrect();
             }
@@ -92,5 +94,9 @@ public class DocumentListenerForTextFieldPort implements DocumentListener
         }
 
         return result;
+    }
+    public boolean getIsPortCorrect()
+    {
+        return portCorrect;
     }
 }

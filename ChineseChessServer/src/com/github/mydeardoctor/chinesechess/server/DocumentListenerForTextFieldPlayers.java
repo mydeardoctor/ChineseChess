@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 public class DocumentListenerForTextFieldPlayers implements DocumentListener
 {
+    private boolean playersCorrect;
     private final Pattern patternForPlayersRange;
     private final GUI gui;
 
@@ -14,6 +15,7 @@ public class DocumentListenerForTextFieldPlayers implements DocumentListener
     {
         super();
 
+        playersCorrect = true;
         String regExForPlayersRange =
             "^"+
             "[2-9]|" +
@@ -44,8 +46,8 @@ public class DocumentListenerForTextFieldPlayers implements DocumentListener
         try
         {
             String playersText = e.getDocument().getText(0, e.getDocument().getLength());
-            boolean result = checkPlayers(playersText);
-            if(result)
+            playersCorrect = checkPlayers(playersText);
+            if(playersCorrect)
             {
                 gui.setPlayersCorrect();
             }
@@ -86,5 +88,9 @@ public class DocumentListenerForTextFieldPlayers implements DocumentListener
         }
 
         return result;
+    }
+    public boolean getArePlayersCorrect()
+    {
+        return playersCorrect;
     }
 }
