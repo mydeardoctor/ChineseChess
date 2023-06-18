@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Client //TODO Multithreading
+public class Client
 {
     //Client attributes.
     private boolean connectedToServer;
@@ -146,10 +146,11 @@ public class Client //TODO Multithreading
                 //If clientSocket is closed,
                 //any thread currently blocked in an I/O operation upon this socket will throw a SocketException.
                 String message = this.toString();
-                objectOutputStream.writeObject(message);
+                objectOutputStream.writeObject(message); //TODO переделать
                 Thread.sleep(1000);
             }
             //TODO Убрать InterruptedException
+            //TODO add IOException
             catch (IOException | InterruptedException e) //SocketException is a subclass of IOException.
             {
                 closeResources();
@@ -224,6 +225,18 @@ public class Client //TODO Multithreading
                 logger.logp(Level.WARNING, this.getClass().getName(), "closeResources",
                         "Could not close objectInputStream of clientSocket.", e);
             }
+        }
+    }
+    public synchronized void writeToServer(Object message) //TODO Нужно ли закрывать соединение? На данный момент неправильно, так как нет потока с чтением, поэтому поток не закроется. Не проверен exception.
+    {
+        try
+        {
+            objectOutputStream.writeObject(message);
+        }
+        catch(IOException e)
+        {
+            logger.logp(Level.WARNING, this.getClass().getName(), "writeToServer",
+                    "Could not write to objectOutputStream of clientSocket.", e);
         }
     }
     public boolean getIsConnectedToServer()

@@ -35,6 +35,9 @@ public abstract class Text
     public abstract String getCouldNotStartServer();
     public abstract String getBack();
 
+    //Frame Lobby.
+    public abstract String getListOfClients();
+
     //Frame Settings.
     public abstract String getLanguage();
 }

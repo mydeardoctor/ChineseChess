@@ -15,7 +15,7 @@ public class Server
     private ThreadPoolExecutor serverThreadPool;
     private ThreadPoolExecutor clientThreadPool;
     private ServerSocket serverSocket;
-    private final ArrayList<Client> clients; //TODO list of sockets? multithreading?
+    private final ListOfClients listOfClients;
 
     //GUI attributes.
     private GUI gui;
@@ -26,7 +26,7 @@ public class Server
     public Server()
     {
         serverRunning = false;
-        clients = new ArrayList<>();
+        listOfClients = new ListOfClients();
     }
     public void setGui(GUI gui)
     {
@@ -36,7 +36,7 @@ public class Server
     {
         try
         {
-            serverSocket = new ServerSocket(portNumber);
+            serverSocket = new ServerSocket(portNumber, 1);
             serverThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
             clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(maximumNumberOfPlayers);
 
@@ -65,11 +65,36 @@ public class Server
                 Socket clientSocket = serverSocket.accept();
                 if(clientThreadPool.getActiveCount() < clientThreadPool.getCorePoolSize())
                 {
-                    Client client = new Client(clientSocket);
+                    Client client = new Client(clientSocket, this);
                     if(client.tryToOpenStreams())
                     {
-                        clients.add(client);
+                        listOfClients.add(client);
+                        gui.refreshTableOfClients(listOfClients.getClientInetAddresses());
                         clientThreadPool.execute(client::run);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            clientSocket.close();
+                        }
+                        catch (IOException e)
+                        {
+                            logger.logp(Level.WARNING, this.getClass().getName(), "run",
+                                    "Could not close clientSocket.", e);
+                        }
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        clientSocket.close();
+                    }
+                    catch (IOException e)
+                    {
+                        logger.logp(Level.WARNING, this.getClass().getName(), "run",
+                                "Could not close clientSocket.", e);
                     }
                 }
             }
@@ -117,11 +142,12 @@ public class Server
         }
 
         //Close Client Sockets. Causes an Exception in Client Threads. Client Threads begin to stop.
-        for(Client client : clients)
+        ArrayList<Socket> clientSockets = listOfClients.getClientSockets();
+        for(Socket clientSocket : clientSockets)
         {
             try
             {
-                client.getClientSocket().close();
+                clientSocket.close();
             }
             catch (IOException e)
             {
@@ -145,8 +171,7 @@ public class Server
             }
         }
 
-        //Clear ArrayList of Clients.
-        clients.clear();
+        //Each client is deleted from listOfClients in its own thread.
 
         //Refresh GUI.
         serverRunning = false;
@@ -155,5 +180,13 @@ public class Server
     public boolean getIsServerRunning()
     {
         return serverRunning;
+    }
+    public ListOfClients getListOfClients()
+    {
+        return listOfClients;
+    }
+    public GUI getGui()
+    {
+        return gui;
     }
 }

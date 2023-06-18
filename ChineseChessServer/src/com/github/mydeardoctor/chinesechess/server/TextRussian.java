@@ -127,6 +127,13 @@ class TextRussian extends Text
         return "Назад";
     }
 
+    //Frame Lobby.
+    @Override
+    public String getListOfClients()
+    {
+        return "Список клиентов";
+    }
+
     //Frame Settings.
     @Override
     public String getLanguage()

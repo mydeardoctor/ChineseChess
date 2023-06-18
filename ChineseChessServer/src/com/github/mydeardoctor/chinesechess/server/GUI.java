@@ -4,6 +4,7 @@ import com.github.mydeardoctor.chinesechess.*;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -47,7 +48,6 @@ public class GUI
     private JMenuItem menuItemSettings;
     private JMenuItem menuItemAbout;
 
-
     //Frame Main Menu.
     private JButton buttonStartOnFrameMainMenu;
     private JButton buttonLobby;
@@ -80,6 +80,15 @@ public class GUI
     private GridBagConstraints constraintsForLabelWithPlayersIcon;
     private GridBagConstraints constraintsForTextAreaPlayersTip;
     private GridBagConstraints constraintsForPanelTransparentOnFrameStart;
+
+    //Frame Lobby.
+    private JLabel labelListOfClients;
+    private JScrollPane scrollPaneWithTableOfClients;
+    private TableOfClientsModel tableOfClientsModel;
+    private JButton buttonBackOnFrameLobby;
+    private GridBagConstraints constraintsForLabelListOfClients;
+    private GridBagConstraints constraintsForScrollPaneWithTableOfClients;
+    private GridBagConstraints constraintsForButtonBackOnFrameLobby;
 
     //Frame Settings.
     private JLabel labelLanguage;
@@ -115,6 +124,7 @@ public class GUI
         initializeCommonFrameFeatures();
         initializeFrameMainMenu();
         initializeFrameStart();
+        initializeFrameLobby();
         initializeFrameSettings();
     }
     private Font initializeFontChinese()
@@ -300,8 +310,7 @@ public class GUI
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
-                //TODO Frame Lobby. Скопировать после создания в Client
-                //buttonLobby.addActionListener(e->);
+                buttonLobby.addActionListener(e->showFrameLobby());
 
                 //Button Settings.
                 buttonSettings = new JButton(text.getSettings());
@@ -476,18 +485,74 @@ public class GUI
                 buttonBackOnFrameStart.setBackground(Color.WHITE);
                 buttonBackOnFrameStart.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonBackOnFrameStart.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
-                GridBagConstraints constraintsForButtonBackStartServer = new GridBagConstraints(
+                GridBagConstraints constraintsForButtonBackOnFrameStart = new GridBagConstraints(
                         2, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(80, 20, 0, 20), 0, 0);
                 buttonBackOnFrameStart.addActionListener(e->showPreviousFrame());
-                panelTransparentOnFrameStart.add(buttonBackOnFrameStart, constraintsForButtonBackStartServer);
+                panelTransparentOnFrameStart.add(buttonBackOnFrameStart, constraintsForButtonBackOnFrameStart);
             });
         }
         catch (InterruptedException | InvocationTargetException e)
         {
             logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameStart",
                     "Could not initialize frame Start.", e);
+        }
+    }
+    private void initializeFrameLobby()
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(()->
+            {
+                //Label List of Clients.
+                labelListOfClients = new JLabel(text.getListOfClients());
+                labelListOfClients.setPreferredSize(new Dimension(300, 60));
+                labelListOfClients.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
+                constraintsForLabelListOfClients = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 0), 0, 0);
+
+                //Table of Clients.
+                tableOfClientsModel = new TableOfClientsModel(100, 1);
+                JTable tableOfClients = new JTable(tableOfClientsModel);
+                tableOfClients.setPreferredScrollableViewportSize(new Dimension(500, 400));
+                tableOfClients.setRowHeight(50);
+                tableOfClients.setTableHeader(null);
+                tableOfClients.setFocusable(false);
+                tableOfClients.setCellSelectionEnabled(false);
+                tableOfClients.setDragEnabled(false);
+                tableOfClients.setGridColor(Color.BLACK);
+                tableOfClients.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
+
+                //Scroll Pane.
+                scrollPaneWithTableOfClients = new JScrollPane(tableOfClients,
+                        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                scrollPaneWithTableOfClients.setBorder(new LineBorder(Color.BLACK, 2));
+                constraintsForScrollPaneWithTableOfClients = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(10, 0, 0, 0), 0, 0);
+
+                //Button Back.
+                buttonBackOnFrameLobby = new JButton(text.getBack());
+                buttonBackOnFrameLobby.setPreferredSize(new Dimension(150, 100));
+                buttonBackOnFrameLobby.setBackground(Color.WHITE);
+                buttonBackOnFrameLobby.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonBackOnFrameLobby.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
+                constraintsForButtonBackOnFrameLobby = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 0, 0, 0), 0, 0);
+                buttonBackOnFrameLobby.addActionListener(e->showPreviousFrame());
+            });
+        }
+        catch (InterruptedException | InvocationTargetException e)
+        {
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameLobby",
+                    "Could not initialize frame Lobby.", e);
         }
     }
     private void initializeFrameSettings()
@@ -600,6 +665,21 @@ public class GUI
             repaint();
         });
     }
+    private void showFrameLobby()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            addToPreviousFrames(FrameType.LOBBY);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(panelTransparent, constraintsForPanelTransparent);
+            frame.getContentPane().add(statusBar, constraintsForStatusBar);
+            panelTransparent.removeAll();
+            panelTransparent.add(labelListOfClients, constraintsForLabelListOfClients);
+            panelTransparent.add(scrollPaneWithTableOfClients, constraintsForScrollPaneWithTableOfClients);
+            panelTransparent.add(buttonBackOnFrameLobby, constraintsForButtonBackOnFrameLobby);
+            repaint();
+        });
+    }
     private void showFrameSettings()
     {
         SwingUtilities.invokeLater(()->
@@ -674,6 +754,7 @@ public class GUI
                 {
                     case MAIN_MENU -> showFrameMainMenu();
                     case START -> showFrameStart();
+                    case LOBBY -> showFrameLobby();
                     case SETTINGS -> showFrameSettings();
                 }
             }
@@ -731,6 +812,9 @@ public class GUI
             buttonStartOnFrameStart.setText(text.getStart());
             buttonStop.setText(text.getStop());
             buttonBackOnFrameStart.setText(text.getBack());
+
+            //Frame Lobby.
+            labelListOfClients.setText(text.getListOfClients());
 
             //Frame Settings.
             labelLanguage.setText(text.getLanguage());
@@ -811,5 +895,22 @@ public class GUI
                 JOptionPane.showMessageDialog(frame,
                         text.getCouldNotStartServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE)
         );
+    }
+    public void refreshTableOfClients(ArrayList<InetAddress> clientInetAddresses)
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            for(int rowIndex = 0; rowIndex < 100; rowIndex++)
+            {
+                tableOfClientsModel.setValueAt("", rowIndex, 0);
+            }
+
+            int rowIndex = 0;
+            for(InetAddress clientInetAddress : clientInetAddresses)
+            {
+                tableOfClientsModel.setValueAt(clientInetAddress.toString(), rowIndex, 0);
+                rowIndex++;
+            }
+        });
     }
 }

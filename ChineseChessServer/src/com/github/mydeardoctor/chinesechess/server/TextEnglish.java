@@ -127,6 +127,13 @@ public class TextEnglish extends Text
         return "Back";
     }
 
+    //Frame Lobby.
+    @Override
+    public String getListOfClients()
+    {
+        return "List of clients";
+    }
+
     //Frame Settings.
     @Override
     public String getLanguage()

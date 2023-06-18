@@ -10,11 +10,13 @@ public class Client
     private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
+    private final Server server;
     private static final Logger logger = Logger.getLogger(Client.class.getName());
 
-    public Client(Socket clientSocket)
+    public Client(Socket clientSocket, Server server)
     {
         this.clientSocket = clientSocket;
+        this.server = server;
     }
     public boolean tryToOpenStreams()
     {
@@ -54,6 +56,8 @@ public class Client
                 System.out.println("Client Socket closed.\n");
 
                 closeResources();
+                server.getListOfClients().remove(this);
+                server.getGui().refreshTableOfClients(server.getListOfClients().getClientInetAddresses());
                 break;
             }
         }
@@ -84,6 +88,18 @@ public class Client
                 logger.logp(Level.WARNING, this.getClass().getName(), "closeResources",
                         "Could not close objectInputStream of clientSocket.", e);
             }
+        }
+    }
+    public synchronized void writeToClient(Object message) //TODO Нужно ли закрывать соединение? Не проверен exception
+    {
+        try
+        {
+            objectOutputStream.writeObject(message);
+        }
+        catch (IOException e)
+        {
+            logger.logp(Level.WARNING, this.getClass().getName(), "writeToClient",
+                    "Could not write to objectOutputStream of clientSocket.", e);
         }
     }
     public Socket getClientSocket()
