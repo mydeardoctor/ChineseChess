@@ -111,9 +111,13 @@ public class GUI
     private GridBagConstraints constraintsForStatusBar;
 
     //Frame Online Multiplayer.
+    private JPanel panelTransparentOnFrameOnlineMultiplayer;
+    private JTextField statusBarOfConnection;
     private JButton buttonConnectToServer;
     private JButton buttonLobby;
     private JButton buttonBackOnFrameOnlineMultiplayer;
+    private GridBagConstraints constraintsForPanelTransparentOnFrameOnlineMultiplayer;
+    private GridBagConstraints constraintsForStatusBarOfConnection;
     private GridBagConstraints constraintsForButtonConnectToServer;
     private GridBagConstraints constraintsForButtonLobby;
     private GridBagConstraints constraintsForButtonBackOnFrameOnlineMultiplayer;
@@ -1075,12 +1079,34 @@ public class GUI
                     "Could not initialize frame Board.", e);
         }
     }
-    private void initializeFrameOnlineMultiplayer() //TODO сделать status bar
+    private void initializeFrameOnlineMultiplayer()
     {
         try
         {
             SwingUtilities.invokeAndWait(()->
             {
+                //Panel Transparent.
+                panelTransparentOnFrameOnlineMultiplayer = new JPanel();
+                panelTransparentOnFrameOnlineMultiplayer.setOpaque(false);
+                panelTransparentOnFrameOnlineMultiplayer.setLayout(gridBagLayout);
+                constraintsForPanelTransparentOnFrameOnlineMultiplayer = new GridBagConstraints(
+                        0, 0, 1, 1, 1, 1,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0);
+
+                //Status Bar.
+                statusBarOfConnection = new JTextField(1);
+                statusBarOfConnection.setEnabled(false);
+                statusBarOfConnection.setDisabledTextColor(Color.BLACK);
+                statusBarOfConnection.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
+                        new EmptyBorder(5, 5, 5, 5)));
+                statusBarOfConnection.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
+                statusBarOfConnection.setText(text.getDisconnectedFromServer());
+                constraintsForStatusBarOfConnection = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                        new Insets(0, 0, 0, 0), 0, 0);
+
                 //Button Connect to Server.
                 buttonConnectToServer = new JButton(text.getConnectToServer());
                 buttonConnectToServer.setPreferredSize(new Dimension(500, 100));
@@ -1761,9 +1787,13 @@ public class GUI
         {
             addToPreviousFrames(FrameType.ONLINE_MULTIPLAYER);
             frame.getContentPane().removeAll();
-            frame.getContentPane().add(buttonConnectToServer, constraintsForButtonConnectToServer);
-            frame.getContentPane().add(buttonLobby, constraintsForButtonLobby);
-            frame.getContentPane().add(
+            frame.getContentPane().add(panelTransparentOnFrameOnlineMultiplayer,
+                    constraintsForPanelTransparentOnFrameOnlineMultiplayer);
+            frame.getContentPane().add(statusBarOfConnection, constraintsForStatusBarOfConnection);
+            panelTransparentOnFrameOnlineMultiplayer.removeAll();
+            panelTransparentOnFrameOnlineMultiplayer.add(buttonConnectToServer, constraintsForButtonConnectToServer);
+            panelTransparentOnFrameOnlineMultiplayer.add(buttonLobby, constraintsForButtonLobby);
+            panelTransparentOnFrameOnlineMultiplayer.add(
                     buttonBackOnFrameOnlineMultiplayer, constraintsForButtonBackOnFrameOnlineMultiplayer);
             repaint();
         });
@@ -1774,15 +1804,19 @@ public class GUI
         {
             addToPreviousFrames(FrameType.CONNECT_TO_SERVER);
             frame.getContentPane().removeAll();
-            frame.getContentPane().add(labelIp, constraintsForLabelIp);
-            frame.getContentPane().add(textFieldIp, constraintsForTextFieldIp);
-            frame.getContentPane().add(labelWithIpIcon, constraintsForLabelWithIpIcon);
-            frame.getContentPane().add(textAreaIpTip, constraintsForTextAreaIpTip);
-            frame.getContentPane().add(labelPort, constraintsForLabelPort);
-            frame.getContentPane().add(textFieldPort, constraintsForTextFieldPort);
-            frame.getContentPane().add(labelWithPortIcon, constraintsForLabelWithPortIcon);
-            frame.getContentPane().add(textAreaPortTip, constraintsForTextAreaPortTip);
-            frame.getContentPane().add(
+            frame.getContentPane().add(panelTransparentOnFrameOnlineMultiplayer,
+                    constraintsForPanelTransparentOnFrameOnlineMultiplayer);
+            frame.getContentPane().add(statusBarOfConnection, constraintsForStatusBarOfConnection);
+            panelTransparentOnFrameOnlineMultiplayer.removeAll();
+            panelTransparentOnFrameOnlineMultiplayer.add(labelIp, constraintsForLabelIp);
+            panelTransparentOnFrameOnlineMultiplayer.add(textFieldIp, constraintsForTextFieldIp);
+            panelTransparentOnFrameOnlineMultiplayer.add(labelWithIpIcon, constraintsForLabelWithIpIcon);
+            panelTransparentOnFrameOnlineMultiplayer.add(textAreaIpTip, constraintsForTextAreaIpTip);
+            panelTransparentOnFrameOnlineMultiplayer.add(labelPort, constraintsForLabelPort);
+            panelTransparentOnFrameOnlineMultiplayer.add(textFieldPort, constraintsForTextFieldPort);
+            panelTransparentOnFrameOnlineMultiplayer.add(labelWithPortIcon, constraintsForLabelWithPortIcon);
+            panelTransparentOnFrameOnlineMultiplayer.add(textAreaPortTip, constraintsForTextAreaPortTip);
+            panelTransparentOnFrameOnlineMultiplayer.add(
                     panelTransparentOnFrameConnectToServer, constraintsForPanelTransparentOnFrameConnectToServer);
             repaint();
         });
@@ -1793,7 +1827,11 @@ public class GUI
         {
             addToPreviousFrames(FrameType.LOBBY);
             frame.getContentPane().removeAll();
-            frame.getContentPane().add(buttonBackOnFrameLobby, constraintsForButtonBackOnFrameLobby);
+            frame.getContentPane().add(panelTransparentOnFrameOnlineMultiplayer,
+                    constraintsForPanelTransparentOnFrameOnlineMultiplayer);
+            frame.getContentPane().add(statusBarOfConnection, constraintsForStatusBarOfConnection);
+            panelTransparentOnFrameOnlineMultiplayer.removeAll();
+            panelTransparentOnFrameOnlineMultiplayer.add(buttonBackOnFrameLobby, constraintsForButtonBackOnFrameLobby);
             repaint();
         });
     }
@@ -2230,6 +2268,14 @@ public class GUI
             buttonConnectToServer.setText(text.getConnectToServer());
             buttonLobby.setText(text.getLobby());
             buttonBackOnFrameOnlineMultiplayer.setText(text.getBack());
+            if(client.getIsConnectedToServer())
+            {
+                statusBarOfConnection.setText(text.getConnectedToServer());
+            }
+            else
+            {
+                statusBarOfConnection.setText(text.getDisconnectedFromServer());
+            }
 
             //Frame Connect to Server.
             labelIp.setText(text.getIpAddress());
@@ -2357,7 +2403,7 @@ public class GUI
     {
         buttonDisconnect.setEnabled(false);
     }
-    public void setDisconnected() //TODO сделать state в классе Client.
+    public void setDisconnected()
     {
         SwingUtilities.invokeLater(()->
         {
@@ -2365,6 +2411,7 @@ public class GUI
                 documentListenerForTextFieldIp.getIsIpCorrect() &&
                 documentListenerForTextFieldPort.getIsPortCorrect());
             buttonDisconnect.setEnabled(false);
+            statusBarOfConnection.setText(text.getDisconnectedFromServer());
         });
     }
     public void setConnected()
@@ -2373,6 +2420,7 @@ public class GUI
         {
             buttonConnect.setEnabled(false);
             buttonDisconnect.setEnabled(true);
+            statusBarOfConnection.setText(text.getConnectedToServer());
         });
     }
     public void showDialogCouldNotConnectToServer()
@@ -2380,6 +2428,13 @@ public class GUI
         SwingUtilities.invokeLater(()->
                 JOptionPane.showMessageDialog(frame,
                         text.getCouldNotConnectToServer(), text.getClientError(), JOptionPane.ERROR_MESSAGE)
+        );
+    }
+    public void showDialogDisconnectedFromServer()
+    {
+        SwingUtilities.invokeLater(()->
+                JOptionPane.showMessageDialog(frame,
+                        text.getDisconnectedFromServer(), text.getClientInfo(), JOptionPane.INFORMATION_MESSAGE)
         );
     }
     public void setPanelBoardReplayGrid(HashMap<Location, Tile> grid)

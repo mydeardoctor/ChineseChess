@@ -692,7 +692,7 @@ public class GUI
 
             //Common frame features.
             frame.setTitle(text.getChineseChessServer());
-            if(server.getIsServerOn())
+            if(server.getIsServerRunning())
             {
                 statusBar.setText(text.getServerIsRunning());
             }

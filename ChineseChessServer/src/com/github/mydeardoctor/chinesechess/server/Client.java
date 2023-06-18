@@ -47,17 +47,17 @@ public class Client
                 //If clientSocket is closed,
                 //any thread currently blocked in an I/O operation upon this socket will throw a SocketException.
                 String message = (String)(objectInputStream.readObject());
-                System.out.println(message);
+                System.out.println(message + "\n");
             }
             catch (IOException | ClassNotFoundException e) //SocketException is a subclass of IOException.
             {
-                System.out.println("Client Socket closed.");
+                System.out.println("Client Socket closed.\n");
 
                 closeResources();
                 break;
             }
         }
-        System.out.println("Client Thread stopped.");
+        System.out.println("Client Thread stopped.\n");
     }
     private void closeResources()
     {

@@ -211,6 +211,16 @@ public class TextEnglish extends Text
     {
         return "Lobby";
     }
+    @Override
+    public String getDisconnectedFromServer()
+    {
+        return "Disconnected from server.";
+    }
+    @Override
+    public String getConnectedToServer()
+    {
+        return "Connected to server.";
+    }
 
     //Frame Connect.
     @Override
@@ -262,6 +272,11 @@ public class TextEnglish extends Text
     public String getConnectionWillBeLost()
     {
         return "Connection will be lost!\nAre you sure?";
+    }
+    @Override
+    public String getClientInfo()
+    {
+        return "Client info";
     }
 
     //Frame Rules.

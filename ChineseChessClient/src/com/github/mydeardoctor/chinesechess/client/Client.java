@@ -6,16 +6,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Client
+public class Client //TODO Multithreading
 {
     //Client attributes.
-    private boolean connectedToServer; //TODO
+    private boolean connectedToServer;
     private Socket clientSocket;
     private ThreadPoolExecutor clientThreadPool;
     private ObjectOutputStream objectOutputStream;
@@ -36,84 +37,83 @@ public class Client
     {
         this.gui = gui;
     }
-    public void connect(String ipAddress, int portNumber) //TODO exceptions unwrapping
+    public void connect(String ipAddress, int portNumber)
     {
         gui.disableButtonConnect();
         gui.disableButtonDisconnect();
 
-        Client client = this;
-        try
+        clientSocket = new Socket();
+        Client clientReference = this;
+
+        //Establishing a connection with a server requires time.
+        //SwingWorker is used so that EDT will not be blocked during establishing of connection.
+        SwingWorker<Boolean, Void> connectorToServer = new SwingWorker<>()
         {
-            clientSocket = new Socket();
-            //TODO new thread
-            SwingWorker<Boolean, Void> sw = new SwingWorker<Boolean, Void>()
+            @Override
+            protected Boolean doInBackground() //Invoked on a separate thread.
             {
-                @Override
-                protected Boolean doInBackground() throws Exception
+                boolean result;
+                try
                 {
-                    boolean result;
-                    try
-                    {
-                        clientSocket.connect(new InetSocketAddress(ipAddress, portNumber), 5000);
-                        result = true;
-                    }
-                    catch (Exception e)
-                    {
-                        result = false;
-                    }
-
-                    return result;
+                    clientSocket.connect(new InetSocketAddress(ipAddress, portNumber), 5000);
+                    result = true;
                 }
-
-                @Override
-                protected void done()
+                catch (IOException e)
                 {
-                    try
+                    result = false;
+
+                    logger.logp(Level.WARNING,
+                            this.getClass().getName() + " SwingWorker<Boolean, Void> connectorToServer",
+                            "doInBackground",
+                            "Could not connect to server.", e);
+                }
+                return result;
+            }
+            @Override
+            protected void done() //Invoked on EDT.
+            {
+                try
+                {
+                    boolean result = get();
+
+                    if (result)
                     {
-                        boolean result = get();
-
-                        if(result)
+                        if (tryToOpenStreams())
                         {
-                            if(tryToOpenStreams())
-                            {
-                                gui.setConnected();
+                            connectedToServer = true;
+                            gui.setConnected();
 
-                                clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-                                clientThreadPool.execute(client::run);
-                            }
-                            else
-                            {
-                                gui.setDisconnected();
-                                gui.showDialogCouldNotConnectToServer();
-                            }
+                            clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+                            clientThreadPool.execute(clientReference::run);
                         }
                         else
                         {
+                            connectedToServer = false;
                             gui.setDisconnected();
                             gui.showDialogCouldNotConnectToServer();
                         }
                     }
-                    catch (Exception e)
+                    else
                     {
-                        e.printStackTrace();
-
+                        connectedToServer = false;
                         gui.setDisconnected();
                         gui.showDialogCouldNotConnectToServer();
                     }
-
-
                 }
-            };
-            sw.execute();
-        }
-        catch (Exception e)
-        {
-            //TODO commented out code
-//            e.printStackTrace();
+                catch (InterruptedException | ExecutionException e)
+                {
+                    connectedToServer = false;
+                    gui.setDisconnected();
+                    gui.showDialogCouldNotConnectToServer();
 
-            gui.setDisconnected();
-            gui.showDialogCouldNotConnectToServer();
-        }
+                    logger.logp(Level.WARNING,
+                            this.getClass().getName() + " SwingWorker<Boolean, Void> connectorToServer",
+                            "done",
+                            "Could not get results of doInBackground().", e);
+                }
+            }
+        };
+        connectorToServer.execute();
     }
     private boolean tryToOpenStreams()
     {
@@ -153,16 +153,18 @@ public class Client
             catch (IOException | InterruptedException e) //SocketException is a subclass of IOException.
             {
                 closeResources();
-                gui.setDisconnected(); //TODO dialog disconnected
+                connectedToServer = false;
+                gui.setDisconnected();
+                gui.showDialogDisconnectedFromServer();
 
-                System.out.println("Client Socket closed.");
+                System.out.println("Client Socket closed.\n");
 
                 break;
             }
         }
-        System.out.println("Client Thread stopped.");
+        System.out.println("Client Thread stopped.\n");
     }
-    public void disconnect() //TODO dialog disconnected
+    public void disconnect()
     {
         //Close Client Socket. Causes an Exception in Client Thread. Client Thread begins to stop.
         if(clientSocket != null)
@@ -194,6 +196,7 @@ public class Client
         }
 
         //Refresh GUI.
+        connectedToServer = false;
         gui.setDisconnected();
     }
     private void closeResources()
@@ -222,5 +225,9 @@ public class Client
                         "Could not close objectInputStream of clientSocket.", e);
             }
         }
+    }
+    public boolean getIsConnectedToServer()
+    {
+        return connectedToServer;
     }
 }

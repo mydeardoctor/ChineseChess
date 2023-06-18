@@ -55,6 +55,8 @@ public abstract class Text
     //Frame Online Multiplayer.
     public abstract String getConnectToServer();
     public abstract String getLobby();
+    public abstract String getDisconnectedFromServer();
+    public abstract String getConnectedToServer();
 
     //Frame Connect.
     public abstract String getIpAddress();
@@ -67,6 +69,7 @@ public abstract class Text
     public abstract String getCouldNotConnectToServer();
     public abstract String getDisconnectFromServer();
     public abstract String getConnectionWillBeLost();
+    public abstract String getClientInfo();
 
     //Frame Rules.
     public abstract String getGoal();

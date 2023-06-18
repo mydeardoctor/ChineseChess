@@ -78,12 +78,12 @@ public class Server
                 serverRunning = false;
                 gui.setServerStopped();
 
-                System.out.println("Server Socket closed.");
+                System.out.println("Server Socket closed.\n");
 
                 break;
             }
         }
-        System.out.println("Server Thread stopped.");
+        System.out.println("Server Thread stopped.\n");
     }
     public void stop()
     {
@@ -152,7 +152,7 @@ public class Server
         serverRunning = false;
         gui.setServerStopped();
     }
-    public boolean getIsServerOn()
+    public boolean getIsServerRunning()
     {
         return serverRunning;
     }

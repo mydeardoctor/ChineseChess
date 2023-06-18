@@ -211,6 +211,16 @@ class TextRussian extends Text
     {
         return "Лобби";
     }
+    @Override
+    public String getDisconnectedFromServer()
+    {
+        return "Вы отключены от сервера.";
+    }
+    @Override
+    public String getConnectedToServer()
+    {
+        return "Вы подключены к серверу.";
+    }
 
     //Frame Connect.
     @Override
@@ -262,6 +272,11 @@ class TextRussian extends Text
     public String getConnectionWillBeLost()
     {
         return "Соединение будет разорвано!\nВы уверены?";
+    }
+    @Override
+    public String getClientInfo()
+    {
+        return "Информация Client";
     }
 
     //Frame Rules.
