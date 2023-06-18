@@ -6,10 +6,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Client
 {
@@ -22,6 +23,9 @@ public class Client
     //GUI attributes.
     private GUI gui;
 
+    //Logger.
+    private static final Logger logger = Logger.getLogger(Client.class.getName());
+
     public Client()
     {
         super();
@@ -30,7 +34,7 @@ public class Client
     {
         this.gui = gui;
     }
-    public void connect(String ipAddress, int portNumber)
+    public void connect(String ipAddress, int portNumber) //TODO exceptions unwrapping
     {
         Client client = this;
         try
@@ -68,20 +72,20 @@ public class Client
                         {
                             if(tryToOpenStreams())
                             {
-                                gui.setConnectionOn();
+                                gui.setConnected();
 
                                 clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
                                 clientThreadPool.execute(client::run);
                             }
                             else
                             {
-                                gui.setConnectionOff();
+                                gui.setDisconnected();
                                 gui.showDialogCouldNotConnectToServer();
                             }
                         }
                         else
                         {
-                            gui.setConnectionOff();
+                            gui.setDisconnected();
                             gui.showDialogCouldNotConnectToServer();
                         }
                     }
@@ -89,7 +93,7 @@ public class Client
                     {
                         e.printStackTrace();
 
-                        gui.setConnectionOff();
+                        gui.setDisconnected();
                         gui.showDialogCouldNotConnectToServer();
                     }
 
@@ -115,7 +119,7 @@ public class Client
         {
 //            e.printStackTrace(); //TODO commented out code
 
-            gui.setConnectionOff();
+            gui.setDisconnected();
             gui.showDialogCouldNotConnectToServer();
         }
     }
@@ -132,7 +136,8 @@ public class Client
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "tryToOpenStreams",
+                    "Could not open objectOutputStream and objectInputStream of clientSocket.", e);
 
             closeResources();
             result = false;
@@ -146,21 +151,26 @@ public class Client
         {
             try
             {
+                //If clientSocket is closed,
+                //any thread currently blocked in an I/O operation upon this socket will throw a SocketException.
                 String message = this.toString();
                 objectOutputStream.writeObject(message);
                 Thread.sleep(1000);
             }
-            catch (Exception e)
+            //TODO Убрать InterruptedException
+            catch (IOException | InterruptedException e) //SocketException is a subclass of IOException.
             {
                 closeResources();
-                gui.setConnectionOff();
+                gui.setDisconnected(); //TODO dialog disconnected
+
                 System.out.println("Client Socket closed.");
+
                 break;
             }
         }
         System.out.println("Client Thread stopped.");
     }
-    public void disconnect()
+    public void disconnect() //TODO dialog disconnected
     {
         //Close Client Socket. Causes an Exception in Client Thread. Client Thread begins to stop.
         if(clientSocket != null)
@@ -171,7 +181,8 @@ public class Client
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                logger.logp(Level.WARNING, this.getClass().getName(), "disconnect",
+                        "Could not close clientSocket.", e);
             }
         }
 
@@ -185,12 +196,13 @@ public class Client
             }
             catch (InterruptedException e)
             {
-                e.printStackTrace();
+                logger.logp(Level.WARNING, this.getClass().getName(), "disconnect",
+                        "Could not stop threads of clientThreadPool.", e);
             }
         }
 
         //Refresh GUI.
-        gui.setConnectionOff();
+        gui.setDisconnected();
     }
     private void closeResources()
     {
@@ -202,7 +214,8 @@ public class Client
             }
             catch (IOException e)
             {
-//                e.printStackTrace(); //TODO commented out code
+                logger.logp(Level.WARNING, this.getClass().getName(), "closeResources",
+                        "Could not close objectOutputStream of clientSocket.", e);
             }
         }
         if(objectInputStream != null)
@@ -213,7 +226,8 @@ public class Client
             }
             catch (IOException e)
             {
-//                e.printStackTrace(); //TODO commented out code
+                logger.logp(Level.WARNING, this.getClass().getName(), "closeResources",
+                        "Could not close objectInputStream of clientSocket.", e);
             }
         }
     }

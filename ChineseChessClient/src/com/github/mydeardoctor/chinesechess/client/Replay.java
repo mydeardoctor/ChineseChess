@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Replay
 {
@@ -18,6 +20,9 @@ public class Replay
 
     //GUI attributes.
     private GUI gui;
+
+    //Logger.
+    private static final Logger logger = Logger.getLogger(Replay.class.getName());
 
     public Replay()
     {
@@ -74,8 +79,11 @@ public class Replay
             }
             fileWithExtension = new File(path);
         }
-        catch (Exception e)
+        catch (IOException e)
         {
+            logger.logp(Level.WARNING, this.getClass().getName(), "save",
+                    "Could not get canonical path of selected file.", e);
+
             return FAILURE;
         }
 
@@ -84,8 +92,11 @@ public class Replay
         {
             objectOutputStream.writeObject(replayOutput);
         }
-        catch(Exception e)
+        catch (IOException e)
         {
+            logger.logp(Level.WARNING, this.getClass().getName(), "save",
+                    "Could not create objectOutputStream or write to objectOutputStream.", e);
+
             return FAILURE;
         }
 
@@ -101,8 +112,11 @@ public class Replay
                 return FAILURE;
             }
         }
-        catch (Exception e)
+        catch (IOException e)
         {
+            logger.logp(Level.WARNING, this.getClass().getName(), "load",
+                    "Could not get canonical path of selected file.", e);
+
             return FAILURE;
         }
 
@@ -112,8 +126,11 @@ public class Replay
             //noinspection unchecked
             replayInput = (ArrayList<HashMap<Location, Tile>>)objectInputStream.readObject();
         }
-        catch(Exception e)
+        catch (ClassNotFoundException | IOException e)
         {
+            logger.logp(Level.WARNING, this.getClass().getName(), "load",
+                    "Could not create objectInputStream or read from objectInputStream.", e);
+
             return FAILURE;
         }
 
@@ -166,7 +183,7 @@ public class Replay
 
         if((movesIndex + 1) > (replayInput.size()-1))
         {
-            gui.stopTimer();
+            gui.stopTimerForReplay();
             gui.disableButtonNextMove();
             gui.disableButtonPlayPause();
             gui.setButtonPlayPauseUnselected();

@@ -2,12 +2,15 @@ package com.github.mydeardoctor.chinesechess.server;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Client
 {
     private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
+    private static final Logger logger = Logger.getLogger(Client.class.getName());
 
     public Client(Socket clientSocket)
     {
@@ -26,7 +29,8 @@ public class Client
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "tryToOpenStreams",
+                    "Could not open objectOutputStream and objectInputStream of clientSocket.", e);
 
             closeResources();
             result = false;
@@ -40,13 +44,16 @@ public class Client
         {
             try
             {
+                //If clientSocket is closed,
+                //any thread currently blocked in an I/O operation upon this socket will throw a SocketException.
                 String message = (String)(objectInputStream.readObject());
                 System.out.println(message);
             }
-            catch (Exception e)
+            catch (IOException | ClassNotFoundException e) //SocketException is a subclass of IOException.
             {
-                closeResources();
                 System.out.println("Client Socket closed.");
+
+                closeResources();
                 break;
             }
         }
@@ -62,7 +69,8 @@ public class Client
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                logger.logp(Level.WARNING, this.getClass().getName(), "closeResources",
+                        "Could not close objectOutputStream of clientSocket.", e);
             }
         }
         if(objectInputStream != null)
@@ -73,7 +81,8 @@ public class Client
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                logger.logp(Level.WARNING, this.getClass().getName(), "closeResources",
+                        "Could not close objectInputStream of clientSocket.", e);
             }
         }
     }

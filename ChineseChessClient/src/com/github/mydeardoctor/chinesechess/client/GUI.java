@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -205,6 +206,7 @@ public class GUI
     //Music player.
     private MusicPlayer musicPlayer;
 
+    //Logger.
     private static final Logger logger = Logger.getLogger(GUI.class.getName()); //TODO logger
 
     public GUI()
@@ -256,7 +258,7 @@ public class GUI
         initializeFrameGameMode();
         initializeFrameBoard();
         initializeFrameOnlineMultiplayer();
-        initializeFrameConnect();
+        initializeFrameConnectToServer();
         initializeFrameLobby();
         initializeFrameReplay();
         initializeFrameRules();
@@ -870,9 +872,12 @@ public class GUI
                     File currentDirectoryFile = new File(currentDirectoryPath);
                     fileChooser.setCurrentDirectory(currentDirectoryFile);
                 }
-                catch(Exception e)
+                catch(URISyntaxException e)
                 {
                     fileChooser.setCurrentDirectory(null);
+
+                    logger.logp(Level.WARNING, this.getClass().getName(), "initializeCommonFrameFeatures",
+                            "Could not set a directory where this program was invoked to fileChooser.", e);
                 }
                 fileChooser.setAcceptAllFileFilterUsed(false);
                 fileChooser.setFileFilter(new FileNameExtensionFilter("Chinese Chess Replay .ccrpl",
@@ -1015,7 +1020,7 @@ public class GUI
                         0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
-                buttonOnlineMultiplayer.addActionListener(e->showFrameOnline());
+                buttonOnlineMultiplayer.addActionListener(e-> showFrameOnlineMultiplayer());
 
                 //Button Back.
                 buttonBackOnFrameGameMode = new JButton(text.getBack());
@@ -1027,7 +1032,7 @@ public class GUI
                         0, 3, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
-                buttonBackOnFrameGameMode.addActionListener(e->showFrameMainMenu());
+                buttonBackOnFrameGameMode.addActionListener(e->showPreviousFrame());
             });
         }
         catch (InterruptedException | InvocationTargetException e)
@@ -1119,7 +1124,7 @@ public class GUI
                     "Could not initialize frame Online Multiplayer.", e);
         }
     }
-    private void initializeFrameConnect()
+    private void initializeFrameConnectToServer()
     {
         try
         {
@@ -1563,7 +1568,7 @@ public class GUI
                         2, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 30), 0, 0);
-                sliderGainMusic.addChangeListener(this::changeGainMusic);
+                sliderGainMusic.addChangeListener(this::changeGainOfMusic);
 
                 //Label SFX.
                 labelSfx = new JLabel(text.getSoundEffects());
@@ -1595,7 +1600,7 @@ public class GUI
                         2, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 30), 0, 0);
-                sliderGainSfx.addChangeListener(this::changeGainSfx);
+                sliderGainSfx.addChangeListener(this::changeGainOfSfx);
 
                 //Button Back.
                 buttonBackOnFrameSettings = new JButton(text.getBack());
@@ -1609,7 +1614,6 @@ public class GUI
                         new Insets(80, 30, 0, 30), 0, 0);
                 buttonBackOnFrameSettings.addActionListener(e->showPreviousFrame());
             });
-            throw new InterruptedException();
         }
         catch (InterruptedException | InvocationTargetException e)
         {
@@ -1642,9 +1646,10 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->comboBoxRules.setSelectedIndex(0));
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "setRules",
+                    "Could not set selected index to comboBoxRules.", e);
         }
     }
     public void setMusicPlayer(MusicPlayer musicPlayer)
@@ -1664,9 +1669,10 @@ public class GUI
                 sliderGainSfx.setValue(musicPlayer.getGainSfxPercentCurrent());
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "setMusicPlayer",
+                    "Could not set musicPlayer.", e);
         }
     }
     public void showFrameAndWarnings()
@@ -1706,9 +1712,10 @@ public class GUI
                 }
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "showFrameAndWarnings",
+                    "Could not show frame and warnings.", e);
         }
     }
     private void showFrameMainMenu()
@@ -1748,11 +1755,11 @@ public class GUI
             repaint();
         });
     }
-    private void showFrameOnline()
+    private void showFrameOnlineMultiplayer()
     {
         SwingUtilities.invokeLater(()->
         {
-            addToPreviousFrames(FrameType.ONLINE);
+            addToPreviousFrames(FrameType.ONLINE_MULTIPLAYER);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(buttonConnectToServer, constraintsForButtonConnectToServer);
             frame.getContentPane().add(buttonLobby, constraintsForButtonLobby);
@@ -1765,7 +1772,7 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            addToPreviousFrames(FrameType.CONNECT);
+            addToPreviousFrames(FrameType.CONNECT_TO_SERVER);
             frame.getContentPane().removeAll();
             frame.getContentPane().add(labelIp, constraintsForLabelIp);
             frame.getContentPane().add(textFieldIp, constraintsForTextFieldIp);
@@ -1903,29 +1910,6 @@ public class GUI
                     text.getAboutVerbose(), text.getAbout(), JOptionPane.INFORMATION_MESSAGE)
         );
     }
-    private void showDialogLoadReplay()
-    {
-        SwingUtilities.invokeLater(()->
-        {
-            fileChooser.setDialogTitle(text.getLoadReplay());
-            int selectedOption = fileChooser.showOpenDialog(frame);
-            if(selectedOption == JFileChooser.APPROVE_OPTION)
-            {
-                File selectedFile = fileChooser.getSelectedFile();
-                int result = replay.load(selectedFile);
-                if(result == Replay.FAILURE)
-                {
-                    JOptionPane.showMessageDialog(frame,
-                            text.getCouldNotLoadReplay(), text.getReplayError(), JOptionPane.ERROR_MESSAGE);
-                }
-                else
-                {
-                    replay.start();
-                    showFrameReplay();
-                }
-            }
-        });
-    }
     private void startSinglePlayerGame()
     {
         SwingUtilities.invokeLater(()->
@@ -1948,18 +1932,9 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            boolean ipCorrect = documentListenerForTextFieldIp.checkIp(textFieldIp.getText());
-            boolean portCorrect = documentListenerForTextFieldPort.checkPort(textFieldPort.getText());
-            if(ipCorrect && portCorrect)
-            {
-                String ipAddress = documentListenerForTextFieldIp.getIpAddressWithoutLeadingZeros();
-                int portNumber = Integer.parseInt(textFieldPort.getText());
-                client.connect(ipAddress, portNumber);
-            }
-            else
-            {
-                showDialogCouldNotConnectToServer();
-            }
+            String ipAddress = documentListenerForTextFieldIp.getIpAddressWithoutLeadingZeros();
+            int portNumber = Integer.parseInt(textFieldPort.getText());
+            client.connect(ipAddress, portNumber);
         });
     }
     private void showDialogDisconnectFromServer()
@@ -1973,6 +1948,29 @@ public class GUI
             if(selectedOption == JOptionPane.YES_OPTION)
             {
                 client.disconnect();
+            }
+        });
+    }
+    private void showDialogLoadReplay()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            fileChooser.setDialogTitle(text.getLoadReplay());
+            int selectedOption = fileChooser.showOpenDialog(frame);
+            if(selectedOption == JFileChooser.APPROVE_OPTION)
+            {
+                File selectedFile = fileChooser.getSelectedFile();
+                int result = replay.load(selectedFile);
+                if(result == Replay.FAILURE)
+                {
+                    JOptionPane.showMessageDialog(frame,
+                            text.getCouldNotLoadReplay(), text.getReplayError(), JOptionPane.ERROR_MESSAGE);
+                }
+                else
+                {
+                    replay.start();
+                    showFrameReplay();
+                }
             }
         });
     }
@@ -2111,7 +2109,7 @@ public class GUI
             }
         });
     }
-    private void changeGainMusic(ChangeEvent e)
+    private void changeGainOfMusic(ChangeEvent e)
     {
         SwingUtilities.invokeLater(()->
         {
@@ -2139,7 +2137,7 @@ public class GUI
             }
         });
     }
-    private void changeGainSfx(ChangeEvent e)
+    private void changeGainOfSfx(ChangeEvent e)
     {
         SwingUtilities.invokeLater(()->
         {
@@ -2150,32 +2148,6 @@ public class GUI
                 musicPlayer.setGainSfxDb(sliderValue);
             }
         });
-    }
-    private void showPreviousFrame()
-    {
-        int size = previousFrames.size();
-        if(size > 0)
-        {
-            previousFrames.remove(size - 1); //Delete current frame from array.
-            size = previousFrames.size();
-            if(size > 0)
-            {
-                FrameType previousFrame = previousFrames.get(size - 1);
-                previousFrames.remove(size - 1); //Delete previous frame from array.
-                switch(previousFrame)
-                {
-                    case MAIN_MENU -> showFrameMainMenu();
-                    case GAME_MODE -> showFrameGameMode();
-                    case BOARD -> showFrameBoard();
-                    case ONLINE -> showFrameOnline();
-                    case CONNECT -> showFrameConnectToServer();
-                    case LOBBY -> showFrameLobby();
-                    case REPLAY -> showFrameReplay();
-                    case RULES -> showFrameRules();
-                    case SETTINGS -> showFrameSettings();
-                }
-            }
-        }
     }
     private void addToPreviousFrames(FrameType currentFrame)
     {
@@ -2190,6 +2162,33 @@ public class GUI
             if(currentFrame != previousFrame)
             {
                 previousFrames.add(currentFrame);
+            }
+        }
+    }
+    private void showPreviousFrame()
+    {
+        int size = previousFrames.size();
+        if(size > 0)
+        {
+            previousFrames.remove(size - 1); //Delete current frame from array.
+            size = previousFrames.size();
+            if(size > 0)
+            {
+                FrameType previousFrame = previousFrames.get(size - 1);
+                //Delete previous frame from array, because it is going to be added later anyway in showXXXFrame().
+                previousFrames.remove(size - 1);
+                switch(previousFrame)
+                {
+                    case MAIN_MENU -> showFrameMainMenu();
+                    case GAME_MODE -> showFrameGameMode();
+                    case BOARD -> showFrameBoard();
+                    case ONLINE_MULTIPLAYER -> showFrameOnlineMultiplayer();
+                    case CONNECT_TO_SERVER -> showFrameConnectToServer();
+                    case LOBBY -> showFrameLobby();
+                    case REPLAY -> showFrameReplay();
+                    case RULES -> showFrameRules();
+                    case SETTINGS -> showFrameSettings();
+                }
             }
         }
     }
@@ -2227,7 +2226,7 @@ public class GUI
             buttonOnlineMultiplayer.setText(text.getOnlineMultiplayer());
             buttonBackOnFrameGameMode.setText(text.getBack());
 
-            //Frame Online.
+            //Frame Online Multiplayer.
             buttonConnectToServer.setText(text.getConnectToServer());
             buttonLobby.setText(text.getLobby());
             buttonBackOnFrameOnlineMultiplayer.setText(text.getBack());
@@ -2350,17 +2349,23 @@ public class GUI
             }
         });
     }
-    public void setConnectionOff()
+    public void setDisconnected() //TODO сделать state в классе Client. сделать статус бар с фразой connected/disconnected.
     {
-        buttonConnect.setEnabled(
+        SwingUtilities.invokeLater(()->
+        {
+            buttonConnect.setEnabled(
                 documentListenerForTextFieldIp.getIsIpCorrect() &&
                 documentListenerForTextFieldPort.getIsPortCorrect());
-        buttonDisconnect.setEnabled(false);
+            buttonDisconnect.setEnabled(false);
+        });
     }
-    public void setConnectionOn()
+    public void setConnected()
     {
-        buttonConnect.setEnabled(false);
-        buttonDisconnect.setEnabled(true);
+        SwingUtilities.invokeLater(()->
+        {
+            buttonConnect.setEnabled(false);
+            buttonDisconnect.setEnabled(true);
+        });
     }
     public void showDialogCouldNotConnectToServer()
     {
@@ -2401,7 +2406,7 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->buttonNextMove.setEnabled(false));
     }
-    public void stopTimer()
+    public void stopTimerForReplay()
     {
         SwingUtilities.invokeLater(()-> timerForReplay.stop());
     }

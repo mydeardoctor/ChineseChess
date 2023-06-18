@@ -2,6 +2,9 @@ package com.github.mydeardoctor.chinesechess.client;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +13,7 @@ public class DocumentListenerForTextFieldPort implements DocumentListener
     private boolean portCorrect;
     private final Pattern patternForPortRange;
     private final GUI gui;
+    private static final Logger logger = Logger.getLogger(DocumentListenerForTextFieldPort.class.getName());
 
     public DocumentListenerForTextFieldPort(GUI gui)
     {
@@ -62,12 +66,15 @@ public class DocumentListenerForTextFieldPort implements DocumentListener
                 gui.setPortIncorrect();
             }
         }
-        catch(Exception ex)
+        catch(BadLocationException ex)
         {
             gui.setPortIncorrect();
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "changeGUI",
+                    "Could not get contents of textFieldPort.", ex);
         }
     }
-    public boolean checkPort(String portText)
+    private boolean checkPort(String portText)
     {
         boolean result;
 
@@ -88,9 +95,12 @@ public class DocumentListenerForTextFieldPort implements DocumentListener
                 result = false;
             }
         }
-        catch(Exception e)
+        catch(NumberFormatException e)
         {
             result = false;
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "checkPort",
+                    "Could not parse contents of textFieldPort.", e);
         }
 
         return result;

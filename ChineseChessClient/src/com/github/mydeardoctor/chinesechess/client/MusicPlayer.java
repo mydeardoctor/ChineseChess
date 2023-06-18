@@ -1,7 +1,10 @@
 package com.github.mydeardoctor.chinesechess.client;
 
 import javax.sound.sampled.*;
+import java.io.IOException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MusicPlayer
 {
@@ -35,6 +38,9 @@ public class MusicPlayer
     private boolean lineSfxAvailable;
     private boolean muteSfxAvailable;
     private boolean gainSfxAvailable;
+
+    //Logger.
+    private static final Logger logger = Logger.getLogger(MusicPlayer.class.getName());
 
     public MusicPlayer()
     {
@@ -80,13 +86,16 @@ public class MusicPlayer
             lineMusic.setLoopPoints(0, -1);
             lineMusicAvailable = true;
         }
-        catch(Exception e)
+        catch(NullPointerException | UnsupportedAudioFileException |  LineUnavailableException | IOException e)
         {
             lineMusicAvailable = false;
             if(lineMusic != null)
             {
                 lineMusic.close();
             }
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeLineMusic",
+                    "Could not initialize lineMusic.", e);
         }
 
         return lineMusic;
@@ -101,9 +110,12 @@ public class MusicPlayer
             muteMusic.setValue(false);
             muteMusicAvailable = true;
         }
-        catch(Exception e)
+        catch(NullPointerException | IllegalArgumentException e)
         {
             muteMusicAvailable = false;
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeMuteMusic",
+                    "Could not initialize muteMusic.", e);
         }
 
         return muteMusic;
@@ -117,9 +129,12 @@ public class MusicPlayer
             gainMusic = (FloatControl)lineMusic.getControl(FloatControl.Type.MASTER_GAIN);
             gainMusicAvailable = true;
         }
-        catch(Exception e)
+        catch(NullPointerException | IllegalArgumentException e)
         {
             gainMusicAvailable = false;
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeGainMusic",
+                    "Could not initialize gainMusic.", e);
         }
 
         return gainMusic;
@@ -188,13 +203,16 @@ public class MusicPlayer
             lineSfx.open(audioInputStream);
             lineSfxAvailable = true;
         }
-        catch(Exception e)
+        catch(NullPointerException | UnsupportedAudioFileException |  LineUnavailableException | IOException e)
         {
             lineSfxAvailable = false;
             if(lineSfx !=null)
             {
                 lineSfx.close();
             }
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeLineSfx",
+                    "Could not initialize lineSfx.", e);
         }
 
         return lineSfx;
@@ -209,9 +227,12 @@ public class MusicPlayer
             muteSfx.setValue(false);
             muteSfxAvailable = true;
         }
-        catch(Exception e)
+        catch(NullPointerException | IllegalArgumentException e)
         {
             muteSfxAvailable = false;
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeMuteSfx",
+                    "Could not initialize muteSfx.", e);
         }
 
         return muteSfx;
@@ -225,9 +246,12 @@ public class MusicPlayer
             gainSfx = (FloatControl) lineSfx.getControl(FloatControl.Type.MASTER_GAIN);
             gainSfxAvailable = true;
         }
-        catch(Exception e)
+        catch(NullPointerException | IllegalArgumentException e)
         {
             gainSfxAvailable = false;
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeGainSfx",
+                    "Could not initialize gainSfx.", e);
         }
 
         return gainSfx;

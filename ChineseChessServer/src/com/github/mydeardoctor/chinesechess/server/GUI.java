@@ -1,6 +1,9 @@
 package com.github.mydeardoctor.chinesechess.server;
 
 import com.github.mydeardoctor.chinesechess.*;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -10,6 +13,7 @@ import javax.swing.text.PlainDocument;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GUI
@@ -84,9 +88,10 @@ public class GUI
     //Server attributes.
     private Server server;
 
-    private static final Logger logger = Logger.getLogger(GUI.class.getName()); //TODO logger
+    //Logger.
+    private static final Logger logger = Logger.getLogger(GUI.class.getName());
 
-    public GUI()
+    public GUI() //TODO убрать статусбар из сеттингз, оставить только там, где он нужен
     {
         //Text
         textEnglish = new TextEnglish();
@@ -97,7 +102,7 @@ public class GUI
         resourcesMissing = false;
         fontChinese = initializeFontChinese();
         iconFrame = initializeIconFrame();
-        backgroundImage = initializeBackground();
+        backgroundImage = initializeBackgroundImage();
         iconIncorrect = initializeIconIncorrect();
         iconCorrect = initializeIconCorrect();
 
@@ -105,7 +110,7 @@ public class GUI
 
         initializeCommonFrameFeatures();
         initializeFrameMainMenu();
-        initializeFrameStartServer();
+        initializeFrameStart();
         initializeFrameSettings();
     }
     private Font initializeFontChinese()
@@ -117,10 +122,13 @@ public class GUI
         {
             fontChinese = Font.createFont(Font.TRUETYPE_FONT, inputStream);
         }
-        catch (Exception e)
+        catch (NullPointerException | IOException | FontFormatException e)
         {
             resourcesMissing = true;
             fontChinese = new Font(Font.DIALOG, Font.PLAIN, 1);
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFontChinese",
+                    "Could not initialize fontChinese.", e);
         }
         return fontChinese;
     }
@@ -133,7 +141,7 @@ public class GUI
             //noinspection DataFlowIssue
             iconFrame = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
             iconFrame = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
@@ -143,27 +151,33 @@ public class GUI
             g2d.setColor(Color.BLACK);
             g2d.setFont(new Font(Font.DIALOG, Font.BOLD, 42));
             g2d.drawString("象棋", 5, 65);
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeIconFrame",
+                    "Could not initialize iconFrame.", e);
         }
         return iconFrame;
     }
-    private BufferedImage initializeBackground()
+    private BufferedImage initializeBackgroundImage()
     {
-        BufferedImage background;
+        BufferedImage backgroundImage;
         URL url = getClass().getResource("/background.jpg");
         try
         {
             //noinspection DataFlowIssue
-            background = ImageIO.read(url);
+            backgroundImage = ImageIO.read(url);
         }
-        catch (Exception e)
+        catch (IllegalArgumentException | IOException e)
         {
             resourcesMissing = true;
-            background = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            Graphics2D g2d = background.createGraphics();
+            backgroundImage = new BufferedImage(100,100,BufferedImage.TYPE_4BYTE_ABGR_PRE);
+            Graphics2D g2d = backgroundImage.createGraphics();
             g2d.setColor(new Color(196, 185, 165));
             g2d.fillRect(0,0,100,100);
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeBackgroundImage",
+                    "Could not initialize backgroundImage.", e);
         }
-        return background;
+        return backgroundImage;
     }
     private ImageIcon initializeIconIncorrect()
     {
@@ -250,9 +264,10 @@ public class GUI
                 frame.setJMenuBar(menuBar);
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeCommonFrameFeatures",
+                    "Could not initialize common frame features.", e);
         }
     }
     private void initializeFrameMainMenu()
@@ -271,7 +286,7 @@ public class GUI
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
-                buttonStartOnFrameMainMenu.addActionListener(e-> showFrameStartServer());
+                buttonStartOnFrameMainMenu.addActionListener(e-> showFrameStart());
 
                 //Button Lobby.
                 buttonLobby = new JButton(text.getLobby());
@@ -283,7 +298,7 @@ public class GUI
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
-                //buttonLobby.addActionListener(e->); //TODO Lobby
+                //buttonLobby.addActionListener(e->); //TODO Frame Lobby. Скопировать после создания в Client
 
                 //Button Settings.
                 buttonSettings = new JButton(text.getSettings());
@@ -298,12 +313,13 @@ public class GUI
                 buttonSettings.addActionListener(e->showFrameSettings());
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameMainMenu",
+                    "Could not initialize frame Main Menu.", e);
         }
     }
-    private void initializeFrameStartServer()
+    private void initializeFrameStart()
     {
         try
         {
@@ -465,9 +481,10 @@ public class GUI
                 panelTransparentOnFrameStart.add(buttonBackOnFrameStart, constraintsForButtonBackStartServer);
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameStart",
+                    "Could not initialize frame Start.", e);
         }
     }
     private void initializeFrameSettings()
@@ -510,9 +527,10 @@ public class GUI
                 buttonBackOnFrameSettings.addActionListener(e->showPreviousFrame());
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "initializeFrameSettings",
+                    "Could not initialize frame Settings.", e);
         }
     }
     public void setServer(Server server)
@@ -537,9 +555,10 @@ public class GUI
                 }
             });
         }
-        catch (Exception e)
+        catch (InterruptedException | InvocationTargetException e)
         {
-            e.printStackTrace();
+            logger.logp(Level.WARNING, this.getClass().getName(), "showFrameAndWarnings",
+                    "Could not show frame and warnings.", e);
         }
     }
     private void showFrameMainMenu()
@@ -554,11 +573,11 @@ public class GUI
             repaint();
         });
     }
-    private void showFrameStartServer()
+    private void showFrameStart()
     {
         SwingUtilities.invokeLater(()->
         {
-            addToPreviousFrames(FrameType.START_SERVER);
+            addToPreviousFrames(FrameType.START);
             panelTransparent.removeAll();
             panelTransparent.add(labelPort, constraintsForLabelPort);
             panelTransparent.add(textFieldPort, constraintsForTextFieldPort);
@@ -595,18 +614,9 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            boolean portCorrect = documentListenerForTextFieldPort.checkPort(textFieldPort.getText());
-            boolean playersCorrect = documentListenerForTextFieldPlayers.checkPlayers(textFieldPlayers.getText());
-            if(portCorrect && playersCorrect)
-            {
-                int portNumber = Integer.parseInt(textFieldPort.getText());
-                int maximumNumberOfPlayers = Integer.parseInt(textFieldPlayers.getText());
-                server.start(portNumber, maximumNumberOfPlayers);
-            }
-            else
-            {
-                showDialogCouldNotStartServer();
-            }
+            int portNumber = Integer.parseInt(textFieldPort.getText());
+            int maximumNumberOfPlayers = Integer.parseInt(textFieldPlayers.getText());
+            server.start(portNumber, maximumNumberOfPlayers);
         });
     }
     private void showDialogStopServer()
@@ -623,26 +633,6 @@ public class GUI
             }
         });
     }
-    private void showPreviousFrame()
-    {
-        int size = previousFrames.size();
-        if(size > 0)
-        {
-            previousFrames.remove(size - 1); //Delete current frame from array.
-            size = previousFrames.size();
-            if(size > 0)
-            {
-                FrameType previousFrame = previousFrames.get(size - 1);
-                previousFrames.remove(size - 1); //Delete previous frame from array.
-                switch(previousFrame)
-                {
-                    case MAIN_MENU -> showFrameMainMenu();
-                    case START_SERVER -> showFrameStartServer();
-                    case SETTINGS -> showFrameSettings();
-                }
-            }
-        }
-    }
     private void addToPreviousFrames(FrameType currentFrame)
     {
         int size = previousFrames.size();
@@ -656,6 +646,27 @@ public class GUI
             if(currentFrame != previousFrame)
             {
                 previousFrames.add(currentFrame);
+            }
+        }
+    }
+    private void showPreviousFrame()
+    {
+        int size = previousFrames.size();
+        if(size > 0)
+        {
+            previousFrames.remove(size - 1); //Delete current frame from array.
+            size = previousFrames.size();
+            if(size > 0)
+            {
+                FrameType previousFrame = previousFrames.get(size - 1);
+                //Delete previous frame from array, because it is going to be added later anyway in showXXXFrame().
+                previousFrames.remove(size - 1);
+                switch(previousFrame)
+                {
+                    case MAIN_MENU -> showFrameMainMenu();
+                    case START -> showFrameStart();
+                    case SETTINGS -> showFrameSettings();
+                }
             }
         }
     }
@@ -771,7 +782,7 @@ public class GUI
             }
         });
     }
-    public void setServerOff()
+    public void setServerStopped()
     {
         setStatusBarText(text.getServerIsStopped());
         buttonStartOnFrameStart.setEnabled(
@@ -779,7 +790,7 @@ public class GUI
                 documentListenerForTextFieldPlayers.getArePlayersCorrect());
         buttonStop.setEnabled(false);
     }
-    public void setServerOn()
+    public void setServerRunning()
     {
         setStatusBarText(text.getServerIsRunning());
         buttonStartOnFrameStart.setEnabled(false);

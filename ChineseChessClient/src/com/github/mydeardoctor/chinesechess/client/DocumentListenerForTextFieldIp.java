@@ -1,9 +1,12 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 
 public class DocumentListenerForTextFieldIp implements DocumentListener
 {
@@ -11,6 +14,7 @@ public class DocumentListenerForTextFieldIp implements DocumentListener
     private final Pattern patternForIp;
     private String ipAddressWithoutLeadingZeros;
     private final GUI gui;
+    private static final Logger logger = Logger.getLogger(DocumentListenerForTextFieldIp.class.getName());
 
     public DocumentListenerForTextFieldIp(GUI gui)
     {
@@ -58,12 +62,15 @@ public class DocumentListenerForTextFieldIp implements DocumentListener
                 gui.setIpIncorrect();
             }
         }
-        catch(Exception ex)
+        catch(BadLocationException ex)
         {
             gui.setIpIncorrect();
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "changeGUI",
+                    "Could not get contents of textFieldIp.", ex);
         }
     }
-    public boolean checkIp(String ipText)
+    private boolean checkIp(String ipText)
     {
         boolean result;
 
@@ -106,9 +113,12 @@ public class DocumentListenerForTextFieldIp implements DocumentListener
                 result = false;
             }
         }
-        catch(Exception e)
+        catch(NumberFormatException e)
         {
             result = false;
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "checkIp",
+                    "Could not parse contents of textFieldIp.", e);
         }
 
         return result;

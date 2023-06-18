@@ -5,11 +5,13 @@ import java.util.concurrent.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Server
 {
     //Server attributes.
-    private boolean serverIsOn;
+    private boolean serverRunning;
     private ThreadPoolExecutor serverThreadPool;
     private ThreadPoolExecutor clientThreadPool;
     private ServerSocket serverSocket;
@@ -18,9 +20,12 @@ public class Server
     //GUI attributes.
     private GUI gui;
 
+    //Logger.
+    private static final Logger logger = Logger.getLogger(Server.class.getName());
+
     public Server()
     {
-        serverIsOn = false;
+        serverRunning = false;
         clients = new ArrayList<>();
     }
     public void setGui(GUI gui)
@@ -35,18 +40,19 @@ public class Server
             serverThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
             clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(maximumNumberOfPlayers);
 
-            serverIsOn = true;
-            gui.setServerOn();
+            serverRunning = true;
+            gui.setServerRunning();
 
             serverThreadPool.execute(this::run);
         }
-        catch(Exception e)
+        catch(IOException e)
         {
-            e.printStackTrace();
-
-            serverIsOn = false;
-            gui.setServerOff();
+            serverRunning = false;
+            gui.setServerStopped();
             gui.showDialogCouldNotStartServer();
+
+            logger.logp(Level.WARNING, this.getClass().getName(), "start",
+                    "Could not create serverSocket.", e);
         }
     }
     private void run()
@@ -55,6 +61,7 @@ public class Server
         {
             try
             {
+                //If serverSocket is closed, any thread currently blocked in accept() will throw a SocketException.
                 Socket clientSocket = serverSocket.accept();
                 if(clientThreadPool.getActiveCount() < clientThreadPool.getCorePoolSize())
                 {
@@ -66,11 +73,13 @@ public class Server
                     }
                 }
             }
-            catch (Exception e)
+            catch (IOException e) //SocketException is a subclass of IOException.
             {
-                serverIsOn = false;
-                gui.setServerOff();
+                serverRunning = false;
+                gui.setServerStopped();
+
                 System.out.println("Server Socket closed.");
+
                 break;
             }
         }
@@ -87,7 +96,8 @@ public class Server
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                logger.logp(Level.WARNING, this.getClass().getName(), "stop",
+                        "Could not close serverSocket.", e);
             }
         }
 
@@ -101,7 +111,8 @@ public class Server
             }
             catch (InterruptedException e)
             {
-                e.printStackTrace();
+                logger.logp(Level.WARNING, this.getClass().getName(), "stop",
+                        "Could not stop threads of serverThreadPool.", e);
             }
         }
 
@@ -114,7 +125,8 @@ public class Server
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                logger.logp(Level.WARNING, this.getClass().getName(), "stop",
+                        "Could not close client sockets.", e);
             }
         }
 
@@ -128,7 +140,8 @@ public class Server
             }
             catch (InterruptedException e)
             {
-                e.printStackTrace();
+                logger.logp(Level.WARNING, this.getClass().getName(), "stop",
+                        "Could not stop threads of clientThreadPool.", e);
             }
         }
 
@@ -136,11 +149,11 @@ public class Server
         clients.clear();
 
         //Refresh GUI.
-        serverIsOn = false;
-        gui.setServerOff();
+        serverRunning = false;
+        gui.setServerStopped();
     }
     public boolean getIsServerOn()
     {
-        return serverIsOn;
+        return serverRunning;
     }
 }

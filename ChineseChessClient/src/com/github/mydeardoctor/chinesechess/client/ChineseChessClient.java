@@ -2,6 +2,10 @@ package com.github.mydeardoctor.chinesechess.client;
 
 import com.github.mydeardoctor.chinesechess.ParentLogger;
 
+//TODO
+//Exceptions unwrapping.
+//Multithreading analisys. В Сервере надо проверить классы Server и Client.
+
 public class ChineseChessClient
 {
     public static void main(String[] args)
