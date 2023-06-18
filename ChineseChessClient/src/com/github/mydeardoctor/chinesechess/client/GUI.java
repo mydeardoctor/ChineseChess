@@ -207,7 +207,7 @@ public class GUI
     private MusicPlayer musicPlayer;
 
     //Logger.
-    private static final Logger logger = Logger.getLogger(GUI.class.getName()); //TODO logger
+    private static final Logger logger = Logger.getLogger(GUI.class.getName());
 
     public GUI()
     {
@@ -2349,7 +2349,15 @@ public class GUI
             }
         });
     }
-    public void setDisconnected() //TODO сделать state в классе Client. сделать статус бар с фразой connected/disconnected.
+    public void disableButtonConnect()
+    {
+        buttonConnect.setEnabled(false);
+    }
+    public void disableButtonDisconnect()
+    {
+        buttonDisconnect.setEnabled(false);
+    }
+    public void setDisconnected() //TODO сделать state в классе Client.
     {
         SwingUtilities.invokeLater(()->
         {

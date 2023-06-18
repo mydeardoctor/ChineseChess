@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 public class Client
 {
     //Client attributes.
+    private boolean connectedToServer; //TODO
     private Socket clientSocket;
     private ThreadPoolExecutor clientThreadPool;
     private ObjectOutputStream objectOutputStream;
@@ -29,6 +30,7 @@ public class Client
     public Client()
     {
         super();
+        connectedToServer = false;
     }
     public void setGui(GUI gui)
     {
@@ -36,12 +38,14 @@ public class Client
     }
     public void connect(String ipAddress, int portNumber) //TODO exceptions unwrapping
     {
+        gui.disableButtonConnect();
+        gui.disableButtonDisconnect();
+
         Client client = this;
         try
         {
             clientSocket = new Socket();
-//            clientSocket.connect(new InetSocketAddress(ipAddress, portNumber), 3000); //TODO new thread
-            //TODO block buttons
+            //TODO new thread
             SwingWorker<Boolean, Void> sw = new SwingWorker<Boolean, Void>()
             {
                 @Override
@@ -101,23 +105,11 @@ public class Client
                 }
             };
             sw.execute();
-//
-//            if(tryToOpenStreams())
-//            {
-//                gui.setConnectionOn();
-//
-//                clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-//                clientThreadPool.execute(this::run);
-//            }
-//            else
-//            {
-//                gui.setConnectionOff();
-//                gui.showDialogCouldNotConnectToServer();
-//            }
         }
         catch (Exception e)
         {
-//            e.printStackTrace(); //TODO commented out code
+            //TODO commented out code
+//            e.printStackTrace();
 
             gui.setDisconnected();
             gui.showDialogCouldNotConnectToServer();

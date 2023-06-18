@@ -36,13 +36,17 @@ public class GUI
 
     //Common frame features.
     private JFrame frame;
-    private JPanel panelTransparent;
     private GridBagLayout gridBagLayout;
+    private PanelBackground panelBackground;
+    private JPanel panelTransparent;
     private JTextField statusBar;
+    private GridBagConstraints constraintsForPanelTransparent;
+    private GridBagConstraints constraintsForStatusBar;
     private JMenuBar menuBar;
     private JMenu menuHelp;
     private JMenuItem menuItemSettings;
     private JMenuItem menuItemAbout;
+
 
     //Frame Main Menu.
     private JButton buttonStartOnFrameMainMenu;
@@ -91,7 +95,7 @@ public class GUI
     //Logger.
     private static final Logger logger = Logger.getLogger(GUI.class.getName());
 
-    public GUI() //TODO убрать статусбар из сеттингз, оставить только там, где он нужен
+    public GUI()
     {
         //Text
         textEnglish = new TextEnglish();
@@ -224,7 +228,7 @@ public class GUI
                 gridBagLayout = new GridBagLayout();
 
                 //Panel Background.
-                PanelBackground panelBackground = new PanelBackground(backgroundImage);
+                panelBackground = new PanelBackground(backgroundImage);
                 panelBackground.setLayout(gridBagLayout);
                 frame.setContentPane(panelBackground);
 
@@ -232,11 +236,10 @@ public class GUI
                 panelTransparent = new JPanel();
                 panelTransparent.setOpaque(false);
                 panelTransparent.setLayout(gridBagLayout);
-                GridBagConstraints constraintsForPanelEmpty = new GridBagConstraints(
+                constraintsForPanelTransparent = new GridBagConstraints(
                         0, 0, 1, 1, 1, 1,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0);
-                frame.getContentPane().add(panelTransparent, constraintsForPanelEmpty);
 
                 //Status Bar.
                 statusBar = new JTextField(text.getServerIsStopped(), 1);
@@ -245,11 +248,10 @@ public class GUI
                 statusBar.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
                         new EmptyBorder(5, 5, 5, 5)));
                 statusBar.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
-                GridBagConstraints constraintsForStatusBar = new GridBagConstraints(
+                constraintsForStatusBar = new GridBagConstraints(
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                         new Insets(0, 0, 0, 0), 0, 0);
-                frame.getContentPane().add(statusBar, constraintsForStatusBar);
 
                 //Menu Bar.
                 menuBar = new JMenuBar();
@@ -298,7 +300,8 @@ public class GUI
                         0, 1, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 0, 30, 0), 0, 0);
-                //buttonLobby.addActionListener(e->); //TODO Frame Lobby. Скопировать после создания в Client
+                //TODO Frame Lobby. Скопировать после создания в Client
+                //buttonLobby.addActionListener(e->);
 
                 //Button Settings.
                 buttonSettings = new JButton(text.getSettings());
@@ -566,6 +569,9 @@ public class GUI
         SwingUtilities.invokeLater(()->
         {
             addToPreviousFrames(FrameType.MAIN_MENU);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(panelTransparent, constraintsForPanelTransparent);
+            frame.getContentPane().add(statusBar, constraintsForStatusBar);
             panelTransparent.removeAll();
             panelTransparent.add(buttonStartOnFrameMainMenu, constraintsForButtonStartOnFrameMainMenu);
             panelTransparent.add(buttonLobby, constraintsForButtonLobby);
@@ -578,6 +584,9 @@ public class GUI
         SwingUtilities.invokeLater(()->
         {
             addToPreviousFrames(FrameType.START);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(panelTransparent, constraintsForPanelTransparent);
+            frame.getContentPane().add(statusBar, constraintsForStatusBar);
             panelTransparent.removeAll();
             panelTransparent.add(labelPort, constraintsForLabelPort);
             panelTransparent.add(textFieldPort, constraintsForTextFieldPort);
@@ -596,10 +605,10 @@ public class GUI
         SwingUtilities.invokeLater(()->
         {
             addToPreviousFrames(FrameType.SETTINGS);
-            panelTransparent.removeAll();
-            panelTransparent.add(labelLanguage, constraintsForLabelLanguage);
-            panelTransparent.add(comboBoxLanguage, constraintsForComboBoxLanguage);
-            panelTransparent.add(buttonBackOnFrameSettings, constraintsForButtonBackOnFrameSettings);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(labelLanguage, constraintsForLabelLanguage);
+            frame.getContentPane().add(comboBoxLanguage, constraintsForComboBoxLanguage);
+            frame.getContentPane().add(buttonBackOnFrameSettings, constraintsForButtonBackOnFrameSettings);
             repaint();
         });
     }

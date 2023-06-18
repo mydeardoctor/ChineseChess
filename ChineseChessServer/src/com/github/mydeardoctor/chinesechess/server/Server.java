@@ -15,7 +15,7 @@ public class Server
     private ThreadPoolExecutor serverThreadPool;
     private ThreadPoolExecutor clientThreadPool;
     private ServerSocket serverSocket;
-    private final ArrayList<Client> clients; //TODO list of sockets?
+    private final ArrayList<Client> clients; //TODO list of sockets? multithreading?
 
     //GUI attributes.
     private GUI gui;
