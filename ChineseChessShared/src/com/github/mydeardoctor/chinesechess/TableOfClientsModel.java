@@ -1,4 +1,4 @@
-package com.github.mydeardoctor.chinesechess.server;
+package com.github.mydeardoctor.chinesechess;
 
 import javax.swing.table.DefaultTableModel;
 

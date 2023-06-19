@@ -71,6 +71,9 @@ public abstract class Text
     public abstract String getConnectionWillBeLost();
     public abstract String getClientInfo();
 
+    //Frame Lobby.
+    public abstract String getListOfClients();
+
     //Frame Rules.
     public abstract String getGoal();
     public abstract String getGoalRule();

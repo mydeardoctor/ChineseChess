@@ -279,6 +279,13 @@ public class TextEnglish extends Text
         return "Client info";
     }
 
+    //Frame Lobby.
+    @Override
+    public String getListOfClients()
+    {
+        return "List of clients";
+    }
+
     //Frame Rules.
     @Override
     public String getGoal()

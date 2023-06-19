@@ -148,7 +148,12 @@ public class GUI
     private GridBagConstraints constraintsForPanelTransparentOnFrameConnectToServer;
 
     //Frame Lobby.
+    private JLabel labelListOfClients;
+    private JScrollPane scrollPaneWithTableOfClients;
+    private TableOfClientsModel tableOfClientsModel;
     private JButton buttonBackOnFrameLobby;
+    private GridBagConstraints constraintsForLabelListOfClients;
+    private GridBagConstraints constraintsForScrollPaneWithTableOfClients;
     private GridBagConstraints constraintsForButtonBackOnFrameLobby;
 
     //Frame Replay.
@@ -1318,16 +1323,47 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
+                //Label List of Clients.
+                labelListOfClients = new JLabel(text.getListOfClients());
+                labelListOfClients.setPreferredSize(new Dimension(300, 60));
+                labelListOfClients.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
+                constraintsForLabelListOfClients = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 0), 0, 0);
+
+                //Table of Clients.
+                tableOfClientsModel = new TableOfClientsModel(0, 1);
+                JTable tableOfClients = new JTable(tableOfClientsModel);
+                tableOfClients.setPreferredScrollableViewportSize(new Dimension(500, 400));
+                tableOfClients.setRowHeight(50);
+                tableOfClients.setTableHeader(null);
+                tableOfClients.setCellSelectionEnabled(true);
+                tableOfClients.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                tableOfClients.setDragEnabled(false);
+                tableOfClients.setGridColor(Color.BLACK);
+                tableOfClients.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
+
+                //Scroll Pane.
+                scrollPaneWithTableOfClients = new JScrollPane(tableOfClients,
+                        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                scrollPaneWithTableOfClients.setBorder(new LineBorder(Color.BLACK, 2));
+                constraintsForScrollPaneWithTableOfClients = new GridBagConstraints(
+                        0, 1, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(10, 0, 0, 0), 0, 0);
+
                 //Button Back.
                 buttonBackOnFrameLobby = new JButton(text.getBack());
                 buttonBackOnFrameLobby.setPreferredSize(new Dimension(200, 100));
                 buttonBackOnFrameLobby.setBackground(Color.WHITE);
                 buttonBackOnFrameLobby.setBorder(new LineBorder(Color.BLACK, 2));
-                buttonBackOnFrameLobby.setFont(fontChinese.deriveFont(Font.BOLD, 46.f));
+                buttonBackOnFrameLobby.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
                 constraintsForButtonBackOnFrameLobby= new GridBagConstraints(
-                        0, 0, 1, 1, 0, 0,
+                        0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(30, 0, 30, 0), 0, 0);
+                        new Insets(30, 0, 0, 0), 0, 0);
                 buttonBackOnFrameLobby.addActionListener(e->showPreviousFrame());
             });
         }
@@ -1831,6 +1867,9 @@ public class GUI
                     constraintsForPanelTransparentOnFrameOnlineMultiplayer);
             frame.getContentPane().add(statusBarOfConnection, constraintsForStatusBarOfConnection);
             panelTransparentOnFrameOnlineMultiplayer.removeAll();
+            panelTransparentOnFrameOnlineMultiplayer.add(labelListOfClients, constraintsForLabelListOfClients);
+            panelTransparentOnFrameOnlineMultiplayer.add(scrollPaneWithTableOfClients,
+                    constraintsForScrollPaneWithTableOfClients);
             panelTransparentOnFrameOnlineMultiplayer.add(buttonBackOnFrameLobby, constraintsForButtonBackOnFrameLobby);
             repaint();
         });

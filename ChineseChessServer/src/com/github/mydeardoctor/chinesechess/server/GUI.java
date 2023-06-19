@@ -515,7 +515,7 @@ public class GUI
                         new Insets(0, 0, 0, 0), 0, 0);
 
                 //Table of Clients.
-                tableOfClientsModel = new TableOfClientsModel(100, 1);
+                tableOfClientsModel = new TableOfClientsModel(0, 1);
                 JTable tableOfClients = new JTable(tableOfClientsModel);
                 tableOfClients.setPreferredScrollableViewportSize(new Dimension(500, 400));
                 tableOfClients.setRowHeight(50);
@@ -900,16 +900,14 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            for(int rowIndex = 0; rowIndex < 100; rowIndex++)
+            for(int rowIndex = tableOfClientsModel.getRowCount() - 1; rowIndex >= 0; rowIndex--)
             {
-                tableOfClientsModel.setValueAt("", rowIndex, 0);
+                tableOfClientsModel.removeRow(rowIndex);
             }
 
-            int rowIndex = 0;
             for(InetAddress clientInetAddress : clientInetAddresses)
             {
-                tableOfClientsModel.setValueAt(clientInetAddress.toString(), rowIndex, 0);
-                rowIndex++;
+                tableOfClientsModel.addRow(new Object[]{clientInetAddress.toString()});
             }
         });
     }
