@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -2451,6 +2452,10 @@ public class GUI
                 documentListenerForTextFieldPort.getIsPortCorrect());
             buttonDisconnect.setEnabled(false);
             statusBarOfConnection.setText(text.getDisconnectedFromServer());
+            for(int rowIndex = tableOfClientsModel.getRowCount() - 1; rowIndex >= 0; rowIndex--)
+            {
+                tableOfClientsModel.removeRow(rowIndex);
+            }
         });
     }
     public void setConnected()
@@ -2475,6 +2480,21 @@ public class GUI
                 JOptionPane.showMessageDialog(frame,
                         text.getDisconnectedFromServer(), text.getClientInfo(), JOptionPane.INFORMATION_MESSAGE)
         );
+    }
+    public void refreshTableOfClients(ArrayList<InetAddress> ipAddressesOfClientsNotInGame)
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            for(int rowIndex = tableOfClientsModel.getRowCount() - 1; rowIndex >= 0; rowIndex--)
+            {
+                tableOfClientsModel.removeRow(rowIndex);
+            }
+
+            for(InetAddress inetAddress : ipAddressesOfClientsNotInGame)
+            {
+                tableOfClientsModel.addRow(new Object[]{inetAddress.toString()});
+            }
+        });
     }
     public void setPanelBoardReplayGrid(HashMap<Location, Tile> grid)
     {

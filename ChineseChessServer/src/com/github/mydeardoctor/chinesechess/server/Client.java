@@ -1,5 +1,6 @@
 package com.github.mydeardoctor.chinesechess.server;
 
+import com.github.mydeardoctor.chinesechess.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -10,12 +11,18 @@ public class Client
     private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
+    private State state; //TODO
+    private Player turn; //TODO
+    private Phase phase; //TODO
     private final Server server;
     private static final Logger logger = Logger.getLogger(Client.class.getName());
 
     public Client(Socket clientSocket, Server server)
     {
         this.clientSocket = clientSocket;
+        state = State.OVER;
+        turn = Player.RED;
+        phase = Phase.CHOOSE_FIGURE;
         this.server = server;
     }
     public boolean tryToOpenStreams()
@@ -57,7 +64,8 @@ public class Client
 
                 closeResources();
                 server.getListOfClients().remove(this);
-                server.getGui().refreshTableOfClients(server.getListOfClients().getClientInetAddresses());
+                server.getGui().refreshTableOfClients(server.getListOfClients().getClients());
+                server.sendListOfClientsToEveryClient();
                 break;
             }
         }
@@ -105,5 +113,9 @@ public class Client
     public Socket getClientSocket()
     {
         return clientSocket;
+    }
+    public State getState()
+    {
+        return state;
     }
 }

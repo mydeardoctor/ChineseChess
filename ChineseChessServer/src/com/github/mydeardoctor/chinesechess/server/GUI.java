@@ -896,7 +896,7 @@ public class GUI
                         text.getCouldNotStartServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE)
         );
     }
-    public void refreshTableOfClients(ArrayList<InetAddress> clientInetAddresses)
+    public void refreshTableOfClients(ArrayList<Client> clients)
     {
         SwingUtilities.invokeLater(()->
         {
@@ -905,9 +905,9 @@ public class GUI
                 tableOfClientsModel.removeRow(rowIndex);
             }
 
-            for(InetAddress clientInetAddress : clientInetAddresses)
+            for(Client client : clients)
             {
-                tableOfClientsModel.addRow(new Object[]{clientInetAddress.toString()});
+                tableOfClientsModel.addRow(new Object[]{client.getClientSocket().getInetAddress().toString()});
             }
         });
     }

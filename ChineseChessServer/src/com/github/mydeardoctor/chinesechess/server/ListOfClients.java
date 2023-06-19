@@ -1,7 +1,5 @@
 package com.github.mydeardoctor.chinesechess.server;
 
-import java.net.InetAddress;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class ListOfClients
@@ -19,22 +17,13 @@ public class ListOfClients
     {
         clients.remove(client);
     }
-    public synchronized ArrayList<Socket> getClientSockets()
+    public synchronized ArrayList<Client> getClients()
     {
-        ArrayList<Socket> clientSockets = new ArrayList<>();
+        ArrayList<Client> clientsCopy = new ArrayList<>();
         for(Client client : clients)
         {
-            clientSockets.add(client.getClientSocket());
+            clientsCopy.add(client);
         }
-        return clientSockets;
-    }
-    public synchronized ArrayList<InetAddress> getClientInetAddresses()
-    {
-        ArrayList<InetAddress> clientInetAddresses = new ArrayList<>();
-        for(Client client : clients)
-        {
-            clientInetAddresses.add(client.getClientSocket().getInetAddress());
-        }
-        return clientInetAddresses;
+        return clientsCopy;
     }
 }

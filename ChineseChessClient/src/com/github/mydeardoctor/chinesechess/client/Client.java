@@ -1,5 +1,9 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import com.github.mydeardoctor.chinesechess.*;
+import com.github.mydeardoctor.chinesechess.Action;
+//TODO испорты по отдельнгости
+
 import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,6 +25,7 @@ public class Client
     private ThreadPoolExecutor clientThreadPool;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
+    private final Protocol protocol; //TODO вынести наверх?
 
     //GUI attributes.
     private GUI gui;
@@ -32,10 +37,12 @@ public class Client
     {
         super();
         connectedToServer = false;
+        protocol = new Protocol();
     }
     public void setGui(GUI gui)
     {
         this.gui = gui;
+        protocol.setGui(gui);
     }
     public void connect(String ipAddress, int portNumber)
     {
@@ -145,13 +152,10 @@ public class Client
             {
                 //If clientSocket is closed,
                 //any thread currently blocked in an I/O operation upon this socket will throw a SocketException.
-                String message = this.toString();
-                objectOutputStream.writeObject(message); //TODO переделать
-                Thread.sleep(1000);
+                Message message = (Message)(objectInputStream.readObject());
+                protocol.handleInput(message);
             }
-            //TODO Убрать InterruptedException
-            //TODO add IOException
-            catch (IOException | InterruptedException e) //SocketException is a subclass of IOException.
+            catch (IOException | ClassNotFoundException e) //SocketException is a subclass of IOException.
             {
                 closeResources();
                 connectedToServer = false;

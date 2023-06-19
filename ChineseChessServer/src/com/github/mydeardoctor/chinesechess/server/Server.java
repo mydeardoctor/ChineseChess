@@ -1,5 +1,8 @@
 package com.github.mydeardoctor.chinesechess.server;
 
+import com.github.mydeardoctor.chinesechess.*;
+
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.concurrent.*;
 import java.io.IOException;
@@ -69,8 +72,9 @@ public class Server
                     if(client.tryToOpenStreams())
                     {
                         listOfClients.add(client);
-                        gui.refreshTableOfClients(listOfClients.getClientInetAddresses());
+                        gui.refreshTableOfClients(listOfClients.getClients());
                         clientThreadPool.execute(client::run);
+                        sendListOfClientsToEveryClient();
                     }
                     else
                     {
@@ -142,12 +146,12 @@ public class Server
         }
 
         //Close Client Sockets. Causes an Exception in Client Threads. Client Threads begin to stop.
-        ArrayList<Socket> clientSockets = listOfClients.getClientSockets();
-        for(Socket clientSocket : clientSockets)
+        ArrayList<Client> clients = listOfClients.getClients();
+        for(Client client : clients)
         {
             try
             {
-                clientSocket.close();
+                client.getClientSocket().close();
             }
             catch (IOException e)
             {
@@ -177,6 +181,25 @@ public class Server
         serverRunning = false;
         gui.setServerStopped();
     }
+    public void sendListOfClientsToEveryClient()
+    {
+        ArrayList<Client> clients = listOfClients.getClients();
+        ArrayList<InetAddress> ipAddressesOfClientsNotInGame = new ArrayList<>();
+        for(Client client : clients)
+        {
+           if(client.getState().equals(State.OVER))
+           {
+               ipAddressesOfClientsNotInGame.add(client.getClientSocket().getInetAddress());
+           }
+        }
+
+        Message message = new Message(Action.UPDATE_TABLE_OF_CLIENTS, ipAddressesOfClientsNotInGame,
+                null, null, null);
+        for(Client client : clients)
+        {
+            client.writeToClient(message);
+        }
+    }
     public boolean getIsServerRunning()
     {
         return serverRunning;
@@ -188,5 +211,5 @@ public class Server
     public GUI getGui()
     {
         return gui;
-    }
+    } //TODO мб запихать в конструктор
 }
