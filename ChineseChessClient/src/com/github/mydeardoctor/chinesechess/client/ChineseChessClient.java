@@ -7,7 +7,7 @@ public class ChineseChessClient
     public static void main(String[] args)
     {
         ParentLogger parentLogger = new ParentLogger();
-        parentLogger.initialize("ChineseChessClientLog.txt");
+        parentLogger.initialize("ChineseChessClientLog%u.txt");
         GameSinglePlayer gameSinglePlayer = new GameSinglePlayer();
         GameLocalMultiplayer gameLocalMultiplayer = new GameLocalMultiplayer();
         Client client = new Client();

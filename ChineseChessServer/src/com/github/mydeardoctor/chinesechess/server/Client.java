@@ -1,6 +1,8 @@
 package com.github.mydeardoctor.chinesechess.server;
 
-import com.github.mydeardoctor.chinesechess.*;
+import com.github.mydeardoctor.chinesechess.State;
+import com.github.mydeardoctor.chinesechess.Player;
+import com.github.mydeardoctor.chinesechess.Phase;
 import java.io.*;
 import java.net.Socket;
 import java.util.logging.Level;

@@ -58,11 +58,13 @@ public abstract class Text
     public abstract String getDisconnectedFromServer();
     public abstract String getConnectedToServer();
 
-    //Frame Connect.
+    //Frame Connect to Server.
     public abstract String getIpAddress();
     public abstract String getIpTip();
     public abstract String getPort();
     public abstract String getPortTip();
+    public abstract String getNickname();
+    public abstract String getNicknameTip();
     public abstract String getConnect();
     public abstract String getDisconnect();
     public abstract String getClientError();

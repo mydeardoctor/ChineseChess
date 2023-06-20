@@ -222,7 +222,7 @@ class TextRussian extends Text
         return "Вы подключены к серверу.";
     }
 
-    //Frame Connect.
+    //Frame Connect to Server.
     @Override
     public String getIpAddress()
     {
@@ -242,6 +242,16 @@ class TextRussian extends Text
     public String getPortTip()
     {
         return String.format("%13s\nот 1024 до 65535", "Должен быть");
+    }
+    @Override
+    public String getNickname()
+    {
+        return "Никнейм";
+    }
+    @Override
+    public String getNicknameTip()
+    {
+        return String.format("Не может быть\n%10s", "пустым");
     }
     @Override
     public String getConnect()

@@ -1,9 +1,6 @@
 package com.github.mydeardoctor.chinesechess.client;
 
-import com.github.mydeardoctor.chinesechess.*;
-import com.github.mydeardoctor.chinesechess.Action;
-//TODO испорты по отдельнгости
-
+import com.github.mydeardoctor.chinesechess.Message;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;

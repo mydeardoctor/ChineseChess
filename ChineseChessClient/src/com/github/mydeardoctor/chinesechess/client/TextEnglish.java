@@ -222,7 +222,7 @@ public class TextEnglish extends Text
         return "Connected to server.";
     }
 
-    //Frame Connect.
+    //Frame Connect to Server.
     @Override
     public String getIpAddress()
     {
@@ -242,6 +242,16 @@ public class TextEnglish extends Text
     public String getPortTip()
     {
         return String.format("Must be between\n%17s", "1024 and 65535");
+    }
+    @Override
+    public String getNickname()
+    {
+        return "Nickname";
+    }
+    @Override
+    public String getNicknameTip()
+    {
+        return "Cannot be empty";
     }
     @Override
     public String getConnect()

@@ -7,7 +7,7 @@ public class ChineseChessServer
     public static void main(String[] args)
     {
         ParentLogger parentLogger = new ParentLogger();
-        parentLogger.initialize("ChineseChessServerLog.txt");
+        parentLogger.initialize("ChineseChessServerLog%u.txt");
         Server server = new Server();
         GUI gui = new GUI();
 

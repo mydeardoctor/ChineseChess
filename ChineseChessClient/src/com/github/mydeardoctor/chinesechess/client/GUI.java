@@ -1,6 +1,9 @@
 package com.github.mydeardoctor.chinesechess.client;
 
-import com.github.mydeardoctor.chinesechess.*;
+import com.github.mydeardoctor.chinesechess.State;
+import com.github.mydeardoctor.chinesechess.PanelBackground;
+import com.github.mydeardoctor.chinesechess.DocumentFilterForTextFieldPort;
+import com.github.mydeardoctor.chinesechess.TableOfClientsModel;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -134,6 +137,11 @@ public class GUI
     private JTextField textFieldPort;
     private JLabel labelWithPortIcon;
     private JTextArea textAreaPortTip;
+    private JLabel labelNickname;
+    private DocumentListenerForTextFieldNickname documentListenerForTextFieldNickname;
+    private JTextField textFieldNickname;
+    private JLabel labelWithNicknameIcon;
+    private JTextArea textAreaNicknameTip;
     private JPanel panelTransparentOnFrameConnectToServer;
     private JButton buttonConnect;
     private JButton buttonDisconnect;
@@ -146,6 +154,10 @@ public class GUI
     private GridBagConstraints constraintsForTextFieldPort;
     private GridBagConstraints constraintsForLabelWithPortIcon;
     private GridBagConstraints constraintsForTextAreaPortTip;
+    private GridBagConstraints constraintsForLabelNickname;
+    private GridBagConstraints constraintsForTextFieldNickname;
+    private GridBagConstraints constraintsForLabelWithNicknameIcon;
+    private GridBagConstraints constraintsForTextAreaNicknameTip;
     private GridBagConstraints constraintsForPanelTransparentOnFrameConnectToServer;
 
     //Frame Lobby.
@@ -1260,14 +1272,63 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(30, 20, 0, 10), 0, 0);
 
+                //Label Nickname.
+                labelNickname = new JLabel(text.getNickname());
+                labelNickname.setPreferredSize(new Dimension(155, 100));
+                labelNickname.setFont(fontChinese.deriveFont(Font.BOLD, 35.f));
+                constraintsForLabelNickname = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 10, 0, 10), 0, 0);
+
+                //Text Field Nickname.
+                PlainDocument documentForTextFieldNickname = new PlainDocument();
+                DocumentFilterForTextFieldNickname documentFilterForTextFieldNickname =
+                        new DocumentFilterForTextFieldNickname();
+                documentForTextFieldNickname.setDocumentFilter(documentFilterForTextFieldNickname);
+                documentListenerForTextFieldNickname = new DocumentListenerForTextFieldNickname(this);
+                documentForTextFieldNickname.addDocumentListener(documentListenerForTextFieldNickname);
+
+                textFieldNickname = new JTextField(documentForTextFieldNickname, "", 10);
+                textFieldNickname.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1),
+                        new EmptyBorder(15, 5, 15, 5)));
+                textFieldNickname.setFont(fontChinese.deriveFont(Font.BOLD, 35.f));
+                constraintsForTextFieldNickname = new GridBagConstraints(
+                        1, 2, 1, 1, 0, 0,
+                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(30, 10, 0, 10), 0, 0);
+
+                //Label with Nickname Icon.
+                labelWithNicknameIcon = new JLabel(iconIncorrect);
+                constraintsForLabelWithNicknameIcon = new GridBagConstraints(
+                        2, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 10, 0, 10), 0, 0);
+
+                //Text Area Nickname Tip.
+                textAreaNicknameTip = new JTextArea(2, 10);
+                textAreaNicknameTip.setPreferredSize(new Dimension(250, 40));
+                textAreaNicknameTip.setOpaque(false);
+                textAreaNicknameTip.setEnabled(false);
+                textAreaNicknameTip.setDisabledTextColor(Color.BLACK);
+                textAreaNicknameTip.setLineWrap(true);
+                textAreaNicknameTip.setWrapStyleWord(true);
+                textAreaNicknameTip.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
+                textAreaNicknameTip.setCaretPosition(0);
+                textAreaNicknameTip.setText(text.getNicknameTip());
+                constraintsForTextAreaNicknameTip = new GridBagConstraints(
+                        3, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(30, 20, 0, 10), 0, 0);
+
                 //Panel Transparent.
                 panelTransparentOnFrameConnectToServer = new JPanel();
                 panelTransparentOnFrameConnectToServer.setOpaque(false);
                 panelTransparentOnFrameConnectToServer.setLayout(gridBagLayout);
                 constraintsForPanelTransparentOnFrameConnectToServer = new GridBagConstraints(
-                        0, 2, 4, 1, 0, 0,
+                        0, 3, 4, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 0), 0, 0);
+                        new Insets(30, 0, 0, 0), 0, 0);
 
                 //Button Connect.
                 buttonConnect = new JButton(text.getConnect());
@@ -1279,7 +1340,7 @@ public class GUI
                 GridBagConstraints constraintsForButtonConnect = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(80, 20, 20, 20), 0, 0);
+                        new Insets(50, 20, 20, 20), 0, 0);
                 buttonConnect.addActionListener(e->connectToServer());
                 panelTransparentOnFrameConnectToServer.add(buttonConnect, constraintsForButtonConnect);
 
@@ -1293,7 +1354,7 @@ public class GUI
                 GridBagConstraints constraintsForButtonDisconnect = new GridBagConstraints(
                         1, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(80, 20, 20, 20), 0, 0);
+                        new Insets(50, 20, 20, 20), 0, 0);
                 buttonDisconnect.addActionListener(e->showDialogDisconnectFromServer());
                 panelTransparentOnFrameConnectToServer.add(buttonDisconnect, constraintsForButtonDisconnect);
 
@@ -1306,7 +1367,7 @@ public class GUI
                 GridBagConstraints constraintsForButtonBackConnectToServer = new GridBagConstraints(
                         2, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(80, 20, 20, 20), 0, 0);
+                        new Insets(50, 20, 20, 20), 0, 0);
                 buttonBackOnFrameConnectToServer.addActionListener(e->showPreviousFrame());
                 panelTransparentOnFrameConnectToServer.add(
                         buttonBackOnFrameConnectToServer, constraintsForButtonBackConnectToServer);
@@ -1853,6 +1914,10 @@ public class GUI
             panelTransparentOnFrameOnlineMultiplayer.add(textFieldPort, constraintsForTextFieldPort);
             panelTransparentOnFrameOnlineMultiplayer.add(labelWithPortIcon, constraintsForLabelWithPortIcon);
             panelTransparentOnFrameOnlineMultiplayer.add(textAreaPortTip, constraintsForTextAreaPortTip);
+            panelTransparentOnFrameOnlineMultiplayer.add(labelNickname, constraintsForLabelNickname);
+            panelTransparentOnFrameOnlineMultiplayer.add(textFieldNickname, constraintsForTextFieldNickname);
+            panelTransparentOnFrameOnlineMultiplayer.add(labelWithNicknameIcon, constraintsForLabelWithNicknameIcon);
+            panelTransparentOnFrameOnlineMultiplayer.add(textAreaNicknameTip, constraintsForTextAreaNicknameTip);
             panelTransparentOnFrameOnlineMultiplayer.add(
                     panelTransparentOnFrameConnectToServer, constraintsForPanelTransparentOnFrameConnectToServer);
             repaint();
@@ -2336,6 +2401,15 @@ public class GUI
             {
                 textAreaPortTip.setText(text.getPortTip());
             }
+            labelNickname.setText(text.getNickname());
+            if(documentListenerForTextFieldNickname.getIsNicknameCorrect())
+            {
+                textAreaNicknameTip.setText("");
+            }
+            else
+            {
+                textAreaNicknameTip.setText(text.getNicknameTip());
+            }
             buttonConnect.setText(text.getConnect());
             buttonDisconnect.setText(text.getDisconnect());
             buttonBackOnFrameConnectToServer.setText(text.getBack());
@@ -2408,7 +2482,8 @@ public class GUI
         {
             labelWithIpIcon.setIcon(iconCorrect);
             textAreaIpTip.setText("");
-            if(documentListenerForTextFieldPort.getIsPortCorrect())
+            if(documentListenerForTextFieldPort.getIsPortCorrect() &&
+               documentListenerForTextFieldNickname.getIsNicknameCorrect())
             {
                 buttonConnect.setEnabled(true);
             }
@@ -2429,7 +2504,30 @@ public class GUI
         {
             labelWithPortIcon.setIcon(iconCorrect);
             textAreaPortTip.setText("");
-            if(documentListenerForTextFieldIp.getIsIpCorrect())
+            if(documentListenerForTextFieldIp.getIsIpCorrect() &&
+               documentListenerForTextFieldNickname.getIsNicknameCorrect())
+            {
+                buttonConnect.setEnabled(true);
+            }
+        });
+    }
+    public void setNicknameIncorrect()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            labelWithNicknameIcon.setIcon(iconIncorrect);
+            textAreaNicknameTip.setText(text.getNicknameTip());
+            buttonConnect.setEnabled(false);
+        });
+    }
+    public void setNicknameCorrect()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            labelWithNicknameIcon.setIcon(iconCorrect);
+            textAreaNicknameTip.setText("");
+            if(documentListenerForTextFieldIp.getIsIpCorrect() &&
+               documentListenerForTextFieldPort.getIsPortCorrect())
             {
                 buttonConnect.setEnabled(true);
             }

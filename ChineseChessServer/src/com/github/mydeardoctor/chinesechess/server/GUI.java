@@ -1,10 +1,10 @@
 package com.github.mydeardoctor.chinesechess.server;
 
-import com.github.mydeardoctor.chinesechess.*;
-
+import com.github.mydeardoctor.chinesechess.PanelBackground;
+import com.github.mydeardoctor.chinesechess.DocumentFilterForTextFieldPort;
+import com.github.mydeardoctor.chinesechess.TableOfClientsModel;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.BufferedImage;

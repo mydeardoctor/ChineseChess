@@ -1,6 +1,7 @@
 package com.github.mydeardoctor.chinesechess.client;
 
-import com.github.mydeardoctor.chinesechess.*;
+import com.github.mydeardoctor.chinesechess.State;
+import com.github.mydeardoctor.chinesechess.Player;
 import java.util.*;
 
 public class GameSinglePlayer extends Game

@@ -1,6 +1,8 @@
 package com.github.mydeardoctor.chinesechess.client;
 
-import com.github.mydeardoctor.chinesechess.*;
+import com.github.mydeardoctor.chinesechess.State;
+import com.github.mydeardoctor.chinesechess.Player;
+import com.github.mydeardoctor.chinesechess.Phase;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
