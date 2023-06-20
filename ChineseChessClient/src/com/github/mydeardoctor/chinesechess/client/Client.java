@@ -1,5 +1,6 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import com.github.mydeardoctor.chinesechess.Action;
 import com.github.mydeardoctor.chinesechess.Message;
 import javax.swing.*;
 import java.io.IOException;
@@ -22,7 +23,10 @@ public class Client
     private ThreadPoolExecutor clientThreadPool;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
-    private final Protocol protocol; //TODO вынести наверх?
+    private String nickname;
+
+    //Protocol attributes.
+    private Protocol protocol;
 
     //GUI attributes.
     private GUI gui;
@@ -36,16 +40,21 @@ public class Client
         connectedToServer = false;
         protocol = new Protocol();
     }
+    public void setProtocol(Protocol protocol)
+    {
+        this.protocol = protocol;
+    }
     public void setGui(GUI gui)
     {
         this.gui = gui;
         protocol.setGui(gui);
     }
-    public void connect(String ipAddress, int portNumber)
+    public void connect(String ipAddress, int portNumber, String nickname)
     {
         gui.disableButtonConnect();
         gui.disableButtonDisconnect();
 
+        this.nickname = nickname;
         clientSocket = new Socket();
         Client clientReference = this;
 
@@ -143,6 +152,7 @@ public class Client
     }
     private void run()
     {
+        writeToServer(new Message(Action.REGISTER_NICKNAME, nickname, null, null, null));
         while(true)
         {
             try
@@ -150,7 +160,7 @@ public class Client
                 //If clientSocket is closed,
                 //any thread currently blocked in an I/O operation upon this socket will throw a SocketException.
                 Message message = (Message)(objectInputStream.readObject());
-                protocol.handleInput(message);
+                protocol.processInput(message);
             }
             catch (IOException | ClassNotFoundException e) //SocketException is a subclass of IOException.
             {

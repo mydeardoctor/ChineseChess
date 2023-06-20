@@ -24,6 +24,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -1395,7 +1397,7 @@ public class GUI
                         new Insets(0, 0, 0, 0), 0, 0);
 
                 //Table of Clients.
-                tableOfClientsModel = new TableOfClientsModel(0, 1);
+                tableOfClientsModel = new TableOfClientsModel(0, 2); //TODO ширина колонок
                 JTable tableOfClients = new JTable(tableOfClientsModel);
                 tableOfClients.setPreferredScrollableViewportSize(new Dimension(500, 400));
                 tableOfClients.setRowHeight(50);
@@ -2077,7 +2079,8 @@ public class GUI
         {
             String ipAddress = documentListenerForTextFieldIp.getIpAddressWithoutLeadingZeros();
             int portNumber = Integer.parseInt(textFieldPort.getText());
-            client.connect(ipAddress, portNumber);
+            String nickname = textFieldNickname.getText();
+            client.connect(ipAddress, portNumber, nickname);
         });
     }
     private void showDialogDisconnectFromServer()
@@ -2579,7 +2582,7 @@ public class GUI
                         text.getDisconnectedFromServer(), text.getClientInfo(), JOptionPane.INFORMATION_MESSAGE)
         );
     }
-    public void refreshTableOfClients(ArrayList<InetAddress> ipAddressesOfClientsNotInGame)
+    public void refreshTableOfClients(HashMap<Integer, String> mapOfNicknames)
     {
         SwingUtilities.invokeLater(()->
         {
@@ -2588,9 +2591,12 @@ public class GUI
                 tableOfClientsModel.removeRow(rowIndex);
             }
 
-            for(InetAddress inetAddress : ipAddressesOfClientsNotInGame)
+            Set<Map.Entry<Integer, String>> setOfNicknames = mapOfNicknames.entrySet();
+            for(Map.Entry<Integer, String> entryOfNicknames : setOfNicknames)
             {
-                tableOfClientsModel.addRow(new Object[]{inetAddress.toString()});
+                Integer hashCode = entryOfNicknames.getKey();
+                String nickname = entryOfNicknames.getValue();
+                tableOfClientsModel.addRow(new Object[]{hashCode.toString(), nickname.toString()});
             }
         });
     }

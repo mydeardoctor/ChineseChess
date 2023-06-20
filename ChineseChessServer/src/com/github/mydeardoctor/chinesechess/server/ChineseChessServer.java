@@ -9,10 +9,15 @@ public class ChineseChessServer
         ParentLogger parentLogger = new ParentLogger();
         parentLogger.initialize("ChineseChessServerLog%u.txt");
         Server server = new Server();
+        MapOfClients mapOfClients = new MapOfClients();
+        Protocol protocol = new Protocol();
         GUI gui = new GUI();
 
+        server.setMapOfClients(mapOfClients);
+        server.setProtocol(protocol);
         server.setGui(gui);
         gui.setServer(server);
+        gui.setMapOfClients(mapOfClients);
 
         gui.showFrameAndWarnings();
     }

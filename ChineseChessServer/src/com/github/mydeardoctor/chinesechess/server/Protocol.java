@@ -1,25 +1,18 @@
-package com.github.mydeardoctor.chinesechess.client;
+package com.github.mydeardoctor.chinesechess.server;
 
 import com.github.mydeardoctor.chinesechess.Message;
 import com.github.mydeardoctor.chinesechess.Action;
 import com.github.mydeardoctor.chinesechess.State;
 import com.github.mydeardoctor.chinesechess.Player;
 import com.github.mydeardoctor.chinesechess.Phase;
-import java.util.HashMap;
 
 public class Protocol
 {
-    //GUI attributes.
-    private GUI gui;
     public Protocol()
     {
         super();
     }
-    public void setGui(GUI gui)
-    {
-        this.gui = gui;
-    }
-    public void processInput(Message message)
+    public void processInput(Message message, Client client)
     {
         Action action = message.getAction();
         Object data = message.getData();
@@ -29,8 +22,12 @@ public class Protocol
 
         switch(action)
         {
-            case UPDATE_TABLE_OF_CLIENTS -> gui.refreshTableOfClients((HashMap<Integer, String>)data);
+            case REGISTER_NICKNAME -> registerNickname(client, (String)data);
         }
     }
-
+    private void registerNickname(Client client, String nickname)
+    {
+        client.setNickname(nickname);
+        System.out.println(nickname); //TODO!!!!!!!!!!!!!!!!!!!
+    }
 }

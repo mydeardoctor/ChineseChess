@@ -101,6 +101,9 @@ public class GUI
     //Server attributes.
     private Server server;
 
+    //Map of Clients attributes.
+    private MapOfClients mapOfClients;
+
     //Logger.
     private static final Logger logger = Logger.getLogger(GUI.class.getName());
 
@@ -604,6 +607,10 @@ public class GUI
     public void setServer(Server server)
     {
         this.server = server;
+    }
+    public void setMapOfClients(MapOfClients mapOfClients)
+    {
+        this.mapOfClients = mapOfClients;
     }
     public void showFrameAndWarnings()
     {

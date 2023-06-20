@@ -5,6 +5,9 @@ import com.github.mydeardoctor.chinesechess.Action;
 import com.github.mydeardoctor.chinesechess.State;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -19,7 +22,12 @@ public class Server
     private ThreadPoolExecutor serverThreadPool;
     private ThreadPoolExecutor clientThreadPool;
     private ServerSocket serverSocket;
-    private final ListOfClients listOfClients;
+
+    //Map of Clients attributes.
+    private MapOfClients mapOfClients;
+
+    //Protocol attributes.
+    private Protocol protocol;
 
     //GUI attributes.
     private GUI gui;
@@ -30,7 +38,14 @@ public class Server
     public Server()
     {
         serverRunning = false;
-        listOfClients = new ListOfClients();
+    }
+    public void setMapOfClients(MapOfClients mapOfClients)
+    {
+        this.mapOfClients = mapOfClients;
+    }
+    public void setProtocol(Protocol protocol)
+    {
+        this.protocol = protocol;
     }
     public void setGui(GUI gui)
     {
@@ -69,13 +84,11 @@ public class Server
                 Socket clientSocket = serverSocket.accept();
                 if(clientThreadPool.getActiveCount() < clientThreadPool.getCorePoolSize())
                 {
-                    Client client = new Client(clientSocket, this);
+                    Client client = new Client(clientSocket, this, mapOfClients, protocol, gui);
                     if(client.tryToOpenStreams())
                     {
-                        listOfClients.add(client);
-                        gui.refreshTableOfClients(listOfClients.getClients());
+                        mapOfClients.put(client.hashCode(), client);
                         clientThreadPool.execute(client::run);
-                        sendListOfClientsToEveryClient();
                     }
                     else
                     {
@@ -147,9 +160,11 @@ public class Server
         }
 
         //Close Client Sockets. Causes an Exception in Client Threads. Client Threads begin to stop.
-        ArrayList<Client> clients = listOfClients.getClients();
-        for(Client client : clients)
+        HashMap<Integer, Client> clients = mapOfClients.getCopy();
+        Set<Map.Entry<Integer, Client>> setOfClients = clients.entrySet();
+        for(Map.Entry<Integer, Client> entryOfClients : setOfClients)
         {
+            Client client = entryOfClients.getValue();
             try
             {
                 client.getClientSocket().close();
@@ -176,41 +191,34 @@ public class Server
             }
         }
 
-        //Each client is deleted from listOfClients in its own thread.
+        //Each client is deleted from mapOfClients in its own thread.
 
         //Refresh GUI.
         serverRunning = false;
         gui.setServerStopped();
     }
-    public void sendListOfClientsToEveryClient()
+    public void sendListOfClientsToEveryClient() //TODO засунуть в протокол
     {
-        ArrayList<Client> clients = listOfClients.getClients();
-        ArrayList<InetAddress> ipAddressesOfClientsNotInGame = new ArrayList<>();
-        for(Client client : clients)
-        {
-           if(client.getState().equals(State.OVER))
-           {
-               ipAddressesOfClientsNotInGame.add(client.getClientSocket().getInetAddress());
-           }
-        }
-
-        Message message = new Message(Action.UPDATE_TABLE_OF_CLIENTS, ipAddressesOfClientsNotInGame,
-                null, null, null);
-        for(Client client : clients)
-        {
-            client.writeToClient(message);
-        }
+        //TODO!!!!!!!!!!!!!!!!!!!!!!!!!
+//        ArrayList<Client> clients = mapOfClients.getCopy();
+//        ArrayList<InetAddress> ipAddressesOfClientsNotInGame = new ArrayList<>();
+//        for(Client client : clients)
+//        {
+//           if(client.getState().equals(State.OVER))
+//           {
+//               ipAddressesOfClientsNotInGame.add(client.getClientSocket().getInetAddress());
+//           }
+//        }
+//
+//        Message message = new Message(Action.UPDATE_TABLE_OF_CLIENTS, ipAddressesOfClientsNotInGame,
+//                null, null, null);
+//        for(Client client : clients)
+//        {
+//            client.writeToClient(message);
+//        }
     }
     public boolean getIsServerRunning()
     {
         return serverRunning;
     }
-    public ListOfClients getListOfClients()
-    {
-        return listOfClients;
-    }
-    public GUI getGui()
-    {
-        return gui;
-    } //TODO мб запихать в конструктор
 }

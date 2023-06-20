@@ -1,5 +1,6 @@
 package com.github.mydeardoctor.chinesechess.server;
 
+import com.github.mydeardoctor.chinesechess.Message;
 import com.github.mydeardoctor.chinesechess.State;
 import com.github.mydeardoctor.chinesechess.Player;
 import com.github.mydeardoctor.chinesechess.Phase;
@@ -10,22 +11,41 @@ import java.util.logging.Logger;
 
 public class Client
 {
+    //Client attributes.
     private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
+    private String nickname; //TODO
     private State state; //TODO
     private Player turn; //TODO
     private Phase phase; //TODO
+
+    //Server attributes.
     private final Server server;
+
+    //Map of Clients attributes.
+    private final MapOfClients mapOfClients;
+
+    //Protocol attrobutes.
+    private final Protocol protocol;
+
+    //GUI attributes.
+    private final GUI gui;
+
+    //Logger.
     private static final Logger logger = Logger.getLogger(Client.class.getName());
 
-    public Client(Socket clientSocket, Server server)
+    public Client(Socket clientSocket, Server server, MapOfClients mapOfClients, Protocol protocol, GUI gui)
     {
         this.clientSocket = clientSocket;
+        nickname = null;
         state = State.OVER;
         turn = Player.RED;
         phase = Phase.CHOOSE_FIGURE;
         this.server = server;
+        this.mapOfClients = mapOfClients;
+        this.protocol = protocol;
+        this.gui = gui;
     }
     public boolean tryToOpenStreams()
     {
@@ -57,17 +77,18 @@ public class Client
             {
                 //If clientSocket is closed,
                 //any thread currently blocked in an I/O operation upon this socket will throw a SocketException.
-                String message = (String)(objectInputStream.readObject());
-                System.out.println(message + "\n");
+                Message message = (Message)(objectInputStream.readObject());
+                protocol.processInput(message, this);
             }
             catch (IOException | ClassNotFoundException e) //SocketException is a subclass of IOException.
             {
                 System.out.println("Client Socket closed.\n");
 
                 closeResources();
-                server.getListOfClients().remove(this);
-                server.getGui().refreshTableOfClients(server.getListOfClients().getClients());
-                server.sendListOfClientsToEveryClient();
+                mapOfClients.remove(this.hashCode());
+                //TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//                gui.refreshTableOfClients(server.getListOfClients().getCopy());
+//                server.sendListOfClientsToEveryClient();
                 break;
             }
         }
@@ -115,6 +136,14 @@ public class Client
     public Socket getClientSocket()
     {
         return clientSocket;
+    }
+    public String getNickname()
+    {
+        return nickname;
+    }
+    public void setNickname(String nickname)
+    {
+        this.nickname = nickname;
     }
     public State getState()
     {

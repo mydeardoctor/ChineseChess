@@ -11,6 +11,7 @@ public class ChineseChessClient
         GameSinglePlayer gameSinglePlayer = new GameSinglePlayer();
         GameLocalMultiplayer gameLocalMultiplayer = new GameLocalMultiplayer();
         Client client = new Client();
+        Protocol protocol = new Protocol();
         Replay replay = new Replay();
         Rules rules = new Rules();
         GUI gui = new GUI();
@@ -22,7 +23,9 @@ public class ChineseChessClient
         gameLocalMultiplayer.setReplay(replay);
         gameLocalMultiplayer.setGui(gui);
         gameLocalMultiplayer.setMusicPlayer(musicPlayer);
+        client.setProtocol(protocol);
         client.setGui(gui);
+        protocol.setGui(gui);
         replay.setGui(gui);
         gui.setGameSinglePlayer(gameSinglePlayer);
         gui.setGameLocalMultiplayer(gameLocalMultiplayer);
