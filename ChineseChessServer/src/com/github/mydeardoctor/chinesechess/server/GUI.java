@@ -14,6 +14,9 @@ import javax.swing.text.PlainDocument;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -518,9 +521,15 @@ public class GUI
                         new Insets(0, 0, 0, 0), 0, 0);
 
                 //Table of Clients.
-                tableOfClientsModel = new TableOfClientsModel(0, 1);
+                tableOfClientsModel = new TableOfClientsModel(0, 2); //TODO
                 JTable tableOfClients = new JTable(tableOfClientsModel);
                 tableOfClients.setPreferredScrollableViewportSize(new Dimension(500, 400));
+                //TODO асширять ли таблицу. сделать чтобы 15 символом имени были видны
+//                tableOfClients.getColumnModel().getColumn(1).setMinWidth(300);
+//                tableOfClients.getColumnModel().getColumn(1).setMaxWidth(300);
+//                tableOfClientsModel.addRow(new Object[]{"asdasd", "wwwwwwwwwwwwwwww"});
+
+
                 tableOfClients.setRowHeight(50);
                 tableOfClients.setTableHeader(null);
                 tableOfClients.setFocusable(false);
@@ -903,18 +912,23 @@ public class GUI
                         text.getCouldNotStartServer(), text.getServerError(), JOptionPane.ERROR_MESSAGE)
         );
     }
-    public void refreshTableOfClients(ArrayList<Client> clients)
+    public void refreshTableOfClients(HashMap<Integer, String> mapOfNicknames)
     {
         SwingUtilities.invokeLater(()->
         {
+            //Delete all rows.
             for(int rowIndex = tableOfClientsModel.getRowCount() - 1; rowIndex >= 0; rowIndex--)
             {
                 tableOfClientsModel.removeRow(rowIndex);
             }
 
-            for(Client client : clients)
+            //Add rows with hashCode and nicknames.
+            Set<Map.Entry<Integer, String>> setOfNicknames = mapOfNicknames.entrySet();
+            for(Map.Entry<Integer, String> entryOfNicknames : setOfNicknames)
             {
-                tableOfClientsModel.addRow(new Object[]{client.getClientSocket().getInetAddress().toString()});
+                Integer hashCode = entryOfNicknames.getKey();
+                String nickname = entryOfNicknames.getValue();
+                tableOfClientsModel.addRow(new Object[]{hashCode.toString(), nickname});
             }
         });
     }

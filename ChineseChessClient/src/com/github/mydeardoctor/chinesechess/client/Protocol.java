@@ -32,5 +32,4 @@ public class Protocol
             case UPDATE_TABLE_OF_CLIENTS -> gui.refreshTableOfClients((HashMap<Integer, String>)data);
         }
     }
-
 }

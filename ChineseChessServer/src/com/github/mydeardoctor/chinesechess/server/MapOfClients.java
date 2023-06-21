@@ -35,9 +35,23 @@ public class MapOfClients
 
         return mapOfClientsCopy;
     }
-    public synchronized HashMap<Integer, String> getNicknames()
+    public synchronized HashMap<Integer, String> getAllNicknames()
     {
-        HashMap<Integer, String> mapOfNicknames = new HashMap<>();
+        HashMap<Integer, String> mapOfAllNicknames = new HashMap<>();
+
+        Set<Map.Entry<Integer, Client>> setOfClients = mapOfClients.entrySet();
+        for(Map.Entry<Integer, Client> entryOfClients : setOfClients)
+        {
+            Integer hashCode = entryOfClients.getKey();
+            String nickname = entryOfClients.getValue().getNickname();
+            mapOfAllNicknames.put(hashCode, nickname);
+        }
+
+        return mapOfAllNicknames;
+    }
+    public synchronized HashMap<Integer, String> getNicknamesNotInGame()
+    {
+        HashMap<Integer, String> mapOfNicknamesNotInGame = new HashMap<>();
 
         Set<Map.Entry<Integer, Client>> setOfClients = mapOfClients.entrySet();
         for(Map.Entry<Integer, Client> entryOfClients : setOfClients)
@@ -46,12 +60,12 @@ public class MapOfClients
             Client client = entryOfClients.getValue();
             String nickname = client.getNickname();
 
-            if(client.getState().equals(State.OVER) && (nickname != null)) //TODO
+            if(client.getState().equals(State.OVER) && (nickname != null))
             {
-                mapOfNicknames.put(hashCode, nickname);
+                mapOfNicknamesNotInGame.put(hashCode, nickname);
             }
         }
 
-        return mapOfNicknames;
+        return mapOfNicknamesNotInGame;
     }
 }

@@ -26,7 +26,7 @@ public class Client
     //Map of Clients attributes.
     private final MapOfClients mapOfClients;
 
-    //Protocol attrobutes.
+    //Protocol attributes.
     private final Protocol protocol;
 
     //GUI attributes.
@@ -69,7 +69,7 @@ public class Client
 
         return result;
     }
-    public void run()
+    public void run() //TODO отсылать клиентам никнеймы, если клиент зашёл в игру или вышел из неё
     {
         while(true)
         {
@@ -86,9 +86,8 @@ public class Client
 
                 closeResources();
                 mapOfClients.remove(this.hashCode());
-                //TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//                gui.refreshTableOfClients(server.getListOfClients().getCopy());
-//                server.sendListOfClientsToEveryClient();
+                gui.refreshTableOfClients(mapOfClients.getAllNicknames());
+//                server.sendListOfClientsToEveryClient(); TODO
                 break;
             }
         }

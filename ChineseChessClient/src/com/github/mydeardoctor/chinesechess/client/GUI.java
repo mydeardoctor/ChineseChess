@@ -1381,7 +1381,7 @@ public class GUI
                     "Could not initialize frame Connect.", e);
         }
     }
-    private void initializeFrameLobby()
+    private void initializeFrameLobby() //TODO cellselectable?
     {
         try
         {

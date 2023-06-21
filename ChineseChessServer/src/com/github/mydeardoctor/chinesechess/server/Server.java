@@ -164,10 +164,9 @@ public class Server
         Set<Map.Entry<Integer, Client>> setOfClients = clients.entrySet();
         for(Map.Entry<Integer, Client> entryOfClients : setOfClients)
         {
-            Client client = entryOfClients.getValue();
             try
             {
-                client.getClientSocket().close();
+                entryOfClients.getValue().getClientSocket().close();
             }
             catch (IOException e)
             {
@@ -191,31 +190,11 @@ public class Server
             }
         }
 
-        //Each client is deleted from mapOfClients in its own thread.
+        //Each client is removed from mapOfClients in its own thread.
 
         //Refresh GUI.
         serverRunning = false;
         gui.setServerStopped();
-    }
-    public void sendListOfClientsToEveryClient() //TODO засунуть в протокол
-    {
-        //TODO!!!!!!!!!!!!!!!!!!!!!!!!!
-//        ArrayList<Client> clients = mapOfClients.getCopy();
-//        ArrayList<InetAddress> ipAddressesOfClientsNotInGame = new ArrayList<>();
-//        for(Client client : clients)
-//        {
-//           if(client.getState().equals(State.OVER))
-//           {
-//               ipAddressesOfClientsNotInGame.add(client.getClientSocket().getInetAddress());
-//           }
-//        }
-//
-//        Message message = new Message(Action.UPDATE_TABLE_OF_CLIENTS, ipAddressesOfClientsNotInGame,
-//                null, null, null);
-//        for(Client client : clients)
-//        {
-//            client.writeToClient(message);
-//        }
     }
     public boolean getIsServerRunning()
     {

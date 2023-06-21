@@ -16,6 +16,8 @@ public class ChineseChessServer
         server.setMapOfClients(mapOfClients);
         server.setProtocol(protocol);
         server.setGui(gui);
+        protocol.setMapOfClients(mapOfClients);
+        protocol.setGui(gui);
         gui.setServer(server);
         gui.setMapOfClients(mapOfClients);
 
