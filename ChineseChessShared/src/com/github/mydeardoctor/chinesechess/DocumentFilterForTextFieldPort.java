@@ -10,7 +10,6 @@ public class DocumentFilterForTextFieldPort extends DocumentFilterForTextField
     private final Pattern patternForFiveNumbers;
     public DocumentFilterForTextFieldPort()
     {
-        super();
         String regExForFiveNumbers =
                 "^" +
                 "[0-9]|" +

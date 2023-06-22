@@ -6,8 +6,7 @@ public class ChineseChessClient
 {
     public static void main(String[] args)
     {
-        ParentLogger parentLogger = new ParentLogger();
-        parentLogger.initialize("ChineseChessClientLog%u.txt");
+        ParentLogger.initialize("ChineseChessClientLog%u.txt");
         GameSinglePlayer gameSinglePlayer = new GameSinglePlayer();
         GameLocalMultiplayer gameLocalMultiplayer = new GameLocalMultiplayer();
         Client client = new Client();
@@ -25,6 +24,7 @@ public class ChineseChessClient
         gameLocalMultiplayer.setMusicPlayer(musicPlayer);
         client.setProtocol(protocol);
         client.setGui(gui);
+        protocol.setClient(client);
         protocol.setGui(gui);
         replay.setGui(gui);
         gui.setGameSinglePlayer(gameSinglePlayer);

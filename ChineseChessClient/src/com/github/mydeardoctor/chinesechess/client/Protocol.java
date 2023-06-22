@@ -9,11 +9,19 @@ import java.util.HashMap;
 
 public class Protocol
 {
+    //Client attributes.
+    private Client client;
+
     //GUI attributes.
     private GUI gui;
+
     public Protocol()
     {
         super();
+    }
+    public void setClient(Client client)
+    {
+        this.client = client;
     }
     public void setGui(GUI gui)
     {
@@ -21,15 +29,24 @@ public class Protocol
     }
     public void processInput(Message message)
     {
-        Action action = message.getAction();
-        Object data = message.getData();
-        State state = message.getState();
-        Player turn = message.getTurn();
-        Phase phase = message.getPhase();
+        Action action = message.action();
+        Object data = message.data();
+        State state = message.state();
+        Player turn = message.turn();
+        Phase phase = message.phase();
 
         switch(action)
         {
-            case UPDATE_TABLE_OF_CLIENTS -> gui.refreshTableOfClients((HashMap<Integer, String>)data);
+            case UPDATE_TABLE_OF_CLIENTS -> updateTableOfClients((HashMap<Integer, String>)data);
         }
+    }
+    public void sendRegisterNickname()
+    {
+        Message message = new Message(Action.REGISTER_NICKNAME, client.getNickname(), null, null, null);
+        client.writeToServer(message);
+    }
+    private void updateTableOfClients(HashMap<Integer, String> mapOfNicknames)
+    {
+        gui.refreshTableOfClients(mapOfNicknames);
     }
 }

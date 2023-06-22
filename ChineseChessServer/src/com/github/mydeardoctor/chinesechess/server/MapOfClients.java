@@ -1,7 +1,6 @@
 package com.github.mydeardoctor.chinesechess.server;
 
 import com.github.mydeardoctor.chinesechess.State;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -35,23 +34,24 @@ public class MapOfClients
 
         return mapOfClientsCopy;
     }
-    public synchronized HashMap<Integer, String> getAllNicknames()
+    public synchronized HashMap<Integer, String> getNicknamesOfAllClients()
     {
-        HashMap<Integer, String> mapOfAllNicknames = new HashMap<>();
+        HashMap<Integer, String> mapOfNicknamesOfAllClients = new HashMap<>();
 
         Set<Map.Entry<Integer, Client>> setOfClients = mapOfClients.entrySet();
         for(Map.Entry<Integer, Client> entryOfClients : setOfClients)
         {
             Integer hashCode = entryOfClients.getKey();
-            String nickname = entryOfClients.getValue().getNickname();
-            mapOfAllNicknames.put(hashCode, nickname);
+            Client client = entryOfClients.getValue();
+            String nickname = client.getNickname();
+            mapOfNicknamesOfAllClients.put(hashCode, nickname);
         }
 
-        return mapOfAllNicknames;
+        return mapOfNicknamesOfAllClients;
     }
-    public synchronized HashMap<Integer, String> getNicknamesNotInGame()
+    public synchronized HashMap<Integer, String> getNicknamesOfAvailableClients()
     {
-        HashMap<Integer, String> mapOfNicknamesNotInGame = new HashMap<>();
+        HashMap<Integer, String> mapOfNicknamesOfAvailableClients = new HashMap<>();
 
         Set<Map.Entry<Integer, Client>> setOfClients = mapOfClients.entrySet();
         for(Map.Entry<Integer, Client> entryOfClients : setOfClients)
@@ -60,12 +60,12 @@ public class MapOfClients
             Client client = entryOfClients.getValue();
             String nickname = client.getNickname();
 
-            if(client.getState().equals(State.OVER) && (nickname != null))
+            if((nickname != null) && client.getState().equals(State.OVER))
             {
-                mapOfNicknamesNotInGame.put(hashCode, nickname);
+                mapOfNicknamesOfAvailableClients.put(hashCode, nickname);
             }
         }
 
-        return mapOfNicknamesNotInGame;
+        return mapOfNicknamesOfAvailableClients;
     }
 }

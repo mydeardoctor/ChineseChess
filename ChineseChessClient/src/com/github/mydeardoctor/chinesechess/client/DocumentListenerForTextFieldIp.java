@@ -18,8 +18,6 @@ public class DocumentListenerForTextFieldIp implements DocumentListener
 
     public DocumentListenerForTextFieldIp(GUI gui)
     {
-        super();
-
         ipCorrect = false;
         String regExForIp =
             "^" +

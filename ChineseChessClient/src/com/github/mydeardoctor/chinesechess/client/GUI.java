@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -167,10 +166,12 @@ public class GUI
     private JScrollPane scrollPaneWithTableOfClients;
     private TableOfClientsModel tableOfClientsModel;
     private JTable tableOfClients;
+    private JPanel panelTransparentOnFrameLobby;
+    private JButton buttonInvite;
     private JButton buttonBackOnFrameLobby;
     private GridBagConstraints constraintsForLabelListOfClients;
     private GridBagConstraints constraintsForScrollPaneWithTableOfClients;
-    private GridBagConstraints constraintsForButtonBackOnFrameLobby;
+    private GridBagConstraints constraintsForPanelTransparentOnFrameLobby;
 
     //Frame Replay.
     private PanelBoard panelBoardOnFrameReplay;
@@ -1426,17 +1427,41 @@ public class GUI
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(10, 50, 10, 50), 0, 0);
 
+                //Panel Transparent.
+                panelTransparentOnFrameLobby = new JPanel();
+                panelTransparentOnFrameLobby.setOpaque(false);
+                panelTransparentOnFrameLobby.setLayout(gridBagLayout);
+                constraintsForPanelTransparentOnFrameLobby = new GridBagConstraints(
+                        0, 2, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 0), 0, 0);
+
+                //Button Invite.
+                buttonInvite = new JButton(text.getInvite());
+                buttonInvite.setPreferredSize(new Dimension(250, 100));
+                buttonInvite.setBackground(Color.WHITE);
+                buttonInvite.setBorder(new LineBorder(Color.BLACK, 2));
+                buttonInvite.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
+                GridBagConstraints constraintsForButtonInvite = new GridBagConstraints(
+                        0, 0, 1, 1, 0, 0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(15, 0, 15, 30), 0, 0);
+                //TODO buttonInvite
+//                buttonInvite.addActionListener(e->{});
+                panelTransparentOnFrameLobby.add(buttonInvite, constraintsForButtonInvite);
+
                 //Button Back.
                 buttonBackOnFrameLobby = new JButton(text.getBack());
                 buttonBackOnFrameLobby.setPreferredSize(new Dimension(150, 100));
                 buttonBackOnFrameLobby.setBackground(Color.WHITE);
                 buttonBackOnFrameLobby.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonBackOnFrameLobby.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
-                constraintsForButtonBackOnFrameLobby = new GridBagConstraints(
-                        0, 2, 1, 1, 0, 0,
+                GridBagConstraints constraintsForButtonBackOnFrameLobby = new GridBagConstraints(
+                        1, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(15, 0, 15, 0), 0, 0);
+                        new Insets(15, 30, 15, 0), 0, 0);
                 buttonBackOnFrameLobby.addActionListener(e->showPreviousFrame());
+                panelTransparentOnFrameLobby.add(buttonBackOnFrameLobby, constraintsForButtonBackOnFrameLobby);
             });
         }
         catch (InterruptedException | InvocationTargetException e)
@@ -1946,7 +1971,8 @@ public class GUI
             panelTransparentOnFrameOnlineMultiplayer.add(labelListOfClients, constraintsForLabelListOfClients);
             panelTransparentOnFrameOnlineMultiplayer.add(scrollPaneWithTableOfClients,
                     constraintsForScrollPaneWithTableOfClients);
-            panelTransparentOnFrameOnlineMultiplayer.add(buttonBackOnFrameLobby, constraintsForButtonBackOnFrameLobby);
+            panelTransparentOnFrameOnlineMultiplayer.add(panelTransparentOnFrameLobby,
+                    constraintsForPanelTransparentOnFrameLobby);
             repaint();
         });
     }
@@ -2009,23 +2035,17 @@ public class GUI
                         new String[] {text.getYes(), text.getNo()}, text.getNo());
                 if(selectedOption == JOptionPane.YES_OPTION)
                 {
-                    if(gameSinglePlayerState.equals(State.RUNNING))
-                    {
-                        gameSinglePlayer.stop();
-                    }
-                    if(gameLocalMultiplayerState.equals(State.RUNNING))
-                    {
-                        gameLocalMultiplayer.stop();
-                    }
-                    if(replayState.equals(State.RUNNING))
-                    {
-                        replay.stop();
-                    }
+                    gameSinglePlayer.stop();
+                    gameLocalMultiplayer.stop();
+                    replay.stop();
                     showFrameMainMenu();
                 }
             }
             else
             {
+                gameSinglePlayer.stop();
+                gameLocalMultiplayer.stop();
+                replay.stop();
                 showFrameMainMenu();
             }
         });
@@ -2430,6 +2450,7 @@ public class GUI
             //Frame Lobby.
             labelListOfClients.setText(text.getListOfClients());
             tableOfClients.getColumnModel().getColumn(1).setHeaderValue(text.getNickname());
+            buttonInvite.setText(text.getInvite());
             buttonBackOnFrameLobby.setText(text.getBack());
 
             //Frame Rules.
@@ -2548,21 +2569,14 @@ public class GUI
             }
         });
     }
-    public void disableButtonConnect()
-    {
-        buttonConnect.setEnabled(false);
-    }
-    public void disableButtonDisconnect()
-    {
-        buttonDisconnect.setEnabled(false);
-    }
     public void setDisconnected()
     {
         SwingUtilities.invokeLater(()->
         {
             buttonConnect.setEnabled(
                 documentListenerForTextFieldIp.getIsIpCorrect() &&
-                documentListenerForTextFieldPort.getIsPortCorrect());
+                documentListenerForTextFieldPort.getIsPortCorrect() &&
+                documentListenerForTextFieldNickname.getIsNicknameCorrect());
             buttonDisconnect.setEnabled(false);
             statusBarOfConnection.setText(text.getDisconnectedFromServer());
             for(int rowIndex = tableOfClientsModel.getRowCount() - 1; rowIndex >= 0; rowIndex--)
@@ -2579,6 +2593,14 @@ public class GUI
             buttonDisconnect.setEnabled(true);
             statusBarOfConnection.setText(text.getConnectedToServer());
         });
+    }
+    public void disableButtonConnect()
+    {
+        buttonConnect.setEnabled(false);
+    }
+    public void disableButtonDisconnect()
+    {
+        buttonDisconnect.setEnabled(false);
     }
     public void showDialogCouldNotConnectToServer()
     {
@@ -2598,17 +2620,19 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
+            //Delete all rows.
             for(int rowIndex = tableOfClientsModel.getRowCount() - 1; rowIndex >= 0; rowIndex--)
             {
                 tableOfClientsModel.removeRow(rowIndex);
             }
 
+            //Add rows with hashCode and nicknames.
             Set<Map.Entry<Integer, String>> setOfNicknames = mapOfNicknames.entrySet();
             for(Map.Entry<Integer, String> entryOfNicknames : setOfNicknames)
             {
                 Integer hashCode = entryOfNicknames.getKey();
                 String nickname = entryOfNicknames.getValue();
-                tableOfClientsModel.addRow(new Object[]{hashCode.toString(), nickname.toString()});
+                tableOfClientsModel.addRow(new Object[]{hashCode.toString(), nickname});
             }
         });
     }

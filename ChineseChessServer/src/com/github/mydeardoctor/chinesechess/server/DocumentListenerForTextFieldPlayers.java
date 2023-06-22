@@ -17,8 +17,6 @@ public class DocumentListenerForTextFieldPlayers implements DocumentListener
 
     public DocumentListenerForTextFieldPlayers(GUI gui)
     {
-        super();
-
         playersCorrect = true;
         String regExForPlayersRange =
             "^"+

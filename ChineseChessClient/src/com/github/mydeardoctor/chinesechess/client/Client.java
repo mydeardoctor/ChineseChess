@@ -1,6 +1,5 @@
 package com.github.mydeardoctor.chinesechess.client;
 
-import com.github.mydeardoctor.chinesechess.Action;
 import com.github.mydeardoctor.chinesechess.Message;
 import javax.swing.*;
 import java.io.IOException;
@@ -20,9 +19,9 @@ public class Client
     //Client attributes.
     private boolean connectedToServer;
     private Socket clientSocket;
-    private ThreadPoolExecutor clientThreadPool;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
+    private ThreadPoolExecutor clientThreadPool;
     private String nickname;
 
     //Protocol attributes.
@@ -36,9 +35,7 @@ public class Client
 
     public Client()
     {
-        super();
         connectedToServer = false;
-        protocol = new Protocol();
     }
     public void setProtocol(Protocol protocol)
     {
@@ -47,16 +44,15 @@ public class Client
     public void setGui(GUI gui)
     {
         this.gui = gui;
-        protocol.setGui(gui);
     }
     public void connect(String ipAddress, int portNumber, String nickname)
     {
         gui.disableButtonConnect();
         gui.disableButtonDisconnect();
 
-        this.nickname = nickname;
+        Client thisClient = this;
         clientSocket = new Socket();
-        Client clientReference = this;
+        this.nickname = nickname;
 
         //Establishing a connection with a server requires time.
         //SwingWorker is used so that EDT will not be blocked during establishing of connection.
@@ -97,7 +93,7 @@ public class Client
                             gui.setConnected();
 
                             clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-                            clientThreadPool.execute(clientReference::run);
+                            clientThreadPool.execute(thisClient::run);
                         }
                         else
                         {
@@ -152,7 +148,7 @@ public class Client
     }
     private void run()
     {
-        writeToServer(new Message(Action.REGISTER_NICKNAME, nickname, null, null, null));
+        protocol.sendRegisterNickname();
         while(true)
         {
             try
@@ -238,7 +234,7 @@ public class Client
             }
         }
     }
-    public synchronized void writeToServer(Object message) //TODO Нужно ли закрывать соединение? На данный момент неправильно, так как нет потока с чтением, поэтому поток не закроется. Не проверен exception.
+    public synchronized void writeToServer(Object message)
     {
         try
         {
@@ -253,5 +249,9 @@ public class Client
     public boolean getIsConnectedToServer()
     {
         return connectedToServer;
+    }
+    public String getNickname()
+    {
+        return nickname;
     }
 }

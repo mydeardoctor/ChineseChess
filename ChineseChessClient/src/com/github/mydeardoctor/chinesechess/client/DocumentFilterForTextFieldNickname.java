@@ -12,7 +12,6 @@ public class DocumentFilterForTextFieldNickname extends DocumentFilterForTextFie
     private final Pattern patternForFifteenCharacters;
     public DocumentFilterForTextFieldNickname()
     {
-        super();
         String regExForFifteenCharacters =
             "^" +
             ".{1,15}" +

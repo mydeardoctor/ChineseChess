@@ -295,6 +295,11 @@ class TextRussian extends Text
     {
         return "Список клиентов";
     }
+    @Override
+    public String getInvite()
+    {
+        return "Пригласить";
+    }
 
     //Frame Rules.
     @Override

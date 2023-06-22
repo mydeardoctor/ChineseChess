@@ -17,8 +17,6 @@ public class DocumentListenerForTextFieldPort implements DocumentListener
 
     public DocumentListenerForTextFieldPort(GUI gui)
     {
-        super();
-
         portCorrect = true;
         String regExForPortRange =
             "^"+

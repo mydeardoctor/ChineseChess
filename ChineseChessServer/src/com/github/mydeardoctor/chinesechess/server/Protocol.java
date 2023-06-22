@@ -5,15 +5,18 @@ import com.github.mydeardoctor.chinesechess.Action;
 import com.github.mydeardoctor.chinesechess.State;
 import com.github.mydeardoctor.chinesechess.Player;
 import com.github.mydeardoctor.chinesechess.Phase;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class Protocol
 {
+    //Map of Clients attributes.
     private MapOfClients mapOfClients;
+
+    //GUI attributes.
     private GUI gui;
+
     public Protocol()
     {
         super();
@@ -26,13 +29,13 @@ public class Protocol
     {
         this.gui = gui;
     }
-    public void processInput(Message message, Client client)
+    public void processInput(Client client, Message message)
     {
-        Action action = message.getAction();
-        Object data = message.getData();
-        State state = message.getState();
-        Player turn = message.getTurn();
-        Phase phase = message.getPhase();
+        Action action = message.action();
+        Object data = message.data();
+        State state = message.state();
+        Player turn = message.turn();
+        Phase phase = message.phase();
 
         switch(action)
         {
@@ -41,36 +44,36 @@ public class Protocol
     }
     private void registerNickname(Client client, String nickname)
     {
-        //Register nickname.
         client.setNickname(nickname);
-
-        //Refresh table of clients.
-        gui.refreshTableOfClients(mapOfClients.getAllNicknames());
-
-        //Send nicknames to clients.
-        HashMap<Integer, String> mapOfNicknames = mapOfClients.getNicknamesNotInGame();
+        gui.refreshTableOfClients(mapOfClients.getNicknamesOfAllClients());
+        sendUpdateTableOfClients();
+    }
+    public void sendUpdateTableOfClients()
+    {
         HashMap<Integer, Client> mapOfClientsCopy = mapOfClients.getCopy();
+        HashMap<Integer, String> mapOfNicknamesOfAvailableClients = mapOfClients.getNicknamesOfAvailableClients();
+
         Set<Map.Entry<Integer, Client>> setOfClientsCopy = mapOfClientsCopy.entrySet();
         for(Map.Entry<Integer, Client> entryOfClientsCopy : setOfClientsCopy)
         {
             Integer hashCode = entryOfClientsCopy.getKey();
-            Client currentClient = entryOfClientsCopy.getValue();
-            String currentNickname = mapOfNicknames.get(hashCode);
+            Client client = entryOfClientsCopy.getValue();
+            String nickname = mapOfNicknamesOfAvailableClients.get(hashCode);
 
-            //Don't send client's own nickname to client.
-            if(currentNickname != null)
+            //Don't send client's own nickname.
+            if(nickname != null)
             {
-                mapOfNicknames.remove(hashCode);
+                mapOfNicknamesOfAvailableClients.remove(hashCode);
             }
 
-            Message message = new Message(Action.UPDATE_TABLE_OF_CLIENTS, mapOfNicknames,
+            Message message = new Message(Action.UPDATE_TABLE_OF_CLIENTS, mapOfNicknamesOfAvailableClients,
                     null, null, null);
-            currentClient.writeToClient(message);
+            client.writeToClient(message);
 
-            //Return nickname to map of nicknames.
-            if(currentNickname != null)
+            //Put nickname back.
+            if(nickname != null)
             {
-                mapOfNicknames.put(hashCode, currentNickname);
+                mapOfNicknamesOfAvailableClients.put(hashCode, nickname);
             }
         }
     }

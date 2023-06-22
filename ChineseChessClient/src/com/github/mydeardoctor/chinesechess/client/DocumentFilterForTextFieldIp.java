@@ -12,7 +12,6 @@ public class DocumentFilterForTextFieldIp extends DocumentFilterForTextField
     private final Pattern patternForNumbersAndDot;
     public DocumentFilterForTextFieldIp()
     {
-        super();
         String regExForNumbersAndDot =
             "^" +
             "[0-9\\.]{1,15}" +

@@ -17,8 +17,6 @@ public class DocumentListenerForTextFieldNickname implements DocumentListener
 
     public DocumentListenerForTextFieldNickname(GUI gui)
     {
-        super();
-
         nicknameCorrect = false;
         String regExForNickname =
             "^" +

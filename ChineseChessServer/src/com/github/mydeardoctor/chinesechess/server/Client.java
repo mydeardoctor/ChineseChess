@@ -15,13 +15,10 @@ public class Client
     private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
-    private String nickname; //TODO
-    private State state; //TODO
-    private Player turn; //TODO
-    private Phase phase; //TODO
-
-    //Server attributes.
-    private final Server server;
+    private String nickname; //TODO nickname
+    private State state; //TODO state
+    private Player turn; //TODO turn
+    private Phase phase; //TODO phase
 
     //Map of Clients attributes.
     private final MapOfClients mapOfClients;
@@ -35,14 +32,13 @@ public class Client
     //Logger.
     private static final Logger logger = Logger.getLogger(Client.class.getName());
 
-    public Client(Socket clientSocket, Server server, MapOfClients mapOfClients, Protocol protocol, GUI gui)
+    public Client(Socket clientSocket, MapOfClients mapOfClients, Protocol protocol, GUI gui)
     {
         this.clientSocket = clientSocket;
         nickname = null;
         state = State.OVER;
         turn = Player.RED;
         phase = Phase.CHOOSE_FIGURE;
-        this.server = server;
         this.mapOfClients = mapOfClients;
         this.protocol = protocol;
         this.gui = gui;
@@ -78,7 +74,7 @@ public class Client
                 //If clientSocket is closed,
                 //any thread currently blocked in an I/O operation upon this socket will throw a SocketException.
                 Message message = (Message)(objectInputStream.readObject());
-                protocol.processInput(message, this);
+                protocol.processInput(this, message);
             }
             catch (IOException | ClassNotFoundException e) //SocketException is a subclass of IOException.
             {
@@ -86,9 +82,8 @@ public class Client
 
                 closeResources();
                 mapOfClients.remove(this.hashCode());
-                gui.refreshTableOfClients(mapOfClients.getAllNicknames());
-                //TODO
-//                server.sendListOfClientsToEveryClient();
+                gui.refreshTableOfClients(mapOfClients.getNicknamesOfAllClients());
+                protocol.sendUpdateTableOfClients();
                 break;
             }
         }
@@ -121,7 +116,7 @@ public class Client
             }
         }
     }
-    public synchronized void writeToClient(Object message) //TODO Нужно ли закрывать соединение? Не проверен exception
+    public synchronized void writeToClient(Object message)
     {
         try
         {

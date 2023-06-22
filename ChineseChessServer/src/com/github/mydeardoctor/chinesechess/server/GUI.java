@@ -105,9 +105,6 @@ public class GUI
     //Server attributes.
     private Server server;
 
-    //Map of Clients attributes.
-    private MapOfClients mapOfClients;
-
     //Logger.
     private static final Logger logger = Logger.getLogger(GUI.class.getName());
 
@@ -617,10 +614,6 @@ public class GUI
     {
         this.server = server;
     }
-    public void setMapOfClients(MapOfClients mapOfClients)
-    {
-        this.mapOfClients = mapOfClients;
-    }
     public void showFrameAndWarnings()
     {
         try
@@ -897,17 +890,17 @@ public class GUI
     }
     public void setServerStopped()
     {
-        setStatusBarText(text.getServerIsStopped());
         buttonStartOnFrameStart.setEnabled(
                 documentListenerForTextFieldPort.getIsPortCorrect() &&
                 documentListenerForTextFieldPlayers.getArePlayersCorrect());
         buttonStop.setEnabled(false);
+        setStatusBarText(text.getServerIsStopped());
     }
     public void setServerRunning()
     {
-        setStatusBarText(text.getServerIsRunning());
         buttonStartOnFrameStart.setEnabled(false);
         buttonStop.setEnabled(true);
+        setStatusBarText(text.getServerIsRunning());
     }
     public void showDialogCouldNotStartServer()
     {

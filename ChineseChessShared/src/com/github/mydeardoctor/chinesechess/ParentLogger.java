@@ -3,14 +3,10 @@ package com.github.mydeardoctor.chinesechess;
 import java.io.IOException;
 import java.util.logging.*;
 
-public class ParentLogger
+public abstract class ParentLogger
 {
     private static final Logger logger = Logger.getLogger(ParentLogger.class.getPackageName());
-    public ParentLogger()
-    {
-        super();
-    }
-    public void initialize(String logFileName)
+    public static void initialize(String logFileName)
     {
         logger.setUseParentHandlers(false);
         logger.setLevel(Level.WARNING);
@@ -31,7 +27,7 @@ public class ParentLogger
         }
         catch (IOException e)
         {
-            logger.logp(Level.WARNING, this.getClass().getName(), "initialize",
+            logger.logp(Level.WARNING, ParentLogger.class.getName(), "initialize",
                     "Could not add fileHandler to parent logger.", e);
         }
     }

@@ -295,6 +295,11 @@ public class TextEnglish extends Text
     {
         return "List of clients";
     }
+    @Override
+    public String getInvite()
+    {
+        return "Invite";
+    }
 
     //Frame Rules.
     @Override

@@ -1,10 +1,5 @@
 package com.github.mydeardoctor.chinesechess.server;
 
-import com.github.mydeardoctor.chinesechess.Message;
-import com.github.mydeardoctor.chinesechess.Action;
-import com.github.mydeardoctor.chinesechess.State;
-import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,9 +14,9 @@ public class Server
 {
     //Server attributes.
     private boolean serverRunning;
+    private ServerSocket serverSocket;
     private ThreadPoolExecutor serverThreadPool;
     private ThreadPoolExecutor clientThreadPool;
-    private ServerSocket serverSocket;
 
     //Map of Clients attributes.
     private MapOfClients mapOfClients;
@@ -58,11 +53,10 @@ public class Server
             serverSocket = new ServerSocket(portNumber, 1);
             serverThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
             clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(maximumNumberOfPlayers);
+            serverThreadPool.execute(this::run);
 
             serverRunning = true;
             gui.setServerRunning();
-
-            serverThreadPool.execute(this::run);
         }
         catch(IOException e)
         {
@@ -84,7 +78,7 @@ public class Server
                 Socket clientSocket = serverSocket.accept();
                 if(clientThreadPool.getActiveCount() < clientThreadPool.getCorePoolSize())
                 {
-                    Client client = new Client(clientSocket, this, mapOfClients, protocol, gui);
+                    Client client = new Client(clientSocket, mapOfClients, protocol, gui);
                     if(client.tryToOpenStreams())
                     {
                         mapOfClients.put(client.hashCode(), client);
@@ -189,8 +183,6 @@ public class Server
                         "Could not stop threads of clientThreadPool.", e);
             }
         }
-
-        //Each client is removed from mapOfClients in its own thread.
 
         //Refresh GUI.
         serverRunning = false;
