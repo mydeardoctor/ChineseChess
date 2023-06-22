@@ -87,7 +87,8 @@ public class Client
                 closeResources();
                 mapOfClients.remove(this.hashCode());
                 gui.refreshTableOfClients(mapOfClients.getAllNicknames());
-//                server.sendListOfClientsToEveryClient(); TODO
+                //TODO
+//                server.sendListOfClientsToEveryClient();
                 break;
             }
         }

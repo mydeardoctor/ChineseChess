@@ -37,6 +37,7 @@ public abstract class Text
 
     //Frame Lobby.
     public abstract String getListOfClients();
+    public abstract String getNickname();
 
     //Frame Settings.
     public abstract String getLanguage();

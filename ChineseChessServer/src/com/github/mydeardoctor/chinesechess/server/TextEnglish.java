@@ -133,6 +133,11 @@ public class TextEnglish extends Text
     {
         return "List of clients";
     }
+    @Override
+    public String getNickname()
+    {
+        return "Nickname";
+    }
 
     //Frame Settings.
     @Override

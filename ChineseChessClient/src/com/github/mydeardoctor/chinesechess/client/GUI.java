@@ -166,6 +166,7 @@ public class GUI
     private JLabel labelListOfClients;
     private JScrollPane scrollPaneWithTableOfClients;
     private TableOfClientsModel tableOfClientsModel;
+    private JTable tableOfClients;
     private JButton buttonBackOnFrameLobby;
     private GridBagConstraints constraintsForLabelListOfClients;
     private GridBagConstraints constraintsForScrollPaneWithTableOfClients;
@@ -1381,7 +1382,7 @@ public class GUI
                     "Could not initialize frame Connect.", e);
         }
     }
-    private void initializeFrameLobby() //TODO cellselectable?
+    private void initializeFrameLobby()
     {
         try
         {
@@ -1394,15 +1395,22 @@ public class GUI
                 constraintsForLabelListOfClients = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 0), 0, 0);
+                        new Insets(30, 0, 10, 0), 0, 0);
 
                 //Table of Clients.
-                tableOfClientsModel = new TableOfClientsModel(0, 2); //TODO ширина колонок
-                JTable tableOfClients = new JTable(tableOfClientsModel);
-                tableOfClients.setPreferredScrollableViewportSize(new Dimension(500, 400));
+                tableOfClientsModel = new TableOfClientsModel(0, 2);
+                tableOfClients = new JTable(tableOfClientsModel);
+                tableOfClients.setPreferredScrollableViewportSize(new Dimension(500, 380));
+                tableOfClients.getTableHeader().setReorderingAllowed(false);
+                tableOfClients.getColumnModel().getColumn(0).setMinWidth(100);
+                tableOfClients.getColumnModel().getColumn(1).setMinWidth(300);
+                tableOfClients.getTableHeader().setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
+                tableOfClients.getColumnModel().getColumn(0).setHeaderValue("#");
+                tableOfClients.getColumnModel().getColumn(1).setHeaderValue(text.getNickname());
                 tableOfClients.setRowHeight(50);
-                tableOfClients.setTableHeader(null);
-                tableOfClients.setCellSelectionEnabled(true);
+                tableOfClients.setFocusable(true);
+                tableOfClients.setRowSelectionAllowed(true);
+                tableOfClients.setColumnSelectionAllowed(false);
                 tableOfClients.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 tableOfClients.setDragEnabled(false);
                 tableOfClients.setGridColor(Color.BLACK);
@@ -1414,20 +1422,20 @@ public class GUI
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
                 scrollPaneWithTableOfClients.setBorder(new LineBorder(Color.BLACK, 2));
                 constraintsForScrollPaneWithTableOfClients = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
-                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 0, 0, 0), 0, 0);
+                        0, 1, 1, 1, 1, 1,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(10, 50, 10, 50), 0, 0);
 
                 //Button Back.
                 buttonBackOnFrameLobby = new JButton(text.getBack());
-                buttonBackOnFrameLobby.setPreferredSize(new Dimension(200, 100));
+                buttonBackOnFrameLobby.setPreferredSize(new Dimension(150, 100));
                 buttonBackOnFrameLobby.setBackground(Color.WHITE);
                 buttonBackOnFrameLobby.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonBackOnFrameLobby.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
-                constraintsForButtonBackOnFrameLobby= new GridBagConstraints(
+                constraintsForButtonBackOnFrameLobby = new GridBagConstraints(
                         0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(30, 0, 0, 0), 0, 0);
+                        new Insets(15, 0, 15, 0), 0, 0);
                 buttonBackOnFrameLobby.addActionListener(e->showPreviousFrame());
             });
         }
@@ -1576,8 +1584,8 @@ public class GUI
 
                 //Combo Box.
                 comboBoxRules = new JComboBox<>();
-                comboBoxRules.setPreferredSize(new Dimension(135, 40));
-                comboBoxRules.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
+                comboBoxRules.setPreferredSize(new Dimension(160, 50));
+                comboBoxRules.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
                 comboBoxRules.addItem(text.getGoal());
                 comboBoxRules.addItem(text.getPalace());
                 comboBoxRules.addItem(text.getRiver());
@@ -1597,10 +1605,10 @@ public class GUI
 
                 //Button Back.
                 buttonBackOnFrameRules = new JButton(text.getBack());
-                buttonBackOnFrameRules.setPreferredSize(new Dimension(80, 40));
+                buttonBackOnFrameRules.setPreferredSize(new Dimension(100, 50));
                 buttonBackOnFrameRules.setBackground(Color.WHITE);
                 buttonBackOnFrameRules.setBorder(new LineBorder(Color.BLACK, 1));
-                buttonBackOnFrameRules.setFont(new Font(Font.DIALOG, Font.PLAIN, 20));
+                buttonBackOnFrameRules.setFont(fontChinese.deriveFont(Font.BOLD, 30.f));
                 GridBagConstraints constraintsForButtonBackRules = new GridBagConstraints(
                         1, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
@@ -2304,11 +2312,13 @@ public class GUI
         }
         else
         {
-            FrameType previousFrame = previousFrames.get(size - 1);
-            if(currentFrame != previousFrame)
+            //Find and delete a repetition of currentFrame.
+            while(previousFrames.contains(currentFrame))
             {
-                previousFrames.add(currentFrame);
+                previousFrames.remove(currentFrame);
             }
+
+            previousFrames.add(currentFrame);
         }
     }
     private void showPreviousFrame()
@@ -2418,6 +2428,8 @@ public class GUI
             buttonBackOnFrameConnectToServer.setText(text.getBack());
 
             //Frame Lobby.
+            labelListOfClients.setText(text.getListOfClients());
+            tableOfClients.getColumnModel().getColumn(1).setHeaderValue(text.getNickname());
             buttonBackOnFrameLobby.setText(text.getBack());
 
             //Frame Rules.

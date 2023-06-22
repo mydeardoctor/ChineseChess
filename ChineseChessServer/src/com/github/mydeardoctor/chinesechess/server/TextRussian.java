@@ -133,6 +133,11 @@ class TextRussian extends Text
     {
         return "Список клиентов";
     }
+    @Override
+    public String getNickname()
+    {
+        return "Никнейм";
+    }
 
     //Frame Settings.
     @Override

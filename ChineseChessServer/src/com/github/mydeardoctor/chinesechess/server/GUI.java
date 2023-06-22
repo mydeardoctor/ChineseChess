@@ -88,6 +88,7 @@ public class GUI
     private JLabel labelListOfClients;
     private JScrollPane scrollPaneWithTableOfClients;
     private TableOfClientsModel tableOfClientsModel;
+    private JTable tableOfClients;
     private JButton buttonBackOnFrameLobby;
     private GridBagConstraints constraintsForLabelListOfClients;
     private GridBagConstraints constraintsForScrollPaneWithTableOfClients;
@@ -518,20 +519,19 @@ public class GUI
                 constraintsForLabelListOfClients = new GridBagConstraints(
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(0, 0, 0, 0), 0, 0);
+                        new Insets(30, 0, 10, 0), 0, 0);
 
                 //Table of Clients.
-                tableOfClientsModel = new TableOfClientsModel(0, 2); //TODO
-                JTable tableOfClients = new JTable(tableOfClientsModel);
-                tableOfClients.setPreferredScrollableViewportSize(new Dimension(500, 400));
-                //TODO асширять ли таблицу. сделать чтобы 15 символом имени были видны
-//                tableOfClients.getColumnModel().getColumn(1).setMinWidth(300);
-//                tableOfClients.getColumnModel().getColumn(1).setMaxWidth(300);
-//                tableOfClientsModel.addRow(new Object[]{"asdasd", "wwwwwwwwwwwwwwww"});
-
-
+                tableOfClientsModel = new TableOfClientsModel(0, 2);
+                tableOfClients = new JTable(tableOfClientsModel);
+                tableOfClients.setPreferredScrollableViewportSize(new Dimension(500, 380));
+                tableOfClients.getTableHeader().setReorderingAllowed(false);
+                tableOfClients.getColumnModel().getColumn(0).setMinWidth(100);
+                tableOfClients.getColumnModel().getColumn(1).setMinWidth(300);
+                tableOfClients.getTableHeader().setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
+                tableOfClients.getColumnModel().getColumn(0).setHeaderValue("#");
+                tableOfClients.getColumnModel().getColumn(1).setHeaderValue(text.getNickname());
                 tableOfClients.setRowHeight(50);
-                tableOfClients.setTableHeader(null);
                 tableOfClients.setFocusable(false);
                 tableOfClients.setCellSelectionEnabled(false);
                 tableOfClients.setDragEnabled(false);
@@ -544,9 +544,9 @@ public class GUI
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
                 scrollPaneWithTableOfClients.setBorder(new LineBorder(Color.BLACK, 2));
                 constraintsForScrollPaneWithTableOfClients = new GridBagConstraints(
-                        0, 1, 1, 1, 0, 0,
-                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(10, 0, 0, 0), 0, 0);
+                        0, 1, 1, 1, 1, 1,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(10, 50, 10, 50), 0, 0);
 
                 //Button Back.
                 buttonBackOnFrameLobby = new JButton(text.getBack());
@@ -557,7 +557,7 @@ public class GUI
                 constraintsForButtonBackOnFrameLobby = new GridBagConstraints(
                         0, 2, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                        new Insets(30, 0, 0, 0), 0, 0);
+                        new Insets(15, 0, 15, 0), 0, 0);
                 buttonBackOnFrameLobby.addActionListener(e->showPreviousFrame());
             });
         }
@@ -747,11 +747,13 @@ public class GUI
         }
         else
         {
-            FrameType previousFrame = previousFrames.get(size - 1);
-            if(currentFrame != previousFrame)
+            //Find and delete a repetition of currentFrame.
+            while(previousFrames.contains(currentFrame))
             {
-                previousFrames.add(currentFrame);
+                previousFrames.remove(currentFrame);
             }
+
+            previousFrames.add(currentFrame);
         }
     }
     private void showPreviousFrame()
@@ -831,6 +833,8 @@ public class GUI
 
             //Frame Lobby.
             labelListOfClients.setText(text.getListOfClients());
+            tableOfClients.getColumnModel().getColumn(1).setHeaderValue(text.getNickname());
+            buttonBackOnFrameLobby.setText(text.getBack());
 
             //Frame Settings.
             labelLanguage.setText(text.getLanguage());
