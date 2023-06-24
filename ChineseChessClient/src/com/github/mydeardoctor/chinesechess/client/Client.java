@@ -140,7 +140,7 @@ public class Client
             logger.logp(Level.WARNING, this.getClass().getName(), "tryToOpenStreams",
                     "Could not open objectOutputStream and objectInputStream of clientSocket.", e);
 
-            closeResources();
+            closeStreams();
             result = false;
         }
 
@@ -160,9 +160,9 @@ public class Client
             }
             catch (IOException | ClassNotFoundException e) //SocketException is a subclass of IOException.
             {
-                closeResources();
+                closeStreams();
                 connectedToServer = false;
-                gui.setDisconnected();
+                gui.setDisconnected(); //TODO мб showFrameOnlineMultiPlayer. Если игрок в игре, то он находится на Frame Board. GameOver. State=over.
                 gui.showDialogDisconnectedFromServer();
 
                 System.out.println("Client Socket closed.\n");
@@ -207,7 +207,7 @@ public class Client
         connectedToServer = false;
         gui.setDisconnected();
     }
-    private void closeResources()
+    private void closeStreams()
     {
         if(objectOutputStream != null)
         {

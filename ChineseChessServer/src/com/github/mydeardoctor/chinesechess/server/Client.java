@@ -3,7 +3,7 @@ package com.github.mydeardoctor.chinesechess.server;
 import com.github.mydeardoctor.chinesechess.Message;
 import com.github.mydeardoctor.chinesechess.State;
 import com.github.mydeardoctor.chinesechess.Player;
-import com.github.mydeardoctor.chinesechess.Phase;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -15,10 +15,10 @@ public class Client
     private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
-    private String nickname; //TODO nickname
+    private String nickname;
     private State state; //TODO state
     private Player turn; //TODO turn
-    private Phase phase; //TODO phase
+    //TODO Integer opponenthashcode
 
     //Map of Clients attributes.
     private final MapOfClients mapOfClients;
@@ -38,7 +38,7 @@ public class Client
         nickname = null;
         state = State.OVER;
         turn = Player.RED;
-        phase = Phase.CHOOSE_FIGURE;
+        //TODO opponentHashCode = null
         this.mapOfClients = mapOfClients;
         this.protocol = protocol;
         this.gui = gui;
@@ -59,13 +59,13 @@ public class Client
             logger.logp(Level.WARNING, this.getClass().getName(), "tryToOpenStreams",
                     "Could not open objectOutputStream and objectInputStream of clientSocket.", e);
 
-            closeResources();
+            closeStreams();
             result = false;
         }
 
         return result;
     }
-    public void run() //TODO отсылать клиентам никнеймы, если клиент зашёл в игру или вышел из неё
+    public void run()
     {
         while(true)
         {
@@ -80,16 +80,37 @@ public class Client
             {
                 System.out.println("Client Socket closed.\n");
 
-                closeResources();
+                //Close resources and delete this client.
+                closeStreams();
                 mapOfClients.remove(this.hashCode());
-                gui.refreshTableOfClients(mapOfClients.getNicknamesOfAllClients());
+
+                //Delete reference to this client from its opponent.
+                //TODO if opponent!= null       opponent statesReset, opponentHashCode = null     sendWarningToOpponent(states reset, gameOver, guiReset, guiShowFrame, guiShowWarning)
+
+                //Send every client an updated list of clients.
                 protocol.sendUpdateTableOfClients();
+
+                //Refresh server's GUI.
+                gui.refreshTableOfClients(mapOfClients.getNicknames());
+
                 break;
             }
         }
         System.out.println("Client Thread stopped.\n");
     }
-    private void closeResources()
+    public synchronized void writeToClient(Object message)
+    {
+        try
+        {
+            objectOutputStream.writeObject(message);
+        }
+        catch (IOException e)
+        {
+            logger.logp(Level.WARNING, this.getClass().getName(), "writeToClient",
+                    "Could not write to objectOutputStream of clientSocket.", e);
+        }
+    }
+    private void closeStreams()
     {
         if(objectOutputStream != null)
         {
@@ -114,18 +135,6 @@ public class Client
                 logger.logp(Level.WARNING, this.getClass().getName(), "closeResources",
                         "Could not close objectInputStream of clientSocket.", e);
             }
-        }
-    }
-    public synchronized void writeToClient(Object message)
-    {
-        try
-        {
-            objectOutputStream.writeObject(message);
-        }
-        catch (IOException e)
-        {
-            logger.logp(Level.WARNING, this.getClass().getName(), "writeToClient",
-                    "Could not write to objectOutputStream of clientSocket.", e);
         }
     }
     public Socket getClientSocket()

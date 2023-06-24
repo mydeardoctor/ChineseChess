@@ -60,8 +60,7 @@ public class Server
         }
         catch(IOException e)
         {
-            serverRunning = false;
-            gui.setServerStopped();
+            stop();
             gui.showDialogCouldNotStartServer();
 
             logger.logp(Level.WARNING, this.getClass().getName(), "start",
@@ -76,6 +75,7 @@ public class Server
             {
                 //If serverSocket is closed, any thread currently blocked in accept() will throw a SocketException.
                 Socket clientSocket = serverSocket.accept();
+                boolean clientSocketShouldBeClosed = false;
                 if(clientThreadPool.getActiveCount() < clientThreadPool.getCorePoolSize())
                 {
                     Client client = new Client(clientSocket, mapOfClients, protocol, gui);
@@ -86,18 +86,15 @@ public class Server
                     }
                     else
                     {
-                        try
-                        {
-                            clientSocket.close();
-                        }
-                        catch (IOException e)
-                        {
-                            logger.logp(Level.WARNING, this.getClass().getName(), "run",
-                                    "Could not close clientSocket.", e);
-                        }
+                        clientSocketShouldBeClosed = true;
                     }
                 }
                 else
+                {
+                    clientSocketShouldBeClosed = true;
+                }
+
+                if(clientSocketShouldBeClosed)
                 {
                     try
                     {
@@ -112,11 +109,7 @@ public class Server
             }
             catch (IOException e) //SocketException is a subclass of IOException.
             {
-                serverRunning = false;
-                gui.setServerStopped();
-
                 System.out.println("Server Socket closed.\n");
-
                 break;
             }
         }
@@ -184,7 +177,7 @@ public class Server
             }
         }
 
-        //Refresh GUI.
+        //Reset.
         serverRunning = false;
         gui.setServerStopped();
     }

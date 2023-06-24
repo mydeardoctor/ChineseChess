@@ -4,7 +4,7 @@ import com.github.mydeardoctor.chinesechess.Message;
 import com.github.mydeardoctor.chinesechess.Action;
 import com.github.mydeardoctor.chinesechess.State;
 import com.github.mydeardoctor.chinesechess.Player;
-import com.github.mydeardoctor.chinesechess.Phase;
+
 import java.util.HashMap;
 
 public class Protocol
@@ -33,7 +33,6 @@ public class Protocol
         Object data = message.data();
         State state = message.state();
         Player turn = message.turn();
-        Phase phase = message.phase();
 
         switch(action)
         {
@@ -42,7 +41,7 @@ public class Protocol
     }
     public void sendRegisterNickname()
     {
-        Message message = new Message(Action.REGISTER_NICKNAME, client.getNickname(), null, null, null);
+        Message message = new Message(Action.REGISTER_NICKNAME, client.getNickname(), null, null);
         client.writeToServer(message);
     }
     private void updateTableOfClients(HashMap<Integer, String> mapOfNicknames)

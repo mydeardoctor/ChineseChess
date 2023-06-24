@@ -1,6 +1,5 @@
 package com.github.mydeardoctor.chinesechess.server;
 
-import com.github.mydeardoctor.chinesechess.State;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -34,24 +33,9 @@ public class MapOfClients
 
         return mapOfClientsCopy;
     }
-    public synchronized HashMap<Integer, String> getNicknamesOfAllClients()
+    public synchronized HashMap<Integer, String> getNicknames()
     {
-        HashMap<Integer, String> mapOfNicknamesOfAllClients = new HashMap<>();
-
-        Set<Map.Entry<Integer, Client>> setOfClients = mapOfClients.entrySet();
-        for(Map.Entry<Integer, Client> entryOfClients : setOfClients)
-        {
-            Integer hashCode = entryOfClients.getKey();
-            Client client = entryOfClients.getValue();
-            String nickname = client.getNickname();
-            mapOfNicknamesOfAllClients.put(hashCode, nickname);
-        }
-
-        return mapOfNicknamesOfAllClients;
-    }
-    public synchronized HashMap<Integer, String> getNicknamesOfAvailableClients()
-    {
-        HashMap<Integer, String> mapOfNicknamesOfAvailableClients = new HashMap<>();
+        HashMap<Integer, String> mapOfNicknames = new HashMap<>();
 
         Set<Map.Entry<Integer, Client>> setOfClients = mapOfClients.entrySet();
         for(Map.Entry<Integer, Client> entryOfClients : setOfClients)
@@ -60,12 +44,12 @@ public class MapOfClients
             Client client = entryOfClients.getValue();
             String nickname = client.getNickname();
 
-            if((nickname != null) && client.getState().equals(State.OVER))
+            if(nickname != null)
             {
-                mapOfNicknamesOfAvailableClients.put(hashCode, nickname);
+                mapOfNicknames.put(hashCode, nickname);
             }
         }
 
-        return mapOfNicknamesOfAvailableClients;
+        return mapOfNicknames;
     }
 }
