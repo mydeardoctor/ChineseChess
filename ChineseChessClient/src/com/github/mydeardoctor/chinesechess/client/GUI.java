@@ -10,6 +10,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.PlainDocument;
 import java.awt.*;
@@ -1410,9 +1411,10 @@ public class GUI
                 tableOfClients.getColumnModel().getColumn(1).setHeaderValue(text.getNickname());
                 tableOfClients.setRowHeight(50);
                 tableOfClients.setFocusable(true);
+                tableOfClients.getSelectionModel().addListSelectionListener(this::setButtonInviteState);
+                tableOfClients.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 tableOfClients.setRowSelectionAllowed(true);
                 tableOfClients.setColumnSelectionAllowed(false);
-                tableOfClients.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 tableOfClients.setDragEnabled(false);
                 tableOfClients.setGridColor(Color.BLACK);
                 tableOfClients.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
@@ -1439,6 +1441,7 @@ public class GUI
                 //Button Invite.
                 buttonInvite = new JButton(text.getInvite());
                 buttonInvite.setPreferredSize(new Dimension(250, 100));
+                buttonInvite.setEnabled(false);
                 buttonInvite.setBackground(Color.WHITE);
                 buttonInvite.setBorder(new LineBorder(Color.BLACK, 2));
                 buttonInvite.setFont(fontChinese.deriveFont(Font.BOLD, 40.f));
@@ -2122,6 +2125,24 @@ public class GUI
             if(selectedOption == JOptionPane.YES_OPTION)
             {
                 client.disconnect();
+            }
+        });
+    }
+    private void setButtonInviteState(ListSelectionEvent e)
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            if(!e.getValueIsAdjusting())
+            {
+                ListSelectionModel listSelectionModel = (ListSelectionModel)(e.getSource());
+                if(listSelectionModel.isSelectionEmpty())
+                {
+                    buttonInvite.setEnabled(false);
+                }
+                else
+                {
+                    buttonInvite.setEnabled(true);
+                }
             }
         });
     }
