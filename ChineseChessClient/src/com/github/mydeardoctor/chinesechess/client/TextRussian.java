@@ -202,9 +202,9 @@ class TextRussian extends Text
 
     //Frame Online Multiplayer.
     @Override
-    public String getConnectToServer()
+    public String getConnectionToServer()
     {
-        return "Подключиться к серверу";
+        return "Подключение к серверу";
     }
     @Override
     public String getLobby()

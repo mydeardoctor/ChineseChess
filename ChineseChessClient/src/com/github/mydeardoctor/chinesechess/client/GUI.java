@@ -1130,7 +1130,7 @@ public class GUI
                         new Insets(0, 0, 0, 0), 0, 0);
 
                 //Button Connect to Server.
-                buttonConnectToServer = new JButton(text.getConnectToServer());
+                buttonConnectToServer = new JButton(text.getConnectionToServer());
                 buttonConnectToServer.setPreferredSize(new Dimension(500, 100));
                 buttonConnectToServer.setBackground(Color.WHITE);
                 buttonConnectToServer.setBorder(new LineBorder(Color.BLACK, 2));
@@ -2403,7 +2403,7 @@ public class GUI
             buttonBackOnFrameGameMode.setText(text.getBack());
 
             //Frame Online Multiplayer.
-            buttonConnectToServer.setText(text.getConnectToServer());
+            buttonConnectToServer.setText(text.getConnectionToServer());
             buttonLobby.setText(text.getLobby());
             buttonBackOnFrameOnlineMultiplayer.setText(text.getBack());
             if(client.getIsConnectedToServer())

@@ -53,7 +53,7 @@ public abstract class Text
     public abstract String getBack();
 
     //Frame Online Multiplayer.
-    public abstract String getConnectToServer();
+    public abstract String getConnectionToServer();
     public abstract String getLobby();
     public abstract String getDisconnectedFromServer();
     public abstract String getConnectedToServer();

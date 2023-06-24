@@ -293,7 +293,7 @@ public class GUI
             SwingUtilities.invokeAndWait(()->
             {
                 //Button Start.
-                buttonStartOnFrameMainMenu = new JButton(text.getStart());
+                buttonStartOnFrameMainMenu = new JButton(text.getStarting());
                 buttonStartOnFrameMainMenu.setPreferredSize(new Dimension(300, 100));
                 buttonStartOnFrameMainMenu.setBackground(Color.WHITE);
                 buttonStartOnFrameMainMenu.setBorder(new LineBorder(Color.BLACK, 2));
@@ -797,7 +797,7 @@ public class GUI
             menuItemAbout.setText(text.getAbout());
 
             //Frame Main Menu.
-            buttonStartOnFrameMainMenu.setText(text.getStart());
+            buttonStartOnFrameMainMenu.setText(text.getStarting());
             buttonLobby.setText(text.getLobby());
             buttonSettings.setText(text.getSettings());
 

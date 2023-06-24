@@ -17,7 +17,7 @@ public abstract class Text
     public abstract String getAboutVerbose();
 
     //Frame Main Menu.
-    public abstract String getStart();
+    public abstract String getStarting();
     public abstract String getLobby();
     public abstract String getSettings();
 
@@ -26,6 +26,7 @@ public abstract class Text
     public abstract String getPortTip();
     public abstract String getMaximumNumberOfPlayers();
     public abstract String getPlayersTip();
+    public abstract String getStart();
     public abstract String getStop();
     public abstract String getServerStop();
     public abstract String getAreYouSure();

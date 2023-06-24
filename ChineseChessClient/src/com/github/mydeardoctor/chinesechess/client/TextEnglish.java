@@ -202,9 +202,9 @@ public class TextEnglish extends Text
 
     //Frame Online Multiplayer.
     @Override
-    public String getConnectToServer()
+    public String getConnectionToServer()
     {
-        return "Connect to server";
+        return "Connection to server";
     }
     @Override
     public String getLobby()

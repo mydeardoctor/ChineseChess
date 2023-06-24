@@ -48,11 +48,13 @@ class TextRussian extends Text
         return String.format("Китайские шахматы\nПрограммист:%16s\nКомпозитор:%14s", "my_dear_doctor", "eskimolly");
     }
 
+
+
     //Frame Main Menu.
     @Override
-    public String getStart()
+    public String getStarting()
     {
-        return "Запустить";
+        return "Запуск";
     }
     @Override
     public String getLobby()
@@ -85,6 +87,11 @@ class TextRussian extends Text
     public String getPlayersTip()
     {
         return String.format("Должно быть\n%12s", "от 2 до 100");
+    }
+    @Override
+    public String getStart()
+    {
+        return "Запустить";
     }
     @Override
     public String getStop()

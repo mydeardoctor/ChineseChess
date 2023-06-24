@@ -50,7 +50,7 @@ public class TextEnglish extends Text
 
     //Frame Main Menu.
     @Override
-    public String getStart()
+    public String getStarting()
     {
         return "Start";
     }
@@ -85,6 +85,11 @@ public class TextEnglish extends Text
     public String getPlayersTip()
     {
         return String.format("Must be between\n%15s", "2 and 100");
+    }
+    @Override
+    public String getStart()
+    {
+        return "Start";
     }
     @Override
     public String getStop()
