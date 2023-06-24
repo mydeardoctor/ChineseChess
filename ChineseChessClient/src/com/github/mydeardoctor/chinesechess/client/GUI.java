@@ -2024,27 +2024,11 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            State gameSinglePlayerState = gameSinglePlayer.getState();
-            State gameLocalMultiplayerState = gameLocalMultiplayer.getState();
-            State replayState = replay.getState();
-            if(gameSinglePlayerState.equals(State.RUNNING)     ||
-               gameLocalMultiplayerState.equals(State.RUNNING) ||
-               replayState.equals(State.RUNNING))
-            {
-                //Show warning.
-                int selectedOption = JOptionPane.showOptionDialog(frame,
-                        text.getAllProgressWillBeLost(), text.getExitToMainMenu(),
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-                        new String[] {text.getYes(), text.getNo()}, text.getNo());
-                if(selectedOption == JOptionPane.YES_OPTION)
-                {
-                    gameSinglePlayer.stop();
-                    gameLocalMultiplayer.stop();
-                    replay.stop();
-                    showFrameMainMenu();
-                }
-            }
-            else
+            int selectedOption = JOptionPane.showOptionDialog(frame,
+                    text.getAllProgressWillBeLost(), text.getExitToMainMenu(),
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                    new String[] {text.getYes(), text.getNo()}, text.getNo());
+            if(selectedOption == JOptionPane.YES_OPTION)
             {
                 gameSinglePlayer.stop();
                 gameLocalMultiplayer.stop();
