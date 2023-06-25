@@ -33,23 +33,4 @@ public class MapOfClients
 
         return mapOfClientsCopy;
     }
-    public synchronized HashMap<Integer, String> getNicknames()
-    {
-        HashMap<Integer, String> mapOfNicknames = new HashMap<>();
-
-        Set<Map.Entry<Integer, Client>> setOfClients = mapOfClients.entrySet();
-        for(Map.Entry<Integer, Client> entryOfClients : setOfClients)
-        {
-            Integer hashCode = entryOfClients.getKey();
-            Client client = entryOfClients.getValue();
-            String nickname = client.getNickname();
-
-            if(nickname != null)
-            {
-                mapOfNicknames.put(hashCode, nickname);
-            }
-        }
-
-        return mapOfNicknames;
-    }
 }

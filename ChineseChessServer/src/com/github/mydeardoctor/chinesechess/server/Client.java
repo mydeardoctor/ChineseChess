@@ -6,6 +6,9 @@ import com.github.mydeardoctor.chinesechess.Player;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,7 +21,7 @@ public class Client
     private String nickname;
     private State state; //TODO state
     private Player turn; //TODO turn
-    //TODO Integer opponenthashcode
+    private Integer opponentHashcode; //TODO opponentHashcode
 
     //Map of Clients attributes.
     private final MapOfClients mapOfClients;
@@ -35,10 +38,10 @@ public class Client
     public Client(Socket clientSocket, MapOfClients mapOfClients, Protocol protocol, GUI gui)
     {
         this.clientSocket = clientSocket;
-        nickname = null;
-        state = State.OVER;
-        turn = Player.RED;
-        //TODO opponentHashCode = null
+        setNickname(null);
+        setState(State.OVER);
+        setTurn(Player.RED);
+        setOpponentHashcode(null);
         this.mapOfClients = mapOfClients;
         this.protocol = protocol;
         this.gui = gui;
@@ -91,7 +94,7 @@ public class Client
                 protocol.sendUpdateTableOfClients();
 
                 //Refresh server's GUI.
-                gui.refreshTableOfClients(mapOfClients.getNicknames());
+                gui.refreshTableOfClients(protocol.getNicknames());
 
                 break;
             }
@@ -141,16 +144,36 @@ public class Client
     {
         return clientSocket;
     }
-    public String getNickname()
+    public synchronized String getNickname()
     {
         return nickname;
     }
-    public void setNickname(String nickname)
+    public synchronized void setNickname(String nickname)
     {
         this.nickname = nickname;
     }
-    public State getState()
+    public synchronized State getState()
     {
         return state;
+    }
+    public synchronized void setState(State state)
+    {
+        this.state = state;
+    }
+    public synchronized Player getTurn()
+    {
+        return turn;
+    }
+    public synchronized void setTurn(Player turn)
+    {
+        this.turn = turn;
+    }
+    public synchronized Integer getOpponentHashcode()
+    {
+        return opponentHashcode;
+    }
+    public synchronized void setOpponentHashcode(Integer opponentHashcode)
+    {
+        this.opponentHashcode = opponentHashcode;
     }
 }

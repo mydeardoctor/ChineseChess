@@ -45,12 +45,12 @@ public class Protocol
     {
         client.setNickname(nickname);
         sendUpdateTableOfClients();
-        gui.refreshTableOfClients(mapOfClients.getNicknames());
+        gui.refreshTableOfClients(getNicknames());
     }
     public void sendUpdateTableOfClients()
     {
         HashMap<Integer, Client> mapOfClientsCopy = mapOfClients.getCopy();
-        HashMap<Integer, String> mapOfNicknames = mapOfClients.getNicknames();
+        HashMap<Integer, String> mapOfNicknames = getNicknames();
 
         Set<Map.Entry<Integer, Client>> setOfClientsCopy = mapOfClientsCopy.entrySet();
         for(Map.Entry<Integer, Client> entryOfClientsCopy : setOfClientsCopy)
@@ -74,5 +74,25 @@ public class Protocol
                 mapOfNicknames.put(hashCode, nickname);
             }
         }
+    }
+    public HashMap<Integer, String> getNicknames()
+    {
+        HashMap<Integer, String> mapOfNicknames = new HashMap<>();
+
+        HashMap<Integer, Client> mapOfClientsCopy = mapOfClients.getCopy();
+        Set<Map.Entry<Integer, Client>> setOfClientsCopy = mapOfClientsCopy.entrySet();
+        for(Map.Entry<Integer, Client> entryOfClientsCopy : setOfClientsCopy)
+        {
+            Integer hashCode = entryOfClientsCopy.getKey();
+            Client client = entryOfClientsCopy.getValue();
+            String nickname = client.getNickname();
+
+            if(nickname != null)
+            {
+                mapOfNicknames.put(hashCode, nickname);
+            }
+        }
+
+        return mapOfNicknames;
     }
 }
