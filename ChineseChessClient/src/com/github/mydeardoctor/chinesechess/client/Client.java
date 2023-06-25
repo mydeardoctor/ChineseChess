@@ -56,7 +56,7 @@ public class Client
 
         //Establishing a connection with a server requires time.
         //SwingWorker is used so that EDT will not be blocked during establishing of connection.
-        SwingWorker<Boolean, Void> connectorToServer = new SwingWorker<>()
+        new SwingWorker<Boolean, Void>()
         {
             @Override
             protected Boolean doInBackground() //Invoked on a separate thread.
@@ -83,36 +83,26 @@ public class Client
             {
                 try
                 {
-                    boolean result = get();
-
-                    if (result)
+                    if (get() && tryToOpenStreams())
                     {
-                        if (tryToOpenStreams())
-                        {
-                            connectedToServer = true;
-                            gui.setConnected();
-
-                            clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-                            clientThreadPool.execute(thisClient::run);
-                        }
-                        else
-                        {
-                            connectedToServer = false;
-                            gui.setDisconnected();
-                            gui.showDialogCouldNotConnectToServer();
-                        }
+                        connectedToServer = true;
+                        clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+                        clientThreadPool.execute(thisClient::run);
+                        gui.setConnected();
                     }
                     else
                     {
-                        connectedToServer = false;
-                        gui.setDisconnected();
+                        connectedToServer = false; //TODO мб вынести в функцию, т.к. дублируется
+                        disconnect();
+                        gui.setDisconnected(); //TODO мб вынести в функцию, т.к. дублируется
                         gui.showDialogCouldNotConnectToServer();
                     }
                 }
                 catch (InterruptedException | ExecutionException e)
                 {
-                    connectedToServer = false;
-                    gui.setDisconnected();
+                    connectedToServer = false; //TODO мб вынести в функцию, т.к. дублируется
+                    disconnect();
+                    gui.setDisconnected(); //TODO мб вынести в функцию, т.к. дублируется
                     gui.showDialogCouldNotConnectToServer();
 
                     logger.logp(Level.WARNING,
@@ -121,8 +111,7 @@ public class Client
                             "Could not get results of doInBackground().", e);
                 }
             }
-        };
-        connectorToServer.execute();
+        }.execute();
     }
     private boolean tryToOpenStreams()
     {
@@ -160,17 +149,31 @@ public class Client
             }
             catch (IOException | ClassNotFoundException e) //SocketException is a subclass of IOException.
             {
+                //TODO states reset, game over, gui reset, guiShowFrame, guiShowWarning
+
+                connectedToServer = false; //TODO мб вынести в функцию, т.к. дублируется
                 closeStreams();
-                connectedToServer = false;
-                gui.setDisconnected(); //TODO мб showFrameOnlineMultiPlayer. Если игрок в игре, то он находится на Frame Board. GameOver. State=over.
+
+                gui.setDisconnected(); //TODO мб вынести в функцию, т.к. дублируется. мб showFrameOnlineMultiPlayer. Если игрок в игре, то он находится на Frame Board. GameOver. State=over.
                 gui.showDialogDisconnectedFromServer();
 
                 System.out.println("Client Socket closed.\n");
-
                 break;
             }
         }
         System.out.println("Client Thread stopped.\n");
+    }
+    public synchronized void writeToServer(Object message)
+    {
+        try
+        {
+            objectOutputStream.writeObject(message);
+        }
+        catch(IOException e)
+        {
+            logger.logp(Level.WARNING, this.getClass().getName(), "writeToServer",
+                    "Could not write to objectOutputStream of clientSocket.", e);
+        }
     }
     public void disconnect()
     {
@@ -202,10 +205,6 @@ public class Client
                         "Could not stop threads of clientThreadPool.", e);
             }
         }
-
-        //Refresh GUI.
-        connectedToServer = false;
-        gui.setDisconnected();
     }
     private void closeStreams()
     {
@@ -232,18 +231,6 @@ public class Client
                 logger.logp(Level.WARNING, this.getClass().getName(), "closeResources",
                         "Could not close objectInputStream of clientSocket.", e);
             }
-        }
-    }
-    public synchronized void writeToServer(Object message)
-    {
-        try
-        {
-            objectOutputStream.writeObject(message);
-        }
-        catch(IOException e)
-        {
-            logger.logp(Level.WARNING, this.getClass().getName(), "writeToServer",
-                    "Could not write to objectOutputStream of clientSocket.", e);
         }
     }
     public boolean getIsConnectedToServer()

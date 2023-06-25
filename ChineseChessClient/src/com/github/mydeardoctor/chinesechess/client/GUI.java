@@ -2112,7 +2112,7 @@ public class GUI
             }
         });
     }
-    private void setButtonInviteState(ListSelectionEvent e)
+    private void setButtonInviteState(ListSelectionEvent e) //TODO пригласил, то кнопка заблокирована. Разблокируется? когда закачивается игра или оппонент дисконнект.
     {
         SwingUtilities.invokeLater(()->
         {
@@ -2588,6 +2588,7 @@ public class GUI
             {
                 tableOfClientsModel.removeRow(rowIndex);
             }
+            buttonInvite.setEnabled(false);
         });
     }
     public void setConnected()
