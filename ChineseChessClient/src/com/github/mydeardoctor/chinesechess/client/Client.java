@@ -35,7 +35,7 @@ public class Client
 
     public Client()
     {
-        connectedToServer = false;
+        setConnectedToServer(false);
     }
     public void setProtocol(Protocol protocol)
     {
@@ -85,14 +85,14 @@ public class Client
                 {
                     if (get() && tryToOpenStreams())
                     {
-                        connectedToServer = true;
+                        setConnectedToServer(true);
                         clientThreadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
                         clientThreadPool.execute(thisClient::run);
                         gui.setConnected();
                     }
                     else
                     {
-                        connectedToServer = false; //TODO мб вынести в функцию, т.к. дублируется
+                        setConnectedToServer(false); //TODO мб вынести в функцию, т.к. дублируется
                         disconnect();
                         gui.setDisconnected(); //TODO мб вынести в функцию, т.к. дублируется
                         gui.showDialogCouldNotConnectToServer();
@@ -100,7 +100,7 @@ public class Client
                 }
                 catch (InterruptedException | ExecutionException e)
                 {
-                    connectedToServer = false; //TODO мб вынести в функцию, т.к. дублируется
+                    setConnectedToServer(false); //TODO мб вынести в функцию, т.к. дублируется
                     disconnect();
                     gui.setDisconnected(); //TODO мб вынести в функцию, т.к. дублируется
                     gui.showDialogCouldNotConnectToServer();
@@ -151,7 +151,7 @@ public class Client
             {
                 //TODO states reset, game over, gui reset, guiShowFrame, guiShowWarning
 
-                connectedToServer = false; //TODO мб вынести в функцию, т.к. дублируется
+                setConnectedToServer(false); //TODO мб вынести в функцию, т.к. дублируется
                 closeStreams();
 
                 gui.setDisconnected(); //TODO мб вынести в функцию, т.к. дублируется. мб showFrameOnlineMultiPlayer. Если игрок в игре, то он находится на Frame Board. GameOver. State=over.
@@ -233,9 +233,13 @@ public class Client
             }
         }
     }
-    public boolean getIsConnectedToServer()
+    public synchronized boolean getConnectedToServer()
     {
         return connectedToServer;
+    }
+    public synchronized void setConnectedToServer(boolean connectedToServer)
+    {
+        this.connectedToServer = connectedToServer;
     }
     public String getNickname()
     {

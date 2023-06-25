@@ -4,7 +4,6 @@ import com.github.mydeardoctor.chinesechess.Message;
 import com.github.mydeardoctor.chinesechess.Action;
 import com.github.mydeardoctor.chinesechess.State;
 import com.github.mydeardoctor.chinesechess.Player;
-
 import java.util.HashMap;
 
 public class Protocol

@@ -1,6 +1,5 @@
 package com.github.mydeardoctor.chinesechess.client;
 
-import com.github.mydeardoctor.chinesechess.State;
 import com.github.mydeardoctor.chinesechess.PanelBackground;
 import com.github.mydeardoctor.chinesechess.DocumentFilterForTextFieldPort;
 import com.github.mydeardoctor.chinesechess.TableOfClientsModel;
@@ -2411,7 +2410,7 @@ public class GUI
             buttonConnectToServer.setText(text.getConnectionToServer());
             buttonLobby.setText(text.getLobby());
             buttonBackOnFrameOnlineMultiplayer.setText(text.getBack());
-            if(client.getIsConnectedToServer())
+            if(client.getConnectedToServer())
             {
                 statusBarOfConnection.setText(text.getConnectedToServer());
             }
