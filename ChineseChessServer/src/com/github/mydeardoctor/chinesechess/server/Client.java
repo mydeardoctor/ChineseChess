@@ -20,7 +20,6 @@ public class Client
     private ObjectInputStream objectInputStream;
     private String nickname;
     private State state; //TODO state
-    private Player turn; //TODO turn
     private Integer opponentHashcode; //TODO opponentHashcode
 
     //Map of Clients attributes.
@@ -40,7 +39,6 @@ public class Client
         this.clientSocket = clientSocket;
         setNickname(null);
         setState(State.OVER);
-        setTurn(Player.RED);
         setOpponentHashcode(null);
         this.mapOfClients = mapOfClients;
         this.protocol = protocol;
@@ -159,14 +157,6 @@ public class Client
     public synchronized void setState(State state)
     {
         this.state = state;
-    }
-    public synchronized Player getTurn()
-    {
-        return turn;
-    }
-    public synchronized void setTurn(Player turn)
-    {
-        this.turn = turn;
     }
     public synchronized Integer getOpponentHashcode()
     {

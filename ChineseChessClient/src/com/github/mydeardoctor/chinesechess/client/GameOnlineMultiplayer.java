@@ -20,7 +20,7 @@ public class GameOnlineMultiplayer extends Game
             case RED -> message = gui.getText().getYouPlay().concat(gui.getText().getRed());
             case BLACK -> message = gui.getText().getYouPlay().concat(gui.getText().getBlack());
         }
-        gui.showDialogYouPlay(message);
+        gui.showDialogYouPlay(message); //TODO пишет, что сингл плеер
     }
     @Override
     protected void moveFigure(Location origin, Location destination)

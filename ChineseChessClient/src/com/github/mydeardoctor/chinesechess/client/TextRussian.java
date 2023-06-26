@@ -300,6 +300,11 @@ class TextRussian extends Text
     {
         return "Пригласить";
     }
+    @Override
+    public String getOpponentIsUnavailable()
+    {
+        return "Соперник недоступен.";
+    }
 
     //Frame Rules.
     @Override
@@ -310,7 +315,7 @@ class TextRussian extends Text
     @Override
     public String getGoalRule()
     {
-        return "Цель игры – поставить шах и мат генералу противника.";
+        return "Цель игры – поставить шах и мат генералу соперника.";
     }
     @Override
     public String getPalace()
@@ -396,7 +401,7 @@ class TextRussian extends Text
     public String getCannonRule()
     {
         return "Пушка ходит горизонтально или вертикально на любое количество пунктов." +
-                 " Но чтобы захватить фигуру противника, пушка должна перепрыгнуть через одну другую фигуру.";
+                 " Но чтобы захватить фигуру соперника, пушка должна перепрыгнуть через одну другую фигуру.";
     }
     @Override
     public String getSoldier()

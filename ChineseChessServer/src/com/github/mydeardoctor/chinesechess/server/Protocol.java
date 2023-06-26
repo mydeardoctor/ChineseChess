@@ -7,6 +7,7 @@ import com.github.mydeardoctor.chinesechess.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public class Protocol
@@ -37,6 +38,7 @@ public class Protocol
         switch(action)
         {
             case REGISTER_NICKNAME -> registerNickname(sourceClient, (String)data);
+            case INVITE -> handleInvite(sourceClient, (Integer)data);
         }
     }
     private void registerNickname(Client client, String nickname)
@@ -92,5 +94,45 @@ public class Protocol
         }
 
         return mapOfNicknames;
+    }
+    private void handleInvite(Client sourceClient, Integer opponentHashcode)
+    {
+        Client opponent = mapOfClients.get(opponentHashcode);
+        if((opponent != null) && (opponent.getState() != State.RUNNING))
+        {
+            sourceClient.setState(State.RUNNING);
+            opponent.setState(State.RUNNING);
+
+            sourceClient.setOpponentHashcode(opponentHashcode);
+            opponent.setOpponentHashcode(sourceClient.hashCode());
+
+            Player playerSide = null;
+            Player opponentSide = null;
+            Random randomNumberGenerator = new Random();
+            int randomNumber = randomNumberGenerator.nextInt(2);
+            switch(randomNumber)
+            {
+                case 0 ->
+                {
+                    playerSide = Player.RED;
+                    opponentSide = Player.BLACK;
+                }
+                case 1 ->
+                {
+                    playerSide = Player.BLACK;
+                    opponentSide = Player.RED;
+                }
+            }
+
+            Message messageToPlayer = new Message(Action.START_GAME, new Player[]{playerSide, opponentSide});
+            sourceClient.writeToClient(messageToPlayer);
+            Message messageToOpponent = new Message(Action.START_GAME, new Player[]{opponentSide, playerSide});
+            opponent.writeToClient(messageToOpponent);
+        }
+        else
+        {
+            Message message = new Message(Action.OPPONENT_UNAVAILABLE, null);
+            sourceClient.writeToClient(message);
+        }
     }
 }

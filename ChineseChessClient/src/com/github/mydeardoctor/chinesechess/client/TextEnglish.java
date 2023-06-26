@@ -300,6 +300,11 @@ public class TextEnglish extends Text
     {
         return "Invite";
     }
+    @Override
+    public String getOpponentIsUnavailable()
+    {
+        return "Opponent is unavailable.";
+    }
 
     //Frame Rules.
     @Override

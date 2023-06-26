@@ -19,6 +19,10 @@ public class MapOfClients
     {
         mapOfClients.remove(hashCode);
     }
+    public synchronized Client get(Integer hashCode)
+    {
+        return mapOfClients.get(hashCode);
+    }
     public synchronized HashMap<Integer, Client> getCopy()
     {
         HashMap<Integer, Client> mapOfClientsCopy = new HashMap<>();

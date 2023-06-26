@@ -76,6 +76,7 @@ public abstract class Text
     //Frame Lobby.
     public abstract String getListOfClients();
     public abstract String getInvite();
+    public abstract String getOpponentIsUnavailable();
 
     //Frame Rules.
     public abstract String getGoal();

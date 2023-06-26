@@ -2,6 +2,7 @@ package com.github.mydeardoctor.chinesechess.client;
 
 import com.github.mydeardoctor.chinesechess.PanelBackground;
 import com.github.mydeardoctor.chinesechess.DocumentFilterForTextFieldPort;
+import com.github.mydeardoctor.chinesechess.Player;
 import com.github.mydeardoctor.chinesechess.TableOfClientsModel;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -167,6 +168,7 @@ public class GUI
     private TableOfClientsModel tableOfClientsModel;
     private JTable tableOfClients;
     private JPanel panelTransparentOnFrameLobby;
+    boolean buttonInviteIgnoresSelections; //TODO
     private JButton buttonInvite;
     private JButton buttonBackOnFrameLobby;
     private GridBagConstraints constraintsForLabelListOfClients;
@@ -223,6 +225,9 @@ public class GUI
 
     //Client.
     private Client client;
+
+    //Protocol.
+    private Protocol protocol;
 
     //Replay.
     private Replay replay;
@@ -1439,6 +1444,7 @@ public class GUI
                         new Insets(0, 0, 0, 0), 0, 0);
 
                 //Button Invite.
+                buttonInviteIgnoresSelections = false;
                 buttonInvite = new JButton(text.getInvite());
                 buttonInvite.setPreferredSize(new Dimension(250, 100));
                 buttonInvite.setEnabled(false);
@@ -1449,8 +1455,7 @@ public class GUI
                         0, 0, 1, 1, 0, 0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(15, 0, 15, 30), 0, 0);
-                //TODO buttonInvite
-//                buttonInvite.addActionListener(e->{});
+                buttonInvite.addActionListener(e->sendInvite());
                 panelTransparentOnFrameLobby.add(buttonInvite, constraintsForButtonInvite);
 
                 //Button Back.
@@ -1791,13 +1796,17 @@ public class GUI
     {
         this.gameLocalMultiplayer = gameLocalMultiplayer;
     }
-    public void setGameOnlineMultiplayer(GameOnlineMultiplayer gameOnlineMultiplayer)
+    public void setGameOnlineMultiplayer(GameOnlineMultiplayer gameOnlineMultiplayer) //TODO а мб и не нужно
     {
         this.gameOnlineMultiplayer = gameOnlineMultiplayer;
     }
     public void setClient(Client client)
     {
         this.client = client;
+    }
+    public void setProtocol(Protocol protocol)
+    {
+        this.protocol = protocol;
     }
     public void setReplay(Replay replay)
     {
@@ -2093,7 +2102,19 @@ public class GUI
             showFrameBoard();
         });
     }
-    //TODO startOnlineMultiplayerGame
+    public void startOnlineMultiplayerGame(Player playerSide, Player opponentSide)
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            tableOfClients.clearSelection();
+            buttonInviteIgnoresSelections = true;
+            buttonInvite.setEnabled(false);
+
+            panelBoardInteractive.setGame(gameOnlineMultiplayer);
+            gameOnlineMultiplayer.start(playerSide, opponentSide);
+            showFrameBoard();
+        });
+    }
     private void connectToServer()
     {
         SwingUtilities.invokeLater(()->
@@ -2122,7 +2143,7 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            if(!e.getValueIsAdjusting())
+            if(!e.getValueIsAdjusting() && !buttonInviteIgnoresSelections)
             {
                 ListSelectionModel listSelectionModel = (ListSelectionModel)(e.getSource());
                 if(listSelectionModel.isSelectionEmpty())
@@ -2133,6 +2154,23 @@ public class GUI
                 {
                     buttonInvite.setEnabled(true);
                 }
+            }
+        });
+    }
+    private void sendInvite() //TODO
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            int selectedRow = tableOfClients.getSelectedRow();
+            if(selectedRow != -1)
+            {
+                tableOfClients.clearSelection();
+                buttonInviteIgnoresSelections = true;
+                buttonInvite.setEnabled(false);
+
+                Integer opponentHashcode = Integer.parseInt(
+                        tableOfClientsModel.getValueAt(selectedRow, 0).toString());
+                protocol.sendInvite(opponentHashcode);
             }
         });
     }
@@ -2595,6 +2633,7 @@ public class GUI
             {
                 tableOfClientsModel.removeRow(rowIndex);
             }
+            buttonInviteIgnoresSelections = false;
             buttonInvite.setEnabled(false);
         });
     }
@@ -2648,6 +2687,17 @@ public class GUI
                 tableOfClientsModel.addRow(new Object[]{hashCode.toString(), nickname});
             }
         });
+    }
+    public void setButtonInviteIgnoresSelections(boolean state)
+    {
+        SwingUtilities.invokeLater(()->buttonInviteIgnoresSelections = state);
+    }
+    public void showDialogOpponentUnavailable()
+    {
+        SwingUtilities.invokeLater(()->
+                JOptionPane.showMessageDialog(frame,
+                        text.getOpponentIsUnavailable(), text.getClientInfo(), JOptionPane.INFORMATION_MESSAGE)
+        );
     }
     public void setPanelBoardReplayGrid(HashMap<Location, Tile> grid)
     {

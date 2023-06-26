@@ -28,6 +28,7 @@ public class ChineseChessClient
         gameOnlineMultiplayer.setMusicPlayer(musicPlayer);
         client.setProtocol(protocol);
         client.setGui(gui);
+        protocol.setGameOnlineMultiplayer(gameOnlineMultiplayer);
         protocol.setClient(client);
         protocol.setGui(gui);
         replay.setGui(gui);
@@ -35,6 +36,7 @@ public class ChineseChessClient
         gui.setGameLocalMultiplayer(gameLocalMultiplayer);
         gui.setGameOnlineMultiplayer(gameOnlineMultiplayer);
         gui.setClient(client);
+        gui.setProtocol(protocol);
         gui.setReplay(replay);
         gui.setRules(rules);
         gui.setMusicPlayer(musicPlayer);
