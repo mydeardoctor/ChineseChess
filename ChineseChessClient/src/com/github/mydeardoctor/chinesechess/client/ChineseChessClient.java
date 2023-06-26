@@ -9,6 +9,7 @@ public class ChineseChessClient
         ParentLogger.initialize("ChineseChessClientLog%u.txt");
         GameSinglePlayer gameSinglePlayer = new GameSinglePlayer();
         GameLocalMultiplayer gameLocalMultiplayer = new GameLocalMultiplayer();
+        GameOnlineMultiplayer gameOnlineMultiplayer = new GameOnlineMultiplayer();
         Client client = new Client();
         Protocol protocol = new Protocol();
         Replay replay = new Replay();
@@ -22,6 +23,9 @@ public class ChineseChessClient
         gameLocalMultiplayer.setReplay(replay);
         gameLocalMultiplayer.setGui(gui);
         gameLocalMultiplayer.setMusicPlayer(musicPlayer);
+        gameOnlineMultiplayer.setReplay(replay);
+        gameOnlineMultiplayer.setGui(gui);
+        gameOnlineMultiplayer.setMusicPlayer(musicPlayer);
         client.setProtocol(protocol);
         client.setGui(gui);
         protocol.setClient(client);
@@ -29,6 +33,7 @@ public class ChineseChessClient
         replay.setGui(gui);
         gui.setGameSinglePlayer(gameSinglePlayer);
         gui.setGameLocalMultiplayer(gameLocalMultiplayer);
+        gui.setGameOnlineMultiplayer(gameOnlineMultiplayer);
         gui.setClient(client);
         gui.setReplay(replay);
         gui.setRules(rules);

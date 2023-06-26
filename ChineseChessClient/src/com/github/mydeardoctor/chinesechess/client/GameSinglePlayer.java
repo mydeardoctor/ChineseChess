@@ -6,7 +6,6 @@ import java.util.*;
 
 public class GameSinglePlayer extends Game
 {
-    private Player cpu;
     private final Random randomNumberGenerator;
     public GameSinglePlayer()
     {
@@ -14,7 +13,7 @@ public class GameSinglePlayer extends Game
         randomNumberGenerator = new Random();
     }
     @Override
-    protected void initializeSidesForPlayers()
+    protected void initializeSides(Player playerSide, Player opponentSide)
     {
         String message = null;
 
@@ -23,38 +22,23 @@ public class GameSinglePlayer extends Game
         {
             case 0 ->
             {
-                cpu = Player.RED;
-                message = gui.getText().getYouPlay().concat(gui.getText().getBlack());
+                this.playerSide = Player.RED;
+                this.opponentSide = Player.BLACK;
+                message = gui.getText().getYouPlay().concat(gui.getText().getRed());
             }
             case 1 ->
             {
-                cpu = Player.BLACK;
-                message = gui.getText().getYouPlay().concat(gui.getText().getRed());
+                this.playerSide = Player.BLACK;
+                this.opponentSide = Player.RED;
+                message = gui.getText().getYouPlay().concat(gui.getText().getBlack());
             }
         }
 
         gui.showDialogYouPlay(message);
     }
     @Override
-    protected void nextPlayerTurn()
+    protected void opponentTurn()
     {
-        if(turn.equals(cpu))
-        {
-            cpuTurn();
-        }
-        else
-        {
-            humanTurn();
-        }
-    }
-    private void cpuTurn()
-    {
-        getAllAllowedMoves();
-        if(state.equals(State.OVER))
-        {
-            return;
-        }
-
         HashMap<Location, HashSet<Location>> allAttackingMoves = getAllAttackingMoves(allAllowedMoves);
 
         HashMap<Location, Location> randomMove;
@@ -148,10 +132,5 @@ public class GameSinglePlayer extends Game
         HashMap<Location, Location> randomMove = new HashMap<>();
         randomMove.put(origin, destination);
         return randomMove;
-    }
-    @Override
-    public boolean getIsCpuTurn()
-    {
-        return turn.equals(cpu);
     }
 }

@@ -30,8 +30,6 @@ public class Protocol
     {
         Action action = message.action();
         Object data = message.data();
-        State state = message.state();
-        Player turn = message.turn();
 
         switch(action)
         {
@@ -40,7 +38,7 @@ public class Protocol
     }
     public void sendRegisterNickname()
     {
-        Message message = new Message(Action.REGISTER_NICKNAME, client.getNickname(), null, null);
+        Message message = new Message(Action.REGISTER_NICKNAME, client.getNickname());
         client.writeToServer(message);
     }
     private void updateTableOfClients(HashMap<Integer, String> mapOfNicknames)

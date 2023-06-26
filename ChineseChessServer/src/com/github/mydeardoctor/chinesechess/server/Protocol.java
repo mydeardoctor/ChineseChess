@@ -33,8 +33,6 @@ public class Protocol
     {
         Action action = message.action();
         Object data = message.data();
-        State state = message.state(); //TODO если серверу без разницы на state и turn, которые присылает клиент, то эти строчки не нужны.
-        Player turn = message.turn();
 
         switch(action)
         {
@@ -65,7 +63,7 @@ public class Protocol
                 mapOfNicknames.remove(hashCode);
             }
 
-            Message message = new Message(Action.UPDATE_TABLE_OF_CLIENTS, mapOfNicknames, null, null);
+            Message message = new Message(Action.UPDATE_TABLE_OF_CLIENTS, mapOfNicknames);
             client.writeToClient(message);
 
             //Put nickname back.

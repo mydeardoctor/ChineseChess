@@ -14,6 +14,8 @@ public abstract class Game
     protected State state;
     protected Player turn;
     private Phase phase;
+    protected Player playerSide;
+    protected Player opponentSide;
     private final Figure generalRed;
     private final Figure advisorRed1;
     private final Figure advisorRed2;
@@ -134,7 +136,7 @@ public abstract class Game
     {
         this.musicPlayer = musicPlayer;
     }
-    public void start()
+    public void start(Player playerSide, Player opponentSide)
     {
         resetGameState();
         resetGrid();
@@ -144,8 +146,8 @@ public abstract class Game
         gui.setStatusBarText(gui.getText().getRedPlayer() + ", " + gui.getText().getChooseFigure());
         musicPlayer.playMusic();
 
-        initializeSidesForPlayers();
-        nextPlayerTurn();
+        initializeSides(playerSide, opponentSide);
+        decideWhoseNextTurnIs();
     }
     private void resetGameState()
     {
@@ -199,14 +201,31 @@ public abstract class Game
         grid.get(new Location(6,3)).setFigure(soldierBlack4);
         grid.get(new Location(8,3)).setFigure(soldierBlack5);
     }
-    protected abstract void initializeSidesForPlayers();
-    protected abstract void nextPlayerTurn();
-    protected void humanTurn()
+    protected abstract void initializeSides(Player playerSide, Player opponentSide);
+    private void decideWhoseNextTurnIs()
     {
-        getAllAllowedMoves();
+        if(getAllAllowedMoves())
+        {
+            if(turn.equals(playerSide))
+            {
+                playerTurn();
+            }
+            else
+            {
+                opponentTurn();
+            }
+        }
+        else
+        {
+            over();
+        }
+    };
+    private void playerTurn()
+    {
         //Handle user mouse clicks.
     }
-    protected void getAllAllowedMoves()
+    protected abstract void opponentTurn();
+    private boolean getAllAllowedMoves()
     {
         allAllowedMoves.clear();
 
@@ -229,9 +248,13 @@ public abstract class Game
             }
         }
 
-        if(allAllowedMoves.size() == 0) //If there are no allowed moves, the game is over.
+        if(allAllowedMoves.size() != 0)
         {
-            over();
+            return true;
+        }
+        else //If there are no allowed moves, the game is over.
+        {
+            return false;
         }
     }
     public void handleSelectedLocation(Location selectedLocation)
@@ -363,7 +386,7 @@ public abstract class Game
             }
         }
 
-        nextPlayerTurn();
+        decideWhoseNextTurnIs();
     }
     private void over()
     {
@@ -426,7 +449,14 @@ public abstract class Game
     {
         return state;
     }
-    public abstract boolean getIsCpuTurn();
+    public Player getTurn()
+    {
+        return turn;
+    }
+    public Player getOpponentSide()
+    {
+        return opponentSide;
+    }
     public Figure getGeneralRed()
     {
         return generalRed;

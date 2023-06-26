@@ -33,11 +33,13 @@ public class PanelBoardInteractive extends PanelBoard implements MouseListener
     @Override
     public void mouseReleased(MouseEvent e)
     {
-        if(e.getButton() != MouseEvent.BUTTON1)
-        {
-            return;
-        }
-        if(game.getIsCpuTurn())
+        if
+        (
+            (e.getButton() != MouseEvent.BUTTON1) ||
+
+            ((game.getClass().equals(GameSinglePlayer.class) || game.getClass().equals(GameOnlineMultiplayer.class)) &&
+            game.getTurn().equals(game.getOpponentSide()))
+        )
         {
             return;
         }

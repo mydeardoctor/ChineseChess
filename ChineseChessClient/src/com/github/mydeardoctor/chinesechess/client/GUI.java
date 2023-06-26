@@ -219,6 +219,7 @@ public class GUI
     //Game.
     private GameSinglePlayer gameSinglePlayer;
     private GameLocalMultiplayer gameLocalMultiplayer;
+    private GameOnlineMultiplayer gameOnlineMultiplayer;
 
     //Client.
     private Client client;
@@ -1790,6 +1791,10 @@ public class GUI
     {
         this.gameLocalMultiplayer = gameLocalMultiplayer;
     }
+    public void setGameOnlineMultiplayer(GameOnlineMultiplayer gameOnlineMultiplayer)
+    {
+        this.gameOnlineMultiplayer = gameOnlineMultiplayer;
+    }
     public void setClient(Client client)
     {
         this.client = client;
@@ -2031,6 +2036,7 @@ public class GUI
             {
                 gameSinglePlayer.stop();
                 gameLocalMultiplayer.stop();
+                //TODO gameOnlineMultiplayer.stop(); Отправить серверу сообщение о рейджквите
                 replay.stop();
                 showFrameMainMenu();
             }
@@ -2074,7 +2080,7 @@ public class GUI
         SwingUtilities.invokeLater(()->
         {
             panelBoardInteractive.setGame(gameSinglePlayer);
-            gameSinglePlayer.start();
+            gameSinglePlayer.start(null, null);
             showFrameBoard();
         });
     }
@@ -2083,10 +2089,11 @@ public class GUI
         SwingUtilities.invokeLater(()->
         {
             panelBoardInteractive.setGame(gameLocalMultiplayer);
-            gameLocalMultiplayer.start();
+            gameLocalMultiplayer.start(null, null);
             showFrameBoard();
         });
     }
+    //TODO startOnlineMultiplayerGame
     private void connectToServer()
     {
         SwingUtilities.invokeLater(()->
@@ -2482,6 +2489,7 @@ public class GUI
             //Game.
             gameSinglePlayer.refreshText();
             gameLocalMultiplayer.refreshText();
+            //TODO gameOnlineMultiplayer.refreshText
         });
     }
     public void repaint()

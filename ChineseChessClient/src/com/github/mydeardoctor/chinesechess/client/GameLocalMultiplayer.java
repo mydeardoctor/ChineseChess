@@ -1,5 +1,7 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import com.github.mydeardoctor.chinesechess.Player;
+
 public class GameLocalMultiplayer extends Game
 {
     public GameLocalMultiplayer()
@@ -7,17 +9,14 @@ public class GameLocalMultiplayer extends Game
         super();
     }
     @Override
-    protected void initializeSidesForPlayers()
+    protected void initializeSides(Player playerSide, Player opponentSide)
     {
+        this.playerSide = Player.RED;
+        this.opponentSide = Player.BLACK;
     }
     @Override
-    protected void nextPlayerTurn()
+    protected void opponentTurn()
     {
-        humanTurn();
-    }
-    @Override
-    public boolean getIsCpuTurn()
-    {
-        return false;
+        //Handle user mouse clicks.
     }
 }
