@@ -1,9 +1,7 @@
 package com.github.mydeardoctor.chinesechess.client;
 
-import com.github.mydeardoctor.chinesechess.PanelBackground;
-import com.github.mydeardoctor.chinesechess.DocumentFilterForTextFieldPort;
-import com.github.mydeardoctor.chinesechess.Player;
-import com.github.mydeardoctor.chinesechess.TableOfClientsModel;
+import com.github.mydeardoctor.chinesechess.*;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -2045,7 +2043,7 @@ public class GUI
             {
                 gameSinglePlayer.stop();
                 gameLocalMultiplayer.stop();
-                //TODO gameOnlineMultiplayer.stop(); Отправить серверу сообщение о рейджквите
+                gameOnlineMultiplayer.stop();
                 replay.stop();
                 showFrameMainMenu();
             }
@@ -2089,7 +2087,7 @@ public class GUI
         SwingUtilities.invokeLater(()->
         {
             panelBoardInteractive.setGame(gameSinglePlayer);
-            gameSinglePlayer.start(null, null);
+            gameSinglePlayer.start(null, null, null);
             showFrameBoard();
         });
     }
@@ -2098,11 +2096,11 @@ public class GUI
         SwingUtilities.invokeLater(()->
         {
             panelBoardInteractive.setGame(gameLocalMultiplayer);
-            gameLocalMultiplayer.start(null, null);
+            gameLocalMultiplayer.start(null, null, null);
             showFrameBoard();
         });
     }
-    public void startOnlineMultiplayerGame(Player playerSide, Player opponentSide)
+    public void startOnlineMultiplayerGame(String opponentNickname, Player playerSide, Player opponentSide)
     {
         SwingUtilities.invokeLater(()->
         {
@@ -2111,7 +2109,7 @@ public class GUI
             buttonInvite.setEnabled(false);
 
             panelBoardInteractive.setGame(gameOnlineMultiplayer);
-            gameOnlineMultiplayer.start(playerSide, opponentSide);
+            gameOnlineMultiplayer.start(opponentNickname, playerSide, opponentSide);
             showFrameBoard();
         });
     }
@@ -2550,7 +2548,7 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
                 JOptionPane.showMessageDialog(frame,
-                        message, text.getSinglePlayer(), JOptionPane.INFORMATION_MESSAGE)
+                        message, text.getGame(), JOptionPane.INFORMATION_MESSAGE)
         );
     }
     public void setIpIncorrect()
@@ -2697,6 +2695,20 @@ public class GUI
         SwingUtilities.invokeLater(()->
                 JOptionPane.showMessageDialog(frame,
                         text.getOpponentIsUnavailable(), text.getClientInfo(), JOptionPane.INFORMATION_MESSAGE)
+        );
+    }
+    public void showDialogOpponentQuit()
+    {
+        SwingUtilities.invokeLater(()->
+                JOptionPane.showMessageDialog(frame,
+                        text.getOpponentQuit(), text.getClientInfo(), JOptionPane.INFORMATION_MESSAGE)
+        );
+    }
+    public void showDialogOpponentDisconnected()
+    {
+        SwingUtilities.invokeLater(()->
+                JOptionPane.showMessageDialog(frame,
+                        text.getOpponentDisconnected(), text.getClientInfo(), JOptionPane.INFORMATION_MESSAGE)
         );
     }
     public void setPanelBoardReplayGrid(HashMap<Location, Tile> grid)

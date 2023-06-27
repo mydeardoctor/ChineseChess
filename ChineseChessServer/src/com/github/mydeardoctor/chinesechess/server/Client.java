@@ -85,8 +85,11 @@ public class Client
                 closeStreams();
                 mapOfClients.remove(this.hashCode());
 
-                //Delete reference to this client from its opponent.
-                //TODO if opponent!= null       opponent statesReset, opponentHashCode = null     sendWarningToOpponent(states reset, gameOver, guiReset, guiShowFrame, guiShowWarning)
+                //Reset states and notify opponent.
+                //TODO  sendWarningToOpponent(states reset, gameOver, guiReset, guiShowFrame, guiShowWarning)
+                protocol.sendPlayerDisconnected(this);
+                setState(State.OVER);
+                setOpponentHashcode(null);
 
                 //Send every client an updated list of clients.
                 protocol.sendUpdateTableOfClients();

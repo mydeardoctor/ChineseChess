@@ -9,7 +9,7 @@ public class GameLocalMultiplayer extends Game
         super();
     }
     @Override
-    protected void initializeSides(Player playerSide, Player opponentSide)
+    protected void initializeSides(String opponentNickname, Player playerSide, Player opponentSide)
     {
         this.playerSide = Player.RED;
         this.opponentSide = Player.BLACK;

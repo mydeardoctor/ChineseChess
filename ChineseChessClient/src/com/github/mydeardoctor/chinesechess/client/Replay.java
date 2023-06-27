@@ -1,5 +1,6 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import com.github.mydeardoctor.chinesechess.Location;
 import com.github.mydeardoctor.chinesechess.State;
 import java.io.*;
 import java.util.ArrayList;

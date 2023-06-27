@@ -1,5 +1,6 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import com.github.mydeardoctor.chinesechess.Location;
 import com.github.mydeardoctor.chinesechess.State;
 import com.github.mydeardoctor.chinesechess.Player;
 import java.util.*;
@@ -13,7 +14,7 @@ public class GameSinglePlayer extends Game
         randomNumberGenerator = new Random();
     }
     @Override
-    protected void initializeSides(Player playerSide, Player opponentSide)
+    protected void initializeSides(String opponentNickname, Player playerSide, Player opponentSide)
     {
         String message = null;
 

@@ -5,9 +5,19 @@ class TextRussian extends Text
     //Game.
 
     @Override
+    public String getGame()
+    {
+        return "Игра";
+    }
+    @Override
     public String getYouPlay()
     {
         return "Вы играете ";
+    }
+    @Override
+    public String getVersus()
+    {
+        return "против ";
     }
     @Override
     public String getRed()
@@ -304,6 +314,16 @@ class TextRussian extends Text
     public String getOpponentIsUnavailable()
     {
         return "Соперник недоступен.";
+    }
+    @Override
+    public String getOpponentQuit()
+    {
+        return "Соперник вышел из игры.";
+    }
+    @Override
+    public String getOpponentDisconnected()
+    {
+        return "Соперник отключился.";
     }
 
     //Frame Rules.

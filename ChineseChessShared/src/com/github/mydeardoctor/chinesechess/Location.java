@@ -1,4 +1,4 @@
-package com.github.mydeardoctor.chinesechess.client;
+package com.github.mydeardoctor.chinesechess;
 
 import java.io.Serializable;
 

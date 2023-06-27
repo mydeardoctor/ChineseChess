@@ -4,7 +4,9 @@ public abstract class Text
 {
     //Game.
 
+    public abstract String getGame();
     public abstract String getYouPlay();
+    public abstract String getVersus();
     public abstract String getRed();
     public abstract String getBlack();
     public abstract String getRedPlayer();
@@ -77,6 +79,8 @@ public abstract class Text
     public abstract String getListOfClients();
     public abstract String getInvite();
     public abstract String getOpponentIsUnavailable();
+    public abstract String getOpponentQuit();
+    public abstract String getOpponentDisconnected();
 
     //Frame Rules.
     public abstract String getGoal();

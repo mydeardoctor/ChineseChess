@@ -5,9 +5,20 @@ public class TextEnglish extends Text
     //Game.
 
     @Override
+    public String getGame()
+    {
+        return "Game";
+    }
+    @Override
     public String getYouPlay()
     {
         return "You play ";
+    }
+
+    @Override
+    public String getVersus()
+    {
+        return "versus ";
     }
     @Override
     public String getRed()
@@ -304,6 +315,16 @@ public class TextEnglish extends Text
     public String getOpponentIsUnavailable()
     {
         return "Opponent is unavailable.";
+    }
+    @Override
+    public String getOpponentQuit()
+    {
+        return "Opponent quit.";
+    }
+    @Override
+    public String getOpponentDisconnected()
+    {
+        return "Opponent disconnected.";
     }
 
     //Frame Rules.

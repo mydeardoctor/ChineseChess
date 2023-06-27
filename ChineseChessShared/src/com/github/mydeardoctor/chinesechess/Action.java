@@ -8,5 +8,9 @@ public enum Action implements Serializable
     UPDATE_TABLE_OF_CLIENTS,
     INVITE,
     OPPONENT_UNAVAILABLE,
-    START_GAME
+    START_GAME,
+    MOVE,
+    END_GAME,
+    PLAYER_QUIT,
+    PlAYER_DISCONNECTED
 }

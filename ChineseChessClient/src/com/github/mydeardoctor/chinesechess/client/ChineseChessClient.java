@@ -17,12 +17,15 @@ public class ChineseChessClient
         GUI gui = new GUI();
         MusicPlayer musicPlayer = new MusicPlayer();
 
+        gameSinglePlayer.setProtocol(protocol);
         gameSinglePlayer.setReplay(replay);
         gameSinglePlayer.setGui(gui);
         gameSinglePlayer.setMusicPlayer(musicPlayer);
+        gameLocalMultiplayer.setProtocol(protocol);
         gameLocalMultiplayer.setReplay(replay);
         gameLocalMultiplayer.setGui(gui);
         gameLocalMultiplayer.setMusicPlayer(musicPlayer);
+        gameOnlineMultiplayer.setProtocol(protocol);
         gameOnlineMultiplayer.setReplay(replay);
         gameOnlineMultiplayer.setGui(gui);
         gameOnlineMultiplayer.setMusicPlayer(musicPlayer);

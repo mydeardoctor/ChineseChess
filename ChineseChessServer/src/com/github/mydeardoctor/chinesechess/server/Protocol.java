@@ -1,15 +1,13 @@
 package com.github.mydeardoctor.chinesechess.server;
 
-import com.github.mydeardoctor.chinesechess.Message;
-import com.github.mydeardoctor.chinesechess.Action;
-import com.github.mydeardoctor.chinesechess.State;
-import com.github.mydeardoctor.chinesechess.Player;
+import com.github.mydeardoctor.chinesechess.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+//TODO null args opponenthashcode, opponent
 public class Protocol
 {
     //Map of Clients attributes.
@@ -39,6 +37,9 @@ public class Protocol
         {
             case REGISTER_NICKNAME -> registerNickname(sourceClient, (String)data);
             case INVITE -> handleInvite(sourceClient, (Integer)data);
+            case MOVE -> resendMove(sourceClient, (Object[])data);
+            case END_GAME -> endGame(sourceClient);
+            case PLAYER_QUIT -> resendPlayerQuit(sourceClient);
         }
     }
     private void registerNickname(Client client, String nickname)
@@ -106,6 +107,9 @@ public class Protocol
             sourceClient.setOpponentHashcode(opponentHashcode);
             opponent.setOpponentHashcode(sourceClient.hashCode());
 
+            String playerNickname = sourceClient.getNickname();
+            String opponentNickname = opponent.getNickname();
+
             Player playerSide = null;
             Player opponentSide = null;
             Random randomNumberGenerator = new Random();
@@ -124,15 +128,58 @@ public class Protocol
                 }
             }
 
-            Message messageToPlayer = new Message(Action.START_GAME, new Player[]{playerSide, opponentSide});
+            Message messageToPlayer = new Message(Action.START_GAME,
+                    new Object[]{opponentNickname, playerSide, opponentSide});
             sourceClient.writeToClient(messageToPlayer);
-            Message messageToOpponent = new Message(Action.START_GAME, new Player[]{opponentSide, playerSide});
+            Message messageToOpponent = new Message(Action.START_GAME,
+                    new Object[]{playerNickname, opponentSide, playerSide});
             opponent.writeToClient(messageToOpponent);
         }
         else
         {
             Message message = new Message(Action.OPPONENT_UNAVAILABLE, null);
             sourceClient.writeToClient(message);
+        }
+    }
+    private void resendMove(Client sourceClient, Object[] moves)
+    {
+        Integer opponentHashcode = sourceClient.getOpponentHashcode();
+        Client opponent = mapOfClients.get(opponentHashcode);
+        if(opponent != null)
+        {
+            Location origin = (Location)moves[0];
+            Location destination = (Location)moves[1];
+
+            Message message = new Message(Action.MOVE, new Object[]{origin, destination});
+            opponent.writeToClient(message);
+        }
+    }
+    private void endGame(Client sourceClient)
+    {
+        sourceClient.setState(State.OVER);
+        sourceClient.setOpponentHashcode(null);
+    }
+    private void resendPlayerQuit(Client sourceClient)
+    {
+        Integer opponentHashcode = sourceClient.getOpponentHashcode();
+        Client opponent = mapOfClients.get(opponentHashcode);
+        if(opponent != null)
+        {
+            Message message = new Message(Action.PLAYER_QUIT, null);
+            opponent.writeToClient(message);
+        }
+
+        sourceClient.setState(State.OVER);
+        sourceClient.setOpponentHashcode(null);
+    }
+    public void sendPlayerDisconnected(Client sourceClient)
+    {
+        Integer opponentHashcode = sourceClient.getOpponentHashcode();
+        Client opponent = mapOfClients.get(opponentHashcode);
+        if(opponent != null)
+        {
+            Message message = new Message(Action.PlAYER_DISCONNECTED, null);
+            opponent.writeToClient(message);
         }
     }
 }

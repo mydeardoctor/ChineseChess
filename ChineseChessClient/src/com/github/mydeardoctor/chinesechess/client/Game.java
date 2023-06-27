@@ -1,5 +1,6 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import com.github.mydeardoctor.chinesechess.Location;
 import com.github.mydeardoctor.chinesechess.State;
 import com.github.mydeardoctor.chinesechess.Player;
 
@@ -52,6 +53,9 @@ public abstract class Game
     protected final HashMap<Location, HashSet<Location>> allAllowedMoves;
     private Location previouslySelectedLocation;
 
+    //Protocol attributes.
+    protected Protocol protocol;
+
     //Replay attributes.
     protected Replay replay;
 
@@ -59,7 +63,7 @@ public abstract class Game
     protected GUI gui;
 
     //Music player attributes.
-    private MusicPlayer musicPlayer;
+    protected MusicPlayer musicPlayer;
 
     public Game()
     {
@@ -124,6 +128,10 @@ public abstract class Game
         }
         return grid;
     }
+    public void setProtocol(Protocol protocol)
+    {
+        this.protocol = protocol;
+    }
     public void setReplay(Replay replay)
     {
         this.replay = replay;
@@ -136,7 +144,7 @@ public abstract class Game
     {
         this.musicPlayer = musicPlayer;
     }
-    public void start(Player playerSide, Player opponentSide)
+    public void start(String opponentNickname, Player playerSide, Player opponentSide)
     {
         resetGameState();
         resetGrid();
@@ -146,7 +154,7 @@ public abstract class Game
         gui.setStatusBarText(gui.getText().getRedPlayer() + ", " + gui.getText().getChooseFigure());
         musicPlayer.playMusic();
 
-        initializeSides(playerSide, opponentSide);
+        initializeSides(opponentNickname, playerSide, opponentSide);
         decideWhoseNextTurnIs();
     }
     private void resetGameState()
@@ -201,7 +209,7 @@ public abstract class Game
         grid.get(new Location(6,3)).setFigure(soldierBlack4);
         grid.get(new Location(8,3)).setFigure(soldierBlack5);
     }
-    protected abstract void initializeSides(Player playerSide, Player opponentSide);
+    protected abstract void initializeSides(String opponentNickname, Player playerSide, Player opponentSide);
     private void decideWhoseNextTurnIs()
     {
         if(getAllAllowedMoves())
@@ -327,7 +335,7 @@ public abstract class Game
     {
         previouslySelectedLocation = locationSelected;
     }
-    private void unhighlightEverything()
+    public void unhighlightEverything()
     {
         Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
         for(Map.Entry<Location, Tile> gridEntry : gridSet)
@@ -356,6 +364,9 @@ public abstract class Game
         grid.get(destination).setFigure(selectedFigure);        //...to a new location.
 
         gui.repaint();
+    }
+    public void receiveMoveFromServer(Location origin, Location destination)
+    {
     }
     private void nextPhase()
     {
@@ -388,7 +399,7 @@ public abstract class Game
 
         decideWhoseNextTurnIs();
     }
-    private void over()
+    public void over()
     {
         state = State.OVER;
 
@@ -452,6 +463,10 @@ public abstract class Game
     public Player getTurn()
     {
         return turn;
+    }
+    public void setTurn(Player turn) //TODO костыль
+    {
+        this.turn = turn;
     }
     public Player getOpponentSide()
     {

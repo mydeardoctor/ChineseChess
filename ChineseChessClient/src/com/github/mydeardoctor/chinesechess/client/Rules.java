@@ -1,5 +1,7 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import com.github.mydeardoctor.chinesechess.Location;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

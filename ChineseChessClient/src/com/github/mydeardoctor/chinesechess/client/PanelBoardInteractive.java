@@ -1,5 +1,8 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import com.github.mydeardoctor.chinesechess.Location;
+import com.github.mydeardoctor.chinesechess.State;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -36,7 +39,7 @@ public class PanelBoardInteractive extends PanelBoard implements MouseListener
         if
         (
             (e.getButton() != MouseEvent.BUTTON1) ||
-
+            game.getState().equals(State.OVER) ||
             ((game.getClass().equals(GameSinglePlayer.class) || game.getClass().equals(GameOnlineMultiplayer.class)) &&
             game.getTurn().equals(game.getOpponentSide()))
         )

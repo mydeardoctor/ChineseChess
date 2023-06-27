@@ -1,5 +1,7 @@
 package com.github.mydeardoctor.chinesechess.client;
 
+import com.github.mydeardoctor.chinesechess.Location;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;

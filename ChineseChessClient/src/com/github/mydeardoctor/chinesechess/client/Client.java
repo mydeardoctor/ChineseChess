@@ -149,6 +149,7 @@ public class Client
             }
             catch (IOException | ClassNotFoundException e) //SocketException is a subclass of IOException.
             {
+                e.printStackTrace();
                 //TODO states reset, game over, gui reset, guiShowFrame, guiShowWarning
 
                 setConnectedToServer(false); //TODO мб вынести в функцию, т.к. дублируется

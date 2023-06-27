@@ -1,9 +1,7 @@
 package com.github.mydeardoctor.chinesechess.client;
 
-import com.github.mydeardoctor.chinesechess.Message;
+import com.github.mydeardoctor.chinesechess.*;
 import com.github.mydeardoctor.chinesechess.Action;
-import com.github.mydeardoctor.chinesechess.State;
-import com.github.mydeardoctor.chinesechess.Player;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -44,7 +42,10 @@ public class Protocol
         {
             case UPDATE_TABLE_OF_CLIENTS -> updateTableOfClients((HashMap<Integer, String>)data);
             case OPPONENT_UNAVAILABLE -> opponentUnavailable();
-            case START_GAME -> startGame((Player[])data);
+            case START_GAME -> startGame((Object[])data);
+            case MOVE -> makeMove((Object[])data);
+            case PLAYER_QUIT -> playerQuit();
+            case PlAYER_DISCONNECTED -> playerDisconnected();
         }
     }
     public void sendRegisterNickname()
@@ -66,11 +67,55 @@ public class Protocol
         gui.setButtonInviteIgnoresSelections(false);
         gui.showDialogOpponentUnavailable();
     }
-    private void startGame(Player[] sides)
+    private void startGame(Object[] data)
     {
         SwingUtilities.invokeLater(()->
         {
-            gui.startOnlineMultiplayerGame(sides[0], sides[1]);
+            gui.startOnlineMultiplayerGame((String)data[0], (Player)data[1], (Player)data[2]);
+        });
+    }
+    public void sendMove(Location origin, Location destination)
+    {
+        Message message = new Message(Action.MOVE, new Object[]{origin, destination});
+        client.writeToServer(message);
+    }
+    private void makeMove(Object[] moves)
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            Location origin = (Location)moves[0];
+            Location destination = (Location)moves[1];
+            gameOnlineMultiplayer.receiveMoveFromServer(origin, destination);
+        });
+    }
+    public void sendEndGame()
+    {
+        Message message = new Message(Action.END_GAME, null);
+        client.writeToServer(message);
+    }
+    public void sendPlayerQuit()
+    {
+        Message message = new Message(Action.PLAYER_QUIT, null);
+        client.writeToServer(message);
+    }
+    private void playerQuit()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            gameOnlineMultiplayer.unhighlightEverything();
+            gameOnlineMultiplayer.setTurn(gameOnlineMultiplayer.getOpponentSide()); //TODO для правильного сообщения
+            gameOnlineMultiplayer.over();
+            gui.showDialogOpponentQuit();
+        });
+    }
+    private void playerDisconnected()
+    {
+        SwingUtilities.invokeLater(()->
+        {
+            gameOnlineMultiplayer.unhighlightEverything();
+            gameOnlineMultiplayer.setTurn(gameOnlineMultiplayer.getOpponentSide()); //TODO для правильного сообщения
+            gameOnlineMultiplayer.over();
+            gui.showDialogOpponentDisconnected();
         });
     }
 }
