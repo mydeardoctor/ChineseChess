@@ -1,7 +1,7 @@
 package com.github.mydeardoctor.chinesechess.client;
 
 import com.github.mydeardoctor.chinesechess.Location;
-import com.github.mydeardoctor.chinesechess.Player;
+import com.github.mydeardoctor.chinesechess.Side;
 import com.github.mydeardoctor.chinesechess.State;
 
 public class GameOnlineMultiplayer extends Game
@@ -11,7 +11,7 @@ public class GameOnlineMultiplayer extends Game
         super();
     }
     @Override
-    protected void initializeSides(String opponentNickname, Player playerSide, Player opponentSide) //TODO не нравится
+    protected void initializeSides(String opponentNickname, Side playerSide, Side opponentSide) //TODO не нравится
     {
         this.playerSide = playerSide;
         this.opponentSide = opponentSide;
@@ -35,11 +35,8 @@ public class GameOnlineMultiplayer extends Game
         super.moveFigure(origin, destination);
         protocol.sendMove(origin, destination);
     }
-    //TODO не нравится
-    @Override
-    public void receiveMoveFromServer(Location origin, Location destination)
+    public void receiveMoveFromServer(Location origin, Location destination) //TODO не нравится
     {
-        super.receiveMoveFromServer(origin, destination);
         super.moveFigure(origin, destination);
         musicPlayer.playSfx();
         replay.addToReplayOutput(grid);
@@ -51,9 +48,9 @@ public class GameOnlineMultiplayer extends Game
         //Wait for server message.
     }
     @Override
-    public void over()
+    public void over(Side turn)
     {
-        super.over();
+        super.over(turn);
         protocol.sendEndGame();
         gui.setButtonInviteIgnoresSelections(false);
     }

@@ -197,7 +197,7 @@ public class Replay
     {
         state = State.OVER;
     }
-    public State getState() //TODO was used in showFrameExitToMainMenu
+    public State getState()
     {
         return state;
     }

@@ -6,7 +6,7 @@ import com.github.mydeardoctor.chinesechess.Action;
 import javax.swing.*;
 import java.util.HashMap;
 
-public class Protocol
+public class Protocol //TODO используются ли методы GAME и т.д. не на EDT?
 {
     //Game attributes.
     private GameOnlineMultiplayer gameOnlineMultiplayer;
@@ -43,7 +43,7 @@ public class Protocol
             case UPDATE_TABLE_OF_CLIENTS -> updateTableOfClients((HashMap<Integer, String>)data);
             case OPPONENT_UNAVAILABLE -> opponentUnavailable();
             case START_GAME -> startGame((Object[])data);
-            case MOVE -> makeMove((Object[])data);
+            case MOVE -> makeMove((Location[])data);
             case PLAYER_QUIT -> playerQuit();
             case PlAYER_DISCONNECTED -> playerDisconnected();
         }
@@ -71,20 +71,20 @@ public class Protocol
     {
         SwingUtilities.invokeLater(()->
         {
-            gui.startOnlineMultiplayerGame((String)data[0], (Player)data[1], (Player)data[2]);
+            gui.startOnlineMultiplayerGame((String)data[0], (Side)data[1], (Side)data[2]);
         });
     }
     public void sendMove(Location origin, Location destination)
     {
-        Message message = new Message(Action.MOVE, new Object[]{origin, destination});
+        Message message = new Message(Action.MOVE, new Location[]{origin, destination});
         client.writeToServer(message);
     }
-    private void makeMove(Object[] moves)
+    private void makeMove(Location[] move)
     {
         SwingUtilities.invokeLater(()->
         {
-            Location origin = (Location)moves[0];
-            Location destination = (Location)moves[1];
+            Location origin = move[0];
+            Location destination = move[1];
             gameOnlineMultiplayer.receiveMoveFromServer(origin, destination);
         });
     }
@@ -102,9 +102,7 @@ public class Protocol
     {
         SwingUtilities.invokeLater(()->
         {
-            gameOnlineMultiplayer.unhighlightEverything();
-            gameOnlineMultiplayer.setTurn(gameOnlineMultiplayer.getOpponentSide()); //TODO для правильного сообщения
-            gameOnlineMultiplayer.over();
+            gameOnlineMultiplayer.over(gameOnlineMultiplayer.getOpponentSide());
             gui.showDialogOpponentQuit();
         });
     }
@@ -112,9 +110,7 @@ public class Protocol
     {
         SwingUtilities.invokeLater(()->
         {
-            gameOnlineMultiplayer.unhighlightEverything();
-            gameOnlineMultiplayer.setTurn(gameOnlineMultiplayer.getOpponentSide()); //TODO для правильного сообщения
-            gameOnlineMultiplayer.over();
+            gameOnlineMultiplayer.over(gameOnlineMultiplayer.getOpponentSide());
             gui.showDialogOpponentDisconnected();
         });
     }

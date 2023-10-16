@@ -2,13 +2,9 @@ package com.github.mydeardoctor.chinesechess.server;
 
 import com.github.mydeardoctor.chinesechess.Message;
 import com.github.mydeardoctor.chinesechess.State;
-import com.github.mydeardoctor.chinesechess.Player;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,8 +15,8 @@ public class Client
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
     private String nickname;
-    private State state; //TODO state
-    private Integer opponentHashcode; //TODO opponentHashcode
+    private State state;
+    private Integer opponentHashcode;
 
     //Map of Clients attributes.
     private final MapOfClients mapOfClients;
@@ -86,7 +82,6 @@ public class Client
                 mapOfClients.remove(this.hashCode());
 
                 //Reset states and notify opponent.
-                //TODO  sendWarningToOpponent(states reset, gameOver, guiReset, guiShowFrame, guiShowWarning)
                 protocol.sendPlayerDisconnected(this);
                 setState(State.OVER);
                 setOpponentHashcode(null);

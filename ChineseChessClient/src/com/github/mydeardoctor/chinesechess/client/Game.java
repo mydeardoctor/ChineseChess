@@ -1,8 +1,8 @@
 package com.github.mydeardoctor.chinesechess.client;
 
 import com.github.mydeardoctor.chinesechess.Location;
+import com.github.mydeardoctor.chinesechess.Side;
 import com.github.mydeardoctor.chinesechess.State;
-import com.github.mydeardoctor.chinesechess.Player;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,10 +13,10 @@ public abstract class Game
 {
     //Game attributes.
     protected State state;
-    protected Player turn;
+    protected Side turn;
     private Phase phase;
-    protected Player playerSide;
-    protected Player opponentSide;
+    protected Side playerSide;
+    protected Side opponentSide;
     private final Figure generalRed;
     private final Figure advisorRed1;
     private final Figure advisorRed2;
@@ -111,7 +111,7 @@ public abstract class Game
     private void initializeGameState()
     {
         state = State.OVER;
-        turn = Player.RED;
+        turn = Side.RED;
         phase = Phase.CHOOSE_FIGURE;
     }
     private HashMap<Location, Tile> initializeGrid()
@@ -144,7 +144,7 @@ public abstract class Game
     {
         this.musicPlayer = musicPlayer;
     }
-    public void start(String opponentNickname, Player playerSide, Player opponentSide)
+    public void start(String opponentNickname, Side playerSide, Side opponentSide)
     {
         resetGameState();
         resetGrid();
@@ -160,7 +160,7 @@ public abstract class Game
     private void resetGameState()
     {
         state = State.RUNNING;
-        turn = Player.RED;
+        turn = Side.RED;
         phase = Phase.CHOOSE_FIGURE;
     }
     private void resetGrid()
@@ -209,7 +209,7 @@ public abstract class Game
         grid.get(new Location(6,3)).setFigure(soldierBlack4);
         grid.get(new Location(8,3)).setFigure(soldierBlack5);
     }
-    protected abstract void initializeSides(String opponentNickname, Player playerSide, Player opponentSide);
+    protected abstract void initializeSides(String opponentNickname, Side playerSide, Side opponentSide);
     private void decideWhoseNextTurnIs()
     {
         if(getAllAllowedMoves())
@@ -225,7 +225,7 @@ public abstract class Game
         }
         else
         {
-            over();
+            over(turn);
         }
     };
     private void playerTurn()
@@ -243,8 +243,8 @@ public abstract class Game
             Figure figure = gridEntry.getValue().getFigure();
             if(figure != null)
             {
-                Player player = figure.getPlayer();
-                if(player.equals(turn)) //For every friendly figure.
+                Side side = figure.getSide();
+                if(side.equals(turn)) //For every friendly figure.
                 {
                     HashSet<Location> allowedMoves = figure.getAllowedMoves(this, turn);
                     if(allowedMoves.size() != 0)
@@ -311,7 +311,7 @@ public abstract class Game
             }
         }
     }
-    public TileType getTileType(Location destination, HashMap<Location, Tile> grid, Player turn)
+    public TileType getTileType(Location destination, HashMap<Location, Tile> grid, Side turn)
     {
         Figure figureAtDestination = grid.get(destination).getFigure();
         if(figureAtDestination == null)
@@ -320,8 +320,8 @@ public abstract class Game
         }
         else
         {
-            Player playerOfFigureAtDestination = figureAtDestination.getPlayer();
-            if(playerOfFigureAtDestination.equals(turn))
+            Side sideOfFigureAtDestination = figureAtDestination.getSide();
+            if(sideOfFigureAtDestination.equals(turn))
             {
                 return TileType.FRIENDLY;
             }
@@ -335,13 +335,15 @@ public abstract class Game
     {
         previouslySelectedLocation = locationSelected;
     }
-    public void unhighlightEverything()
+    private void unhighlightEverything()
     {
         Set<Map.Entry<Location, Tile>> gridSet = grid.entrySet();
         for(Map.Entry<Location, Tile> gridEntry : gridSet)
         {
             gridEntry.getValue().setSelected(false);
         }
+
+        gui.repaint();
     }
     private void highlightSelectedFigureAndAllowedMoves(Location locationSelected)
     {
@@ -365,9 +367,6 @@ public abstract class Game
 
         gui.repaint();
     }
-    public void receiveMoveFromServer(Location origin, Location destination)
-    {
-    }
     private void nextPhase()
     {
         phase = Phase.CHOOSE_DESTINATION;
@@ -385,13 +384,13 @@ public abstract class Game
         {
             case RED ->
             {
-                turn = Player.BLACK;
+                turn = Side.BLACK;
                 phase = Phase.CHOOSE_FIGURE;
                 gui.setStatusBarText(gui.getText().getBlackPlayer() + ", " + gui.getText().getChooseFigure());
             }
             case BLACK ->
             {
-                turn = Player.RED;
+                turn = Side.RED;
                 phase = Phase.CHOOSE_FIGURE;
                 gui.setStatusBarText(gui.getText().getRedPlayer() + ", " + gui.getText().getChooseFigure());
             }
@@ -399,7 +398,7 @@ public abstract class Game
 
         decideWhoseNextTurnIs();
     }
-    public void over()
+    public void over(Side turn)
     {
         state = State.OVER;
 
@@ -413,6 +412,7 @@ public abstract class Game
                                                gui.getText().getWon());
         }
 
+        unhighlightEverything();
         musicPlayer.stopMusic();
     }
     public void stop()
@@ -444,31 +444,19 @@ public abstract class Game
             }
             case OVER ->
             {
-                switch(turn)
-                {
-                    case RED -> gui.setStatusBarText(gui.getText().getGameOver() + " " +
-                                                     gui.getText().getBlackPlayer() + " " +
-                                                     gui.getText().getWon());
-                    case BLACK -> gui.setStatusBarText(gui.getText().getGameOver() + " " +
-                                                       gui.getText().getRedPlayer() + " " +
-                                                       gui.getText().getWon());
-                }
+                gui.setStatusBarText(gui.getText().getGameOver());
             }
         }
     }
-    public State getState() //TODO was used in showFrameExitToMainMenu
+    public State getState()
     {
         return state;
     }
-    public Player getTurn()
+    public Side getTurn()
     {
         return turn;
     }
-    public void setTurn(Player turn) //TODO костыль
-    {
-        this.turn = turn;
-    }
-    public Player getOpponentSide()
+    public Side getOpponentSide()
     {
         return opponentSide;
     }

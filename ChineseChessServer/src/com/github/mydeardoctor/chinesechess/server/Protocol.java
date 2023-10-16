@@ -37,7 +37,7 @@ public class Protocol
         {
             case REGISTER_NICKNAME -> registerNickname(sourceClient, (String)data);
             case INVITE -> handleInvite(sourceClient, (Integer)data);
-            case MOVE -> resendMove(sourceClient, (Object[])data);
+            case MOVE -> resendMove(sourceClient, (Location[])data);
             case END_GAME -> endGame(sourceClient);
             case PLAYER_QUIT -> resendPlayerQuit(sourceClient);
         }
@@ -110,21 +110,21 @@ public class Protocol
             String playerNickname = sourceClient.getNickname();
             String opponentNickname = opponent.getNickname();
 
-            Player playerSide = null;
-            Player opponentSide = null;
+            Side playerSide = null;
+            Side opponentSide = null;
             Random randomNumberGenerator = new Random();
             int randomNumber = randomNumberGenerator.nextInt(2);
             switch(randomNumber)
             {
                 case 0 ->
                 {
-                    playerSide = Player.RED;
-                    opponentSide = Player.BLACK;
+                    playerSide = Side.RED;
+                    opponentSide = Side.BLACK;
                 }
                 case 1 ->
                 {
-                    playerSide = Player.BLACK;
-                    opponentSide = Player.RED;
+                    playerSide = Side.BLACK;
+                    opponentSide = Side.RED;
                 }
             }
 
@@ -141,16 +141,16 @@ public class Protocol
             sourceClient.writeToClient(message);
         }
     }
-    private void resendMove(Client sourceClient, Object[] moves)
+    private void resendMove(Client sourceClient, Location[] move)
     {
         Integer opponentHashcode = sourceClient.getOpponentHashcode();
         Client opponent = mapOfClients.get(opponentHashcode);
         if(opponent != null)
         {
-            Location origin = (Location)moves[0];
-            Location destination = (Location)moves[1];
+            Location origin = move[0];
+            Location destination = move[1];
 
-            Message message = new Message(Action.MOVE, new Object[]{origin, destination});
+            Message message = new Message(Action.MOVE, new Location[]{origin, destination});
             opponent.writeToClient(message);
         }
     }

@@ -166,7 +166,7 @@ public class GUI
     private TableOfClientsModel tableOfClientsModel;
     private JTable tableOfClients;
     private JPanel panelTransparentOnFrameLobby;
-    boolean buttonInviteIgnoresSelections; //TODO
+    boolean buttonInviteIgnoresSelections;
     private JButton buttonInvite;
     private JButton buttonBackOnFrameLobby;
     private GridBagConstraints constraintsForLabelListOfClients;
@@ -1016,7 +1016,7 @@ public class GUI
         {
             SwingUtilities.invokeAndWait(()->
             {
-                //Button Single Player.
+                //Button Single Side.
                 buttonSinglePlayer = new JButton(text.getSinglePlayer());
                 buttonSinglePlayer.setPreferredSize(new Dimension(500, 100));
                 buttonSinglePlayer.setBackground(Color.WHITE);
@@ -1794,7 +1794,7 @@ public class GUI
     {
         this.gameLocalMultiplayer = gameLocalMultiplayer;
     }
-    public void setGameOnlineMultiplayer(GameOnlineMultiplayer gameOnlineMultiplayer) //TODO а мб и не нужно
+    public void setGameOnlineMultiplayer(GameOnlineMultiplayer gameOnlineMultiplayer)
     {
         this.gameOnlineMultiplayer = gameOnlineMultiplayer;
     }
@@ -2035,11 +2035,35 @@ public class GUI
     {
         SwingUtilities.invokeLater(()->
         {
-            int selectedOption = JOptionPane.showOptionDialog(frame,
-                    text.getAllProgressWillBeLost(), text.getExitToMainMenu(),
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-                    new String[] {text.getYes(), text.getNo()}, text.getNo());
-            if(selectedOption == JOptionPane.YES_OPTION)
+            boolean exitToMainMenu = false;
+
+            if(
+            gameSinglePlayer.getState().equals(State.RUNNING) ||
+            gameLocalMultiplayer.getState().equals(State.RUNNING) ||
+            gameOnlineMultiplayer.getState().equals(State.RUNNING) ||
+            replay.getState().equals(State.RUNNING) ||
+            !replay.getIsReplayOutputEmpty()
+            )
+            {
+                int selectedOption = JOptionPane.showOptionDialog(frame,
+                        text.getAllProgressWillBeLost(), text.getExitToMainMenu(),
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                        new String[] {text.getYes(), text.getNo()}, text.getNo());
+                if(selectedOption == JOptionPane.YES_OPTION)
+                {
+                    exitToMainMenu = true;
+                }
+                else
+                {
+                    exitToMainMenu = false;
+                }
+            }
+            else
+            {
+                exitToMainMenu = true;
+            }
+
+            if(exitToMainMenu)
             {
                 gameSinglePlayer.stop();
                 gameLocalMultiplayer.stop();
@@ -2100,7 +2124,7 @@ public class GUI
             showFrameBoard();
         });
     }
-    public void startOnlineMultiplayerGame(String opponentNickname, Player playerSide, Player opponentSide)
+    public void startOnlineMultiplayerGame(String opponentNickname, Side playerSide, Side opponentSide)
     {
         SwingUtilities.invokeLater(()->
         {
@@ -2137,7 +2161,7 @@ public class GUI
             }
         });
     }
-    private void setButtonInviteState(ListSelectionEvent e) //TODO пригласил, то кнопка заблокирована. Разблокируется? когда закачивается игра или оппонент дисконнект.
+    private void setButtonInviteState(ListSelectionEvent e)
     {
         SwingUtilities.invokeLater(()->
         {
@@ -2155,7 +2179,7 @@ public class GUI
             }
         });
     }
-    private void sendInvite() //TODO
+    private void sendInvite()
     {
         SwingUtilities.invokeLater(()->
         {
@@ -2523,9 +2547,24 @@ public class GUI
             buttonBackOnFrameSettings.setText(text.getBack());
 
             //Game.
-            gameSinglePlayer.refreshText();
-            gameLocalMultiplayer.refreshText();
-            //TODO gameOnlineMultiplayer.refreshText
+            if(gameSinglePlayer.getState().equals(State.RUNNING))
+            {
+                gameSinglePlayer.refreshText();
+            }
+            if(gameLocalMultiplayer.getState().equals(State.RUNNING))
+            {
+                gameLocalMultiplayer.refreshText();
+            }
+            if(gameOnlineMultiplayer.getState().equals(State.RUNNING))
+            {
+                gameOnlineMultiplayer.refreshText();
+            }
+            if(gameSinglePlayer.getState().equals(State.OVER) &&
+               gameLocalMultiplayer.getState().equals(State.OVER) &&
+               gameOnlineMultiplayer.getState().equals(State.OVER))
+            {
+                setStatusBarText(text.getGameOver());
+            }
         });
     }
     public void repaint()

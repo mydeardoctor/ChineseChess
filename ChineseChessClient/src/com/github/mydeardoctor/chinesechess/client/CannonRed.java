@@ -1,11 +1,11 @@
 package com.github.mydeardoctor.chinesechess.client;
 
-import com.github.mydeardoctor.chinesechess.Player;
+import com.github.mydeardoctor.chinesechess.Side;
 
 public class CannonRed extends Cannon
 {
     public CannonRed()
     {
-        super(Player.RED);
+        super(Side.RED);
     }
 }

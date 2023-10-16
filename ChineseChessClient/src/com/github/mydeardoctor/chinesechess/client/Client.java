@@ -64,7 +64,7 @@ public class Client
                 boolean result;
                 try
                 {
-                    clientSocket.connect(new InetSocketAddress(ipAddress, portNumber), 5000);
+                    clientSocket.connect(new InetSocketAddress(ipAddress, portNumber), 30000); //TODO был 5 сек
                     result = true;
                 }
                 catch (IOException e)
@@ -92,17 +92,17 @@ public class Client
                     }
                     else
                     {
-                        setConnectedToServer(false); //TODO мб вынести в функцию, т.к. дублируется
+                        setConnectedToServer(false);
                         disconnect();
-                        gui.setDisconnected(); //TODO мб вынести в функцию, т.к. дублируется
+                        gui.setDisconnected();
                         gui.showDialogCouldNotConnectToServer();
                     }
                 }
                 catch (InterruptedException | ExecutionException e)
                 {
-                    setConnectedToServer(false); //TODO мб вынести в функцию, т.к. дублируется
+                    setConnectedToServer(false);
                     disconnect();
-                    gui.setDisconnected(); //TODO мб вынести в функцию, т.к. дублируется
+                    gui.setDisconnected();
                     gui.showDialogCouldNotConnectToServer();
 
                     logger.logp(Level.WARNING,
@@ -152,10 +152,10 @@ public class Client
                 e.printStackTrace();
                 //TODO states reset, game over, gui reset, guiShowFrame, guiShowWarning
 
-                setConnectedToServer(false); //TODO мб вынести в функцию, т.к. дублируется
+                setConnectedToServer(false);
                 closeStreams();
 
-                gui.setDisconnected(); //TODO мб вынести в функцию, т.к. дублируется. мб showFrameOnlineMultiPlayer. Если игрок в игре, то он находится на Frame Board. GameOver. State=over.
+                gui.setDisconnected();
                 gui.showDialogDisconnectedFromServer();
 
                 System.out.println("Client Socket closed.\n");

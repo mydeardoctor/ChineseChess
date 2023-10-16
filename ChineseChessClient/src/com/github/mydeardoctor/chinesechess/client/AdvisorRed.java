@@ -1,7 +1,7 @@
 package com.github.mydeardoctor.chinesechess.client;
 
 import com.github.mydeardoctor.chinesechess.Location;
-import com.github.mydeardoctor.chinesechess.Player;
+import com.github.mydeardoctor.chinesechess.Side;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -9,10 +9,10 @@ public class AdvisorRed extends Advisor
 {
     public AdvisorRed()
     {
-        super(Player.RED);
+        super(Side.RED);
     }
     @Override
-    public HashSet<Location> getPossibleMoves(Game game, HashMap<Location, Tile> grid, Player turn)
+    public HashSet<Location> getPossibleMoves(Game game, HashMap<Location, Tile> grid, Side turn)
     {
         HashSet<Location> possibleMoves = new HashSet<>();
 

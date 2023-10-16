@@ -2,6 +2,7 @@ package com.github.mydeardoctor.chinesechess.client;
 
 public class TextEnglish extends Text
 {
+    //TODO переставить
     //Game.
 
     @Override

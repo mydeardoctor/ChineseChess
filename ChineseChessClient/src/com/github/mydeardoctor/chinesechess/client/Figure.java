@@ -1,7 +1,8 @@
 package com.github.mydeardoctor.chinesechess.client;
 
 import com.github.mydeardoctor.chinesechess.Location;
-import com.github.mydeardoctor.chinesechess.Player;
+import com.github.mydeardoctor.chinesechess.Side;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,13 +11,13 @@ import java.util.Set;
 
 public abstract class Figure implements Serializable
 {
-    private final Player player;
+    private final Side side;
 
-    public Figure(Player player)
+    public Figure(Side side)
     {
-        this.player = player;
+        this.side = side;
     }
-    public HashSet<Location> getAllowedMoves(Game game, Player turn)
+    public HashSet<Location> getAllowedMoves(Game game, Side turn)
     {
         HashSet<Location> allowedMoves = new HashSet<>();
 
@@ -83,7 +84,7 @@ public abstract class Figure implements Serializable
             //Check if friendly general is now under attack.
             boolean generalUnderAttack = false;
             Location friendlyGeneralLocation=null;
-            Player nextTurn = null;
+            Side nextTurn = null;
             switch(turn)
             {
                 case RED ->
@@ -91,14 +92,14 @@ public abstract class Figure implements Serializable
                     friendlyGeneralLocation = generalRedLocation;
                     //Pretend that the game is in the next turn.
                     //This is necessary for correct calculation of enemy possible moves.
-                    nextTurn = Player.BLACK;
+                    nextTurn = Side.BLACK;
                 }
                 case BLACK ->
                 {
                     friendlyGeneralLocation = generalBlackLocation;
                     //Pretend that the game is in the next turn.
                     //This is necessary for correct calculation of enemy possible moves.
-                    nextTurn = Player.RED;
+                    nextTurn = Side.RED;
                 }
             }
 
@@ -108,8 +109,8 @@ public abstract class Figure implements Serializable
                 Figure figure = gridCopyEntry.getValue().getFigure();
                 if(figure!=null)
                 {
-                    Player player = figure.getPlayer();
-                    if(player==nextTurn) //For every enemy figure.
+                    Side side = figure.getSide();
+                    if(side ==nextTurn) //For every enemy figure.
                     {
                         HashSet<Location> enemyPossibleMoves = figure.getPossibleMoves(game, gridCopy, nextTurn);
                         //Check if enemy figure can attack friendly general.
@@ -129,7 +130,7 @@ public abstract class Figure implements Serializable
 
         return allowedMoves;
     }
-    public abstract HashSet<Location> getPossibleMoves(Game game, HashMap<Location, Tile> grid, Player turn);
+    public abstract HashSet<Location> getPossibleMoves(Game game, HashMap<Location, Tile> grid, Side turn);
     public Location getLocation(Figure figure, HashMap<Location, Tile> grid)
     {
         Location location = null;
@@ -148,8 +149,8 @@ public abstract class Figure implements Serializable
         }
         return location;
     }
-    public Player getPlayer()
+    public Side getSide()
     {
-        return player;
+        return side;
     }
 }

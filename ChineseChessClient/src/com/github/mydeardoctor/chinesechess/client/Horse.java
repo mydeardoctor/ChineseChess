@@ -1,18 +1,19 @@
 package com.github.mydeardoctor.chinesechess.client;
 
 import com.github.mydeardoctor.chinesechess.Location;
-import com.github.mydeardoctor.chinesechess.Player;
+import com.github.mydeardoctor.chinesechess.Side;
+
 import java.util.HashMap;
 import java.util.HashSet;
 
 public abstract class Horse extends Figure
 {
-    public Horse(Player player)
+    public Horse(Side side)
     {
-        super(player);
+        super(side);
     }
     @Override
-    public HashSet<Location> getPossibleMoves(Game game, HashMap<Location, Tile> grid, Player turn)
+    public HashSet<Location> getPossibleMoves(Game game, HashMap<Location, Tile> grid, Side turn)
     {
         HashSet<Location> possibleMoves = new HashSet<>();
 
@@ -71,7 +72,7 @@ public abstract class Horse extends Figure
         return possibleMoves;
     }
     private void checkTile(int xDestination, int yDestination, int xIntermediate, int yIntermediate,
-                           Game game, HashMap<Location, Tile> grid, Player turn, HashSet<Location> possibleMoves)
+                           Game game, HashMap<Location, Tile> grid, Side turn, HashSet<Location> possibleMoves)
     {
         Location destination = new Location(xIntermediate, yIntermediate);
         TileType destinationType = game.getTileType(destination, grid, turn);

@@ -2,8 +2,7 @@ package com.github.mydeardoctor.chinesechess;
 
 import java.io.Serializable;
 
-//TODO rename to side
-public enum Player implements Serializable
+public enum Side implements Serializable
 {
     RED, BLACK
 }

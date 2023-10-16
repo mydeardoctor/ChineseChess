@@ -1,6 +1,6 @@
 package com.github.mydeardoctor.chinesechess.client;
 
-import com.github.mydeardoctor.chinesechess.Player;
+import com.github.mydeardoctor.chinesechess.Side;
 
 public class GameLocalMultiplayer extends Game
 {
@@ -9,10 +9,10 @@ public class GameLocalMultiplayer extends Game
         super();
     }
     @Override
-    protected void initializeSides(String opponentNickname, Player playerSide, Player opponentSide)
+    protected void initializeSides(String opponentNickname, Side playerSide, Side opponentSide)
     {
-        this.playerSide = Player.RED;
-        this.opponentSide = Player.BLACK;
+        this.playerSide = Side.RED;
+        this.opponentSide = Side.BLACK;
     }
     @Override
     protected void opponentTurn()
