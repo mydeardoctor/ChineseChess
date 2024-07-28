@@ -11,7 +11,7 @@ public class GameOnlineMultiplayer extends Game
         super();
     }
     @Override
-    protected void initializeSides(String opponentNickname, Side playerSide, Side opponentSide) //TODO не нравится
+    protected void initializeSides(String opponentNickname, Side playerSide, Side opponentSide) //TODO refactor
     {
         this.playerSide = playerSide;
         this.opponentSide = opponentSide;
@@ -35,7 +35,7 @@ public class GameOnlineMultiplayer extends Game
         super.moveFigure(origin, destination);
         protocol.sendMove(origin, destination);
     }
-    public void receiveMoveFromServer(Location origin, Location destination) //TODO не нравится
+    public void receiveMoveFromServer(Location origin, Location destination) //TODO refactor
     {
         super.moveFigure(origin, destination);
         musicPlayer.playSfx();

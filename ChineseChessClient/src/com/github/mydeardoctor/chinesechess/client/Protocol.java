@@ -6,7 +6,7 @@ import com.github.mydeardoctor.chinesechess.Action;
 import javax.swing.*;
 import java.util.HashMap;
 
-public class Protocol //TODO используются ли методы GAME и т.д. не на EDT?
+public class Protocol //TODO what if Game methods run both on EDT and on a different thread?
 {
     //Game attributes.
     private GameOnlineMultiplayer gameOnlineMultiplayer;

@@ -64,7 +64,7 @@ public class Client
                 boolean result;
                 try
                 {
-                    clientSocket.connect(new InetSocketAddress(ipAddress, portNumber), 30000); //TODO был 5 сек
+                    clientSocket.connect(new InetSocketAddress(ipAddress, portNumber), 30000); //TODO was 5 sec
                     result = true;
                 }
                 catch (IOException e)
